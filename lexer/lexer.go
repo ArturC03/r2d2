@@ -22,19 +22,24 @@ func New(input string) *Lexer {
 }
 
 // readChar avança o lexer por um caractere.
+
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0 // Indica o fim do arquivo
 	} else {
 		l.ch = l.input[l.readPosition]
 	}
+
+	// Atualiza a posição e a leitura do próximo caractere
 	l.position = l.readPosition
 	l.readPosition++
+
+	// Atualiza a linha e coluna corretamente
 	if l.ch == '\n' {
-		l.line++
-		l.column = 0
+		l.line++     // Incrementa a linha
+		l.column = 0 // Zera a coluna
 	} else {
-		l.column++
+		l.column++ // Incrementa a coluna para qualquer outro caractere
 	}
 }
 
