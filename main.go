@@ -3,36 +3,36 @@ package main
 import (
 	"fmt"
 	"github.com/ArturC03/r2d2/lexer"
+	"io"
+	"log"
+	"os"
 )
 
 func main() {
-	source := `
-	import "function" from "path"
-	module cookie {
-		export fn main(argv: string[]): int {
-			const constante = 34;
-			var variavel_mut = constante;
-			let variavel_imut = variavel_mut;
+	// Specify the filename
+	filename := "input.txt" // Change this to the path of your file
 
-			if (i >= 2) {
-			} else if (i == 2) {
-			} else {
-			}
+	// Open the file
+	file, err := os.Open(filename)
+	if err != nil {
+		log.Fatalf("Error opening file: %v\n", err)
+	}
+	defer file.Close()
 
-			loop {
-				break;
-			}
+	// Read the contents of the file
+	content, err := io.ReadAll(file)
+	if err != nil {
+		log.Fatalf("Error reading file: %v\n", err)
+	}
 
-			for (var i = 0; i < 3; i++) {
-			}
-		}
-		export pseudo fn PseudoFuncao() {}
-	}`
-	l := lexer.NewLexer(source)
+	// Create a new lexer instance with the file content
+	l := lexer.New(string(content))
+
+	// Tokenize the input until EOF
 	for {
 		tok := l.NextToken()
 		fmt.Printf("%+v\n", tok)
-		if tok.Type == lexer.TokenEOF {
+		if tok.Type == lexer.EOF {
 			break
 		}
 	}
