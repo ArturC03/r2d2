@@ -1,179 +1,189 @@
 package lexer
 
 import (
-	"fmt"
 	"unicode"
 )
 
-// Tipos de token
-type TokenType string
-
-const (
-	TokenEOF      TokenType = "EOF"      // Fim do ficheiro
-	TokenIdent    TokenType = "IDENT"    // Identificador
-	TokenNumber   TokenType = "NUMBER"   // Literal numérico
-	TokenString   TokenType = "STRING"   // Literal string
-	TokenKeyword  TokenType = "KEYWORD"  // Palavra reservada
-	TokenSymbol   TokenType = "SYMBOL"   // Símbolo (ex.: {}, (), =)
-	TokenColon    TokenType = "COLON"    // ":"
-	TokenOperator TokenType = "OPERATOR" // Operadores
-	TokenError    TokenType = "ERROR"    // Erro
-	TokenComment  TokenType = "COMMENT"  // Comentário
-)
-
-// Token representa um elemento lexical
-type Token struct {
-	Type   TokenType
-	Lexeme string
-	Line   int
-	Column int
-}
-
-// Lexer estrutura principal
+// Lexer represents the state of the lexer.
 type Lexer struct {
-	input  string
-	pos    int
-	line   int
-	column int
+	input        string
+	position     int  // Current position in the input
+	readPosition int  // Next position to read
+	ch           byte // Current character under examination
+	line         int  // Current line number
+	column       int  // Current column number
 }
 
-// Nova instância do lexer (Construtor)
-func NewLexer(input string) *Lexer {
-	return &Lexer{input: input, line: 1, column: 0}
+// New creates a new lexer for the given input.
+func New(input string) *Lexer {
+	l := &Lexer{input: input, line: 1, column: 0}
+	l.readChar() // Initialize first character
+	return l
 }
 
-// Avança para o próximo caracter
-func (l *Lexer) next() rune {
-	if l.pos >= len(l.input) {
-		return 0
+// readChar advances the lexer by one character.
+func (l *Lexer) readChar() {
+	if l.readPosition >= len(l.input) {
+		l.ch = 0 // Indicates end of file
+	} else {
+		l.ch = l.input[l.readPosition]
 	}
-
-	ch := rune(l.input[l.pos])
-	l.pos++
-	if ch == '\n' {
+	l.position = l.readPosition
+	l.readPosition++
+	if l.ch == '\n' {
 		l.line++
 		l.column = 0
 	} else {
 		l.column++
 	}
-	return ch
 }
 
-// Verifica o próximo caracter sem passar por ele
-func (l *Lexer) peek() rune {
-	if l.pos >= len(l.input) {
+// NextToken extracts the next token from the input.
+func (l *Lexer) NextToken() Token {
+	var tok Token
+
+	l.skipWhitespace()
+
+	switch l.ch {
+	case '=':
+		if l.peekChar() == '=' {
+			l.readChar()
+			tok = l.newToken(Equals, "==")
+		} else {
+			tok = l.newToken(Assign, "=")
+		}
+	case '+':
+		tok = l.newToken(Plus, "+")
+	case '-':
+		tok = l.newToken(Minus, "-")
+	case '*':
+		tok = l.newToken(Multiply, "*")
+	case '/':
+		tok = l.newToken(Divide, "/")
+	case '<':
+		tok = l.newToken(LessThan, "<")
+	case '>':
+		tok = l.newToken(GreaterThan, ">")
+	case '!':
+		if l.peekChar() == '=' {
+			l.readChar()
+			tok = l.newToken(NotEquals, "!=")
+		} else {
+			tok = l.newToken(Illegal, string(l.ch))
+		}
+	case '{':
+		tok = l.newToken(LeftBrace, "{")
+	case '}':
+		tok = l.newToken(RightBrace, "}")
+	case '(':
+		tok = l.newToken(LeftParen, "(")
+	case ')':
+		tok = l.newToken(RightParen, ")")
+	case ';':
+		tok = l.newToken(Semicolon, ";")
+	case ',':
+		tok = l.newToken(Comma, ",")
+	case 0:
+		tok.Type = EOF
+		tok.Lexeme = ""
+	default:
+		if isLetter(l.ch) {
+			lexeme := l.readIdentifier()
+			tok.Type = lookupKeyword(lexeme)
+			tok.Lexeme = lexeme
+			return tok
+		} else if isDigit(l.ch) {
+			tok.Type = Integer
+			tok.Lexeme = l.readNumber()
+			return tok
+		} else {
+			tok = l.newToken(Illegal, string(l.ch))
+		}
+	}
+
+	l.readChar()
+	return tok
+}
+
+// Helper methods
+
+func (l *Lexer) skipWhitespace() {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+		l.readChar()
+	}
+}
+
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
 		return 0
 	}
-	return rune(l.input[l.pos])
+	return l.input[l.readPosition]
 }
 
-// Retorna o próximo token
-func (l *Lexer) NextToken() Token {
-	ch := l.next()
-
-	// Ignorar espaços em branco e comentários
-	for unicode.IsSpace(ch) {
-		ch = l.next()
+func (l *Lexer) newToken(tokenType TokenType, lexeme string) Token {
+	return Token{
+		Type:   tokenType,
+		Lexeme: lexeme,
+		Line:   l.line,
+		Column: l.column,
 	}
-
-	if ch == '/' && l.peek() == '/' { // Comentário de linha
-		for ch != '\n' && ch != 0 {
-			ch = l.next()
-		}
-
-		return Token{Type: TokenComment, Lexeme: "//", Line: l.line, Column: l.column}
-	}
-
-	// Fim do ficheiro
-	if ch == 0 {
-		return Token{Type: TokenEOF, Lexeme: "", Line: l.line, Column: l.column}
-	}
-
-	// Identificadores e palavras reservadas
-	if unicode.IsLetter(ch) || ch == '_' {
-		start := l.pos - 1
-		for unicode.IsLetter(l.peek()) || unicode.IsDigit(l.peek()) || l.peek() == '_' {
-			l.next()
-		}
-		lexeme := l.input[start:l.pos]
-		if isKeyword(lexeme) {
-			return Token{Type: TokenKeyword, Lexeme: lexeme, Line: l.line, Column: l.column}
-		}
-		return Token{Type: TokenIdent, Lexeme: lexeme, Line: l.line, Column: l.column}
-	}
-
-	// Literais numéricos
-	if unicode.IsDigit(ch) {
-		start := l.pos - 1
-		for unicode.IsDigit(l.peek()) || l.peek() == '.' {
-			l.next()
-		}
-		lexeme := l.input[start:l.pos]
-		return Token{Type: TokenNumber, Lexeme: lexeme, Line: l.line, Column: l.column}
-	}
-
-	// Literais string
-	if ch == '"' {
-		start := l.pos
-		for l.peek() != '"' && l.peek() != 0 {
-			l.next()
-		}
-		if l.peek() == '"' {
-			l.next()
-			return Token{Type: TokenString, Lexeme: l.input[start : l.pos-1], Line: l.line, Column: l.column}
-		}
-		return Token{Type: TokenError, Lexeme: "String não terminada", Line: l.line, Column: l.column}
-	}
-
-	// Dois pontos ":"
-	if ch == ':' {
-		return Token{Type: TokenColon, Lexeme: ":", Line: l.line, Column: l.column}
-	}
-
-	// Operadores e símbolos
-	if isOperator(ch) {
-		return Token{Type: TokenOperator, Lexeme: string(ch), Line: l.line, Column: l.column}
-	}
-	if isSymbol(ch) {
-		return Token{Type: TokenSymbol, Lexeme: string(ch), Line: l.line, Column: l.column}
-	}
-
-	// Erro de caractere inválido
-	return Token{Type: TokenError, Lexeme: fmt.Sprintf("Caractere inesperado: %c", ch), Line: l.line, Column: l.column}
 }
 
-// Verifica palavras reservadas
-func isKeyword(lexeme string) bool {
-	keywords := []string{
-		"import", "from", "module", "export", "fn", "pseudo",
-		"let", "var", "const", "if", "else", "loop", "for", "while", "do", "break",
+func (l *Lexer) readIdentifier() string {
+	start := l.position
+	for isLetter(l.ch) {
+		l.readChar()
 	}
-	for _, kw := range keywords {
-		if lexeme == kw {
-			return true
-		}
-	}
-	return false
+	return l.input[start:l.position]
 }
 
-// Verifica operadores (+, -, *, /, etc.)
-func isOperator(ch rune) bool {
-	operators := "+-*/=<>"
-	return runeContains(operators, ch)
-}
-
-// Verifica símbolos (ex.: {}, (), ;)
-func isSymbol(ch rune) bool {
-	symbols := "{}[]();,."
-	return runeContains(symbols, ch)
-}
-
-// Helper: verifica se o caractere está num conjunto
-func runeContains(set string, r rune) bool {
-	for _, s := range set {
-		if r == s {
-			return true
-		}
+func (l *Lexer) readNumber() string {
+	start := l.position
+	for isDigit(l.ch) {
+		l.readChar()
 	}
-	return false
+	return l.input[start:l.position]
+}
+
+func isLetter(ch byte) bool {
+	return unicode.IsLetter(rune(ch)) || ch == '_'
+}
+
+func isDigit(ch byte) bool {
+	return unicode.IsDigit(rune(ch))
+}
+
+func lookupKeyword(lexeme string) TokenType {
+	switch lexeme {
+	case "module":
+		return KeywordModule
+	case "export":
+		return KeywordExport
+	case "const":
+		return KeywordConst
+	case "let":
+		return KeywordLet
+	case "var":
+		return KeywordVar
+	case "fn":
+		return KeywordFn
+	case "loop":
+		return KeywordLoop
+	case "break":
+		return KeywordBreak
+	case "if":
+		return KeywordIf
+	case "else":
+		return KeywordElse
+	case "do":
+		return KeywordDo
+	case "while":
+		return KeywordWhile
+	case "for":
+		return KeywordFor
+	case "pseudo":
+		return KeywordPseudo
+	default:
+		return Identifier
+	}
 }
