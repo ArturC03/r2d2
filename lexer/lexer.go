@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"unicode"
+// "unicode"
 )
 
 // Lexer representa o estado do lexer.
@@ -166,17 +166,17 @@ func (l *Lexer) readString() string {
 	return str
 }
 
-// isLetter verifica se o caractere é uma letra ou um sublinhado.
+// isLetter verifica se um caractere é uma letra.
 func isLetter(ch byte) bool {
-	return unicode.IsLetter(rune(ch)) || ch == '_'
+	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_'
 }
 
-// isDigit verifica se o caractere é um dígito.
+// isDigit verifica se um caractere é um dígito.
 func isDigit(ch byte) bool {
-	return unicode.IsDigit(rune(ch))
+	return ch >= '0' && ch <= '9'
 }
 
-// lookupKeyword verifica se o lexema corresponde a uma palavra-chave.
+// lookupKeyword verifica se um identificador é uma palavra-chave e retorna o tipo correspondente.
 func lookupKeyword(lexeme string) TokenType {
 	switch lexeme {
 	case "module":
