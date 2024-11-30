@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// Specify the filename
-	filename := "input.txt" // Change this to the path of your file
+	filename := "input.r2d2" // Change this to the path of your file
 
 	// Open the file
 	file, err := os.Open(filename)

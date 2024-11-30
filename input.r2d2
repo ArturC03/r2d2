@@ -1,0 +1,21 @@
+import "function" from "path"
+module cookie {
+    export fn main(argv: string[]): int {
+        const constante = 34;
+        var variavel_mut = constante;
+        let variavel_imut = variavel_mut;
+
+        if (i >= 2) {
+        } else if (i == 2) {
+        } else {
+        }
+
+        loop {
+            break;
+        }
+
+        for (var i = 0; i < 3; i++) {
+        }
+    }
+    export pseudo fn PseudoFuncao() {}
+}

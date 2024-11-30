@@ -4,27 +4,27 @@ import (
 	"unicode"
 )
 
-// Lexer represents the state of the lexer.
+// Lexer representa o estado do lexer.
 type Lexer struct {
 	input        string
-	position     int  // Current position in the input
-	readPosition int  // Next position to read
-	ch           byte // Current character under examination
-	line         int  // Current line number
-	column       int  // Current column number
+	position     int  // Posição atual na entrada
+	readPosition int  // Próxima posição a ser lida
+	ch           byte // Caractere atual sendo examinado
+	line         int  // Número da linha atual
+	column       int  // Número da coluna atual
 }
 
-// New creates a new lexer for the given input.
+// New cria um novo lexer para a entrada fornecida.
 func New(input string) *Lexer {
 	l := &Lexer{input: input, line: 1, column: 0}
-	l.readChar() // Initialize first character
+	l.readChar() // Inicializa o primeiro caractere
 	return l
 }
 
-// readChar advances the lexer by one character.
+// readChar avança o lexer por um caractere.
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
-		l.ch = 0 // Indicates end of file
+		l.ch = 0 // Indica o fim do arquivo
 	} else {
 		l.ch = l.input[l.readPosition]
 	}
@@ -38,7 +38,7 @@ func (l *Lexer) readChar() {
 	}
 }
 
-// NextToken extracts the next token from the input.
+// NextToken extrai o próximo token da entrada.
 func (l *Lexer) NextToken() Token {
 	var tok Token
 
@@ -83,6 +83,10 @@ func (l *Lexer) NextToken() Token {
 		tok = l.newToken(Semicolon, ";")
 	case ',':
 		tok = l.newToken(Comma, ",")
+	case ':':
+		tok = l.newToken(Colon, ":")
+	case '"':
+		tok = l.newToken(String, l.readString())
 	case 0:
 		tok.Type = EOF
 		tok.Lexeme = ""
@@ -131,7 +135,7 @@ func (l *Lexer) newToken(tokenType TokenType, lexeme string) Token {
 
 func (l *Lexer) readIdentifier() string {
 	start := l.position
-	for isLetter(l.ch) {
+	for isLetter(l.ch) || isDigit(l.ch) {
 		l.readChar()
 	}
 	return l.input[start:l.position]
@@ -143,6 +147,17 @@ func (l *Lexer) readNumber() string {
 		l.readChar()
 	}
 	return l.input[start:l.position]
+}
+
+func (l *Lexer) readString() string {
+	start := l.position + 1
+	l.readChar() // Move past the opening quote
+	for l.ch != '"' && l.ch != 0 {
+		l.readChar()
+	}
+	str := l.input[start:l.position]
+	l.readChar() // Move past the closing quote
+	return str
 }
 
 func isLetter(ch byte) bool {
@@ -159,26 +174,20 @@ func lookupKeyword(lexeme string) TokenType {
 		return KeywordModule
 	case "export":
 		return KeywordExport
-	case "const":
-		return KeywordConst
+	case "fn":
+		return KeywordFn
 	case "let":
 		return KeywordLet
 	case "var":
 		return KeywordVar
-	case "fn":
-		return KeywordFn
-	case "loop":
-		return KeywordLoop
-	case "break":
-		return KeywordBreak
 	case "if":
 		return KeywordIf
 	case "else":
 		return KeywordElse
-	case "do":
-		return KeywordDo
-	case "while":
-		return KeywordWhile
+	case "loop":
+		return KeywordLoop
+	case "break":
+		return KeywordBreak
 	case "for":
 		return KeywordFor
 	case "pseudo":
