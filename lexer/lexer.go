@@ -111,12 +111,14 @@ func (l *Lexer) NextToken() Token {
 
 // Helper methods
 
+// skipWhitespace ignora espaços em branco, tabulações e novas linhas.
 func (l *Lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
 }
 
+// peekChar olha o próximo caractere, mas não avança a posição.
 func (l *Lexer) peekChar() byte {
 	if l.readPosition >= len(l.input) {
 		return 0
@@ -124,6 +126,7 @@ func (l *Lexer) peekChar() byte {
 	return l.input[l.readPosition]
 }
 
+// newToken cria um novo token com o tipo, lexema, linha e coluna.
 func (l *Lexer) newToken(tokenType TokenType, lexeme string) Token {
 	return Token{
 		Type:   tokenType,
@@ -133,6 +136,7 @@ func (l *Lexer) newToken(tokenType TokenType, lexeme string) Token {
 	}
 }
 
+// readIdentifier lê um identificador até que um caractere não-alfabético seja encontrado.
 func (l *Lexer) readIdentifier() string {
 	start := l.position
 	for isLetter(l.ch) || isDigit(l.ch) {
@@ -141,6 +145,7 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[start:l.position]
 }
 
+// readNumber lê um número até que um caractere não numérico seja encontrado.
 func (l *Lexer) readNumber() string {
 	start := l.position
 	for isDigit(l.ch) {
@@ -149,6 +154,7 @@ func (l *Lexer) readNumber() string {
 	return l.input[start:l.position]
 }
 
+// readString lê uma string delimitada por aspas duplas.
 func (l *Lexer) readString() string {
 	start := l.position + 1
 	l.readChar() // Move past the opening quote
@@ -160,14 +166,17 @@ func (l *Lexer) readString() string {
 	return str
 }
 
+// isLetter verifica se o caractere é uma letra ou um sublinhado.
 func isLetter(ch byte) bool {
 	return unicode.IsLetter(rune(ch)) || ch == '_'
 }
 
+// isDigit verifica se o caractere é um dígito.
 func isDigit(ch byte) bool {
 	return unicode.IsDigit(rune(ch))
 }
 
+// lookupKeyword verifica se o lexema corresponde a uma palavra-chave.
 func lookupKeyword(lexeme string) TokenType {
 	switch lexeme {
 	case "module":
