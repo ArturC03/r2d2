@@ -65,8 +65,7 @@ func (l *Lexer) NextToken() Token {
 	case '/':
 		if l.peekChar() == '/' || l.peekChar() == '*' {
 			l.skipComment()
-			// Ignora o comentário e continua a processar os tokens
-			return l.NextToken() // Recurre para continuar processando os tokens
+			return l.NextToken()
 		}
 		tok = l.newToken(Divide, "/")
 	case '<':
@@ -77,9 +76,27 @@ func (l *Lexer) NextToken() Token {
 		if l.peekChar() == '=' {
 			l.readChar()
 			tok = l.newToken(NotEquals, "!=")
+		} else if l.peekChar() == '!' {
+			l.readChar()
+			tok = l.newToken(Not, "!")
 		} else {
-			tok = l.newToken(Illegal, string(l.ch))
-			l.reportError("caracter inválido: '!'")
+			tok = l.newToken(Not, "!")
+		}
+	case '&': // Handle "&&"
+		if l.peekChar() == '&' {
+			l.readChar()
+			tok = l.newToken(And, "&&")
+		} else {
+			tok = l.newToken(Illegal, "&")
+			l.reportError("caracter inválido: '&'")
+		}
+	case '|': // Handle "||"
+		if l.peekChar() == '|' {
+			l.readChar()
+			tok = l.newToken(Or, "||")
+		} else {
+			tok = l.newToken(Illegal, "|")
+			l.reportError("caracter inválido: '|'")
 		}
 	case '{':
 		tok = l.newToken(LeftBrace, "{")
@@ -241,6 +258,10 @@ func lookupKeyword(lexeme string) TokenType {
 		return KeywordPseudo
 	case "send": // Add this case for the 'send' keyword
 		return KeywordSend
+	case "true":
+		return KeywordTrue
+	case "false":
+		return KeywordFalse
 	default:
 		return Identifier
 	}

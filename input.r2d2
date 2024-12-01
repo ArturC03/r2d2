@@ -1,6 +1,6 @@
 [1, 2, 3]
 
-/* import "function" from "path"
+import "function" from "path"
 // import "function from "path" as PseudoFuncao
 module cookie {
     export fn main(argv: string[]): int {
@@ -13,6 +13,8 @@ module cookie {
         } else {
         }
 
+        print("Olá, Mundo!");
+
         loop {
             break;
         }
@@ -23,4 +25,4 @@ module cookie {
 
     send "Olá, Mundo!";
     export pseudo fn PseudoFuncao() {}
-} */
+} 

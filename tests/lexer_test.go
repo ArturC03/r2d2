@@ -110,8 +110,8 @@ func TestLexerKeywords(t *testing.T) {
 	expectedTokens := []lexer.TokenType{
 		lexer.KeywordLet, lexer.Identifier, lexer.Assign, lexer.Integer, lexer.Semicolon,
 		lexer.KeywordIf, lexer.Identifier, lexer.GreaterThan, lexer.Integer, lexer.LeftBrace,
-		lexer.KeywordReturn, lexer.KeywordTrue, lexer.Semicolon, lexer.KeywordElse,
-		lexer.LeftBrace, lexer.KeywordReturn, lexer.KeywordFalse, lexer.Semicolon, lexer.RightBrace, lexer.RightBrace, lexer.EOF,
+		lexer.KeywordSend, lexer.KeywordTrue, lexer.Semicolon, lexer.KeywordElse,
+		lexer.LeftBrace, lexer.KeywordSend, lexer.KeywordFalse, lexer.Semicolon, lexer.RightBrace, lexer.RightBrace, lexer.EOF,
 	}
 
 	t.Run("Palavras-chave", func(t *testing.T) {

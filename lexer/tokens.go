@@ -11,6 +11,9 @@ const (
 	Integer       TokenType = "Integer"
 	String        TokenType = "String"
 	Assign        TokenType = "Assign"
+	And           TokenType = "And"
+	Or            TokenType = "Or"
+	Not           TokenType = "Not"
 	Equals        TokenType = "Equals"
 	NotEquals     TokenType = "NotEquals"
 	Plus          TokenType = "Plus"
@@ -28,6 +31,7 @@ const (
 	Semicolon     TokenType = "Semicolon"
 	Comma         TokenType = "Comma"
 	Colon         TokenType = "Colon"
+	Comment       TokenType = "Comment" // // ou /* */
 	KeywordModule TokenType = "KeywordModule"
 	KeywordExport TokenType = "KeywordExport"
 	KeywordFn     TokenType = "KeywordFn"
@@ -40,7 +44,9 @@ const (
 	KeywordSend   TokenType = "KeywordSend"
 	KeywordFor    TokenType = "KeywordFor"    // for
 	KeywordPseudo TokenType = "KeywordPseudo" // pseudo
-	Comment       TokenType = "Comment"       // // ou /* */
+	KeywordTrue   TokenType = "KeywordTrue"   // true
+	KeywordFalse  TokenType = "KeywordFalse"  // false
+	KeywordNil    TokenType = "KeywordNil"    // nil
 )
 
 // Token representa um token na entrada com tipo, lexema, linha e coluna.
