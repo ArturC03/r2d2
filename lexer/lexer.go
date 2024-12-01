@@ -65,7 +65,8 @@ func (l *Lexer) NextToken() Token {
 	case '/':
 		if l.peekChar() == '/' || l.peekChar() == '*' {
 			l.skipComment()
-			return l.NextToken()
+			// Ignora o comentário e continua a processar os tokens
+			return l.NextToken() // Recurre para continuar processando os tokens
 		}
 		tok = l.newToken(Divide, "/")
 	case '<':

@@ -39,6 +39,7 @@ const (
 	KeywordBreak  TokenType = "KeywordBreak"
 	KeywordFor    TokenType = "KeywordFor"
 	KeywordPseudo TokenType = "KeywordPseudo"
+	Comment       TokenType = "Comment"
 )
 
 // Token representa um token na entrada com tipo, lexema, linha e coluna.
