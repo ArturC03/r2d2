@@ -1,7 +1,8 @@
 package lexer
 
 import (
-// "unicode"
+	// "unicode"
+	"fmt"
 )
 
 // Lexer representa o estado do lexer.
@@ -49,6 +50,7 @@ func (l *Lexer) NextToken() Token {
 
 	l.skipWhitespace()
 
+	fmt.Printf("Caractere lido: %c, Linha: %d, Coluna: %d\n", l.ch, l.line, l.column)
 	switch l.ch {
 	case '=':
 		if l.peekChar() == '=' {
@@ -57,6 +59,7 @@ func (l *Lexer) NextToken() Token {
 		} else {
 			tok = l.newToken(Assign, "=")
 		}
+
 	case '+':
 		tok = l.newToken(Plus, "+")
 	case '-':
