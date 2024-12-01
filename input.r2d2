@@ -1,4 +1,4 @@
-import "function" from "path"
+import "function from "path"
 module cookie {
     export fn main(argv: string[]): int {
         const constante = 34;
