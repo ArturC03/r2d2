@@ -239,6 +239,8 @@ func lookupKeyword(lexeme string) TokenType {
 		return KeywordFor
 	case "pseudo":
 		return KeywordPseudo
+	case "send": // Add this case for the 'send' keyword
+		return KeywordSend
 	default:
 		return Identifier
 	}

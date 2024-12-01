@@ -37,9 +37,10 @@ const (
 	KeywordElse   TokenType = "KeywordElse"
 	KeywordLoop   TokenType = "KeywordLoop"
 	KeywordBreak  TokenType = "KeywordBreak"
-	KeywordFor    TokenType = "KeywordFor"
-	KeywordPseudo TokenType = "KeywordPseudo"
-	Comment       TokenType = "Comment"
+	KeywordSend   TokenType = "KeywordSend"
+	KeywordFor    TokenType = "KeywordFor"    // for
+	KeywordPseudo TokenType = "KeywordPseudo" // pseudo
+	Comment       TokenType = "Comment"       // // ou /* */
 )
 
 // Token representa um token na entrada com tipo, lexema, linha e coluna.

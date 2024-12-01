@@ -20,5 +20,7 @@ module cookie {
         for (var i = 0; i < 3; i++) {
         }
     }
+
+    send "Olá, Mundo!";
     export pseudo fn PseudoFuncao() {}
 } */

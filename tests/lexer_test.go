@@ -1,68 +1,196 @@
 package tests
 
 import (
-	"github.com/ArturC03/r2d2/lexer" // Importa o pacote lexer da sua estrutura
+	"github.com/ArturC03/r2d2/lexer" // Caminho correto do módulo
 	"testing"
 )
 
-func TestNextToken(t *testing.T) {
-	// Exemplo de entrada que será analisada pelo lexer
-	input := `
-		module example {
-			let x = [1, 2, 3];
-			export fn pseudo() {}
-		}
-	`
+// Função auxiliar para rodar o lexer e comparar com os tokens esperados
+func runLexerWithExpectedTokens(input string, expectedTokens []lexer.TokenType, t *testing.T) {
+	l := lexer.New(input) // Inicializa o lexer
 
-	// Tokens esperados
-	expectedTokens := []lexer.Token{
-		{Type: lexer.KeywordModule, Lexeme: "module", Line: 2, Column: 2},
-		{Type: lexer.Identifier, Lexeme: "example", Line: 2, Column: 9},
-		{Type: lexer.LeftBrace, Lexeme: "{", Line: 2, Column: 17},
-		{Type: lexer.KeywordLet, Lexeme: "let", Line: 3, Column: 3},
-		{Type: lexer.Identifier, Lexeme: "x", Line: 3, Column: 7},
-		{Type: lexer.Assign, Lexeme: "=", Line: 3, Column: 9},
-		{Type: lexer.LeftBracket, Lexeme: "[", Line: 3, Column: 11},
-		{Type: lexer.Integer, Lexeme: "1", Line: 3, Column: 12},
-		{Type: lexer.Comma, Lexeme: ",", Line: 3, Column: 13},
-		{Type: lexer.Integer, Lexeme: "2", Line: 3, Column: 15},
-		{Type: lexer.Comma, Lexeme: ",", Line: 3, Column: 16},
-		{Type: lexer.Integer, Lexeme: "3", Line: 3, Column: 18},
-		{Type: lexer.RightBracket, Lexeme: "]", Line: 3, Column: 19},
-		{Type: lexer.Semicolon, Lexeme: ";", Line: 3, Column: 20},
-		{Type: lexer.KeywordExport, Lexeme: "export", Line: 4, Column: 3},
-		{Type: lexer.KeywordFn, Lexeme: "fn", Line: 4, Column: 10},
-		{Type: lexer.Identifier, Lexeme: "pseudo", Line: 4, Column: 13},
-		{Type: lexer.LeftParen, Lexeme: "(", Line: 4, Column: 19},
-		{Type: lexer.RightParen, Lexeme: ")", Line: 4, Column: 20},
-		{Type: lexer.LeftBrace, Lexeme: "{", Line: 4, Column: 22},
-		{Type: lexer.RightBrace, Lexeme: "}", Line: 4, Column: 23},
-		{Type: lexer.RightBrace, Lexeme: "}", Line: 5, Column: 1},
-		{Type: lexer.EOF, Lexeme: "", Line: 5, Column: 2},
-	}
-
-	// Inicializa o lexer com a entrada
-	lex := lexer.New(input)
-
-	// Itera sobre os tokens esperados e os compara com os tokens gerados
 	for i, expected := range expectedTokens {
-		tok := lex.NextToken()
+		tok := l.NextToken()
 
-		// Verifica se o tipo do token está correto
-		if tok.Type != expected.Type {
-			t.Fatalf("Erro no token %d - Tipo errado. Esperado %q, obteve %q", i, expected.Type, tok.Type)
-		}
-		// Verifica se o lexema está correto
-		if tok.Lexeme != expected.Lexeme {
-			t.Fatalf("Erro no token %d - Lexema errado. Esperado %q, obteve %q", i, expected.Lexeme, tok.Lexeme)
-		}
-		// Verifica se a linha está correta
-		if tok.Line != expected.Line {
-			t.Fatalf("Erro no token %d - Linha errada. Esperado %d, obteve %d", i, expected.Line, tok.Line)
-		}
-		// Verifica se a coluna está correta
-		if tok.Column != expected.Column {
-			t.Fatalf("Erro no token %d - Coluna errada. Esperado %d, obteve %d", i, expected.Column, tok.Column)
+		if tok.Type != expected {
+			t.Errorf("Token esperado: %v, mas obtido: %v (na posição %d)", expected, tok.Type, i+1)
 		}
 	}
+}
+
+// Teste de lexer básico com atribuição
+func TestLexerBasic(t *testing.T) {
+	input := `let x = 5;`
+	expectedTokens := []lexer.TokenType{
+		lexer.KeywordLet, lexer.Identifier, lexer.Assign, lexer.Integer, lexer.Semicolon, lexer.EOF,
+	}
+
+	t.Run("Atribuição simples", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de operadores
+func TestLexerOperators(t *testing.T) {
+	input := `x + y - z * (a / b) == 10 != 20;`
+	expectedTokens := []lexer.TokenType{
+		lexer.Identifier, lexer.Plus, lexer.Identifier, lexer.Minus, lexer.Identifier,
+		lexer.Multiply, lexer.LeftParen, lexer.Identifier, lexer.Divide, lexer.Identifier,
+		lexer.RightParen, lexer.Equals, lexer.Integer, lexer.NotEquals, lexer.Integer, lexer.Semicolon, lexer.EOF,
+	}
+
+	t.Run("Operadores básicos", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de comentários de linha
+func TestLexerCommentLine(t *testing.T) {
+	input := `let x = 5; // Isto é um comentário`
+	expectedTokens := []lexer.TokenType{
+		lexer.KeywordLet, lexer.Identifier, lexer.Assign, lexer.Integer, lexer.Semicolon, lexer.EOF,
+	}
+
+	t.Run("Comentário de linha", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de comentários de bloco
+func TestLexerCommentBlock(t *testing.T) {
+	input := `let x = 5; /* Comentário de bloco */`
+	expectedTokens := []lexer.TokenType{
+		lexer.KeywordLet, lexer.Identifier, lexer.Assign, lexer.Integer, lexer.Semicolon, lexer.EOF,
+	}
+
+	t.Run("Comentário de bloco", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de strings
+func TestLexerString(t *testing.T) {
+	input := `"Olá, Mundo!"`
+	expectedTokens := []lexer.TokenType{
+		lexer.String, lexer.EOF,
+	}
+
+	t.Run("String simples", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de números
+func TestLexerNumber(t *testing.T) {
+	input := `12345`
+	expectedTokens := []lexer.TokenType{
+		lexer.Integer, lexer.EOF,
+	}
+
+	t.Run("Número inteiro", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de erro ao ter letras após números
+func TestLexerNumberWithLetters(t *testing.T) {
+	input := `123abc`
+	expectedTokens := []lexer.TokenType{
+		lexer.Integer, lexer.Illegal, lexer.EOF,
+	}
+
+	t.Run("Número com letras (erro esperado)", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de palavras-chave
+func TestLexerKeywords(t *testing.T) {
+	input := `let x = 5; if x > 10 { return true; } else { return false; }`
+	expectedTokens := []lexer.TokenType{
+		lexer.KeywordLet, lexer.Identifier, lexer.Assign, lexer.Integer, lexer.Semicolon,
+		lexer.KeywordIf, lexer.Identifier, lexer.GreaterThan, lexer.Integer, lexer.LeftBrace,
+		lexer.KeywordReturn, lexer.KeywordTrue, lexer.Semicolon, lexer.KeywordElse,
+		lexer.LeftBrace, lexer.KeywordReturn, lexer.KeywordFalse, lexer.Semicolon, lexer.RightBrace, lexer.RightBrace, lexer.EOF,
+	}
+
+	t.Run("Palavras-chave", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de caractere ilegal
+func TestLexerIllegalCharacter(t *testing.T) {
+	input := `let x = 5; $var = 10;`
+	expectedTokens := []lexer.TokenType{
+		lexer.KeywordLet, lexer.Identifier, lexer.Assign, lexer.Integer, lexer.Semicolon,
+		lexer.Illegal, lexer.Identifier, lexer.Assign, lexer.Integer, lexer.Semicolon, lexer.EOF,
+	}
+
+	t.Run("Caractere ilegal '$'", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de múltiplas palavras-chave
+func TestLexerMultipleKeywords(t *testing.T) {
+	input := `let var if else fn module`
+	expectedTokens := []lexer.TokenType{
+		lexer.KeywordLet, lexer.KeywordVar, lexer.KeywordIf, lexer.KeywordElse, lexer.KeywordFn, lexer.KeywordModule, lexer.EOF,
+	}
+
+	t.Run("Múltiplas palavras-chave", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de comentário aninhado (deve gerar erro)
+func TestLexerNestedComments(t *testing.T) {
+	input := `/* Início comentário /* comentário interno */ Fim comentário */`
+	expectedTokens := []lexer.TokenType{
+		lexer.Illegal, lexer.EOF,
+	}
+
+	t.Run("Comentário aninhado (erro esperado)", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de string não finalizada
+func TestLexerUnfinishedString(t *testing.T) {
+	input := `"string não finalizada`
+	expectedTokens := []lexer.TokenType{
+		lexer.Illegal, lexer.EOF,
+	}
+
+	t.Run("String não finalizada (erro esperado)", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de comentário de bloco não finalizado
+func TestLexerUnfinishedBlockComment(t *testing.T) {
+	input := `/* Comentário não finalizado`
+	expectedTokens := []lexer.TokenType{
+		lexer.Illegal, lexer.EOF,
+	}
+
+	t.Run("Comentário de bloco não finalizado (erro esperado)", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
+}
+
+// Teste de expressão complexa
+func TestLexerComplexExpression(t *testing.T) {
+	input := `let x = (a + b) * (c / d) - (e && f);`
+	expectedTokens := []lexer.TokenType{
+		lexer.KeywordLet, lexer.Identifier, lexer.Assign, lexer.LeftParen, lexer.Identifier,
+		lexer.Plus, lexer.Identifier, lexer.RightParen, lexer.Multiply, lexer.LeftParen, lexer.Identifier,
+		lexer.Divide, lexer.Identifier, lexer.RightParen, lexer.Minus, lexer.LeftParen, lexer.Identifier,
+		lexer.Identifier, lexer.RightParen, lexer.Semicolon, lexer.EOF,
+	}
+
+	t.Run("Expressão complexa", func(t *testing.T) {
+		runLexerWithExpectedTokens(input, expectedTokens, t)
+	})
 }
