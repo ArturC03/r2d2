@@ -26,9 +26,6 @@ func main() {
 		log.Fatalf("Error reading file: %v\n", err)
 	}
 
-	// Debug: print file content
-	fmt.Printf("File Content:\n%s\n", string(content))
-
 	// Normalize line endings
 	normalizedContent := strings.ReplaceAll(string(content), "\r\n", "\n")
 

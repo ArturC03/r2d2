@@ -23,6 +23,8 @@ const (
 	RightBrace    TokenType = "RightBrace"
 	LeftParen     TokenType = "LeftParen"
 	RightParen    TokenType = "RightParen"
+	LeftBracket   TokenType = "LeftBracket"  // [
+	RightBracket  TokenType = "RightBracket" // ]
 	Semicolon     TokenType = "Semicolon"
 	Comma         TokenType = "Comma"
 	Colon         TokenType = "Colon"

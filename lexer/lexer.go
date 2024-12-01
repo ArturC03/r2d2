@@ -9,7 +9,7 @@ type Lexer struct {
 	input        string
 	position     int  // Posição atual na entrada
 	readPosition int  // Próxima posição a ser lida
-	ch           byte // Caractere atual sendo examinado
+	ch           byte // caracter atual sendo examinado
 	line         int  // Número da linha atual
 	column       int  // Número da coluna atual
 }
@@ -17,11 +17,11 @@ type Lexer struct {
 // New cria um novo lexer para a entrada fornecida.
 func New(input string) *Lexer {
 	l := &Lexer{input: input, line: 1, column: 0}
-	l.readChar() // Inicializa o primeiro caractere
+	l.readChar() // Inicializa o primeiro caracter
 	return l
 }
 
-// readChar avança o lexer por um caractere.
+// readChar avança o lexer por um caracter.
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0 // Indica o fim do arquivo
@@ -29,7 +29,7 @@ func (l *Lexer) readChar() {
 		l.ch = l.input[l.readPosition]
 	}
 
-	// Atualiza a posição e a leitura do próximo caractere
+	// Atualiza a posição e a leitura do próximo caracter
 	l.position = l.readPosition
 	l.readPosition++
 
@@ -38,7 +38,7 @@ func (l *Lexer) readChar() {
 		l.line++     // Incrementa a linha
 		l.column = 0 // Zera a coluna
 	} else {
-		l.column++ // Incrementa a coluna para qualquer outro caractere
+		l.column++ // Incrementa a coluna para qualquer outro caracter
 	}
 }
 
@@ -63,7 +63,7 @@ func (l *Lexer) NextToken() Token {
 	case '*':
 		tok = l.newToken(Multiply, "*")
 	case '/':
-		if l.peekChar() == '/' {
+		if l.peekChar() == '/' || l.peekChar() == '*' {
 			l.skipComment()
 			return l.NextToken()
 		}
@@ -78,7 +78,7 @@ func (l *Lexer) NextToken() Token {
 			tok = l.newToken(NotEquals, "!=")
 		} else {
 			tok = l.newToken(Illegal, string(l.ch))
-			l.reportError("caractere inválido: '!'")
+			l.reportError("caracter inválido: '!'")
 		}
 	case '{':
 		tok = l.newToken(LeftBrace, "{")
@@ -88,6 +88,10 @@ func (l *Lexer) NextToken() Token {
 		tok = l.newToken(LeftParen, "(")
 	case ')':
 		tok = l.newToken(RightParen, ")")
+	case '[':
+		tok = l.newToken(LeftBracket, "[")
+	case ']':
+		tok = l.newToken(RightBracket, "]")
 	case ';':
 		tok = l.newToken(Semicolon, ";")
 	case ',':
@@ -114,7 +118,7 @@ func (l *Lexer) NextToken() Token {
 			return tok
 		} else {
 			tok = l.newToken(Illegal, string(l.ch))
-			l.reportError(fmt.Sprintf("caractere inválido: '%c'", l.ch))
+			l.reportError(fmt.Sprintf("caracter inválido: '%c'", l.ch))
 		}
 	}
 

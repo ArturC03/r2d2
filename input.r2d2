@@ -1,4 +1,7 @@
-import "function from "path"
+[1, 2, 3]
+
+/* import "function" from "path"
+// import "function from "path" as PseudoFuncao
 module cookie {
     export fn main(argv: string[]): int {
         const constante = 34;
@@ -18,4 +21,4 @@ module cookie {
         }
     }
     export pseudo fn PseudoFuncao() {}
-}
+} */
