@@ -51,6 +51,7 @@ func (l *Lexer) NextToken() Token {
 	l.skipWhitespace()
 
 	fmt.Printf("Caractere lido: %c, Linha: %d, Coluna: %d\n", l.ch, l.line, l.column)
+
 	switch l.ch {
 	case '=':
 		if l.peekChar() == '=' {
@@ -136,6 +137,7 @@ func (l *Lexer) peekChar() byte {
 
 // newToken cria um novo token com o tipo, lexema, linha e coluna.
 func (l *Lexer) newToken(tokenType TokenType, lexeme string) Token {
+	fmt.Printf("Caractere lido: %c, Linha: %d, Coluna: %d\n", l.ch, l.line, l.column)
 	return Token{
 		Type:   tokenType,
 		Lexeme: lexeme,
