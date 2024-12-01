@@ -102,18 +102,14 @@ func (l *Lexer) NextToken() Token {
 	default:
 		if isLetter(l.ch) {
 			lexeme := l.readIdentifier()
-			tok.Type = lookupKeyword(lexeme)
-			tok.Lexeme = lexeme
-			return tok
+			tok = l.newToken(lookupKeyword(lexeme), lexeme)
 		} else if isDigit(l.ch) {
-			tok.Type = Integer
-			tok.Lexeme = l.readNumber()
-			return tok
+			lexeme := l.readNumber()
+			tok = l.newToken(Integer, lexeme)
 		} else {
 			tok = l.newToken(Illegal, string(l.ch))
 		}
 	}
-
 	l.readChar()
 	return tok
 }
