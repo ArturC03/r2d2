@@ -21,6 +21,11 @@ func New(input string) *Lexer {
 	return l
 }
 
+// Função para retornar os erros de forma amigável ao WASM
+func (l *Lexer) wasmReportError(message string) string {
+	return fmt.Sprintf("Erro léxico na linha %d, coluna %d: %s", l.line, l.column, message)
+}
+
 // readChar avança o lexer por um caracter.
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
@@ -42,7 +47,7 @@ func (l *Lexer) readChar() {
 	}
 }
 
-// NextToken extrai o próximo token da entrada.
+// nextToken extrai o próximo token da entrada.
 func (l *Lexer) NextToken() Token {
 	var tok Token
 
@@ -82,22 +87,6 @@ func (l *Lexer) NextToken() Token {
 		} else {
 			tok = l.newToken(Not, "!")
 		}
-	case '&': // Handle "&&"
-		if l.peekChar() == '&' {
-			l.readChar()
-			tok = l.newToken(And, "&&")
-		} else {
-			tok = l.newToken(Illegal, "&")
-			l.reportError("caracter inválido: '&'")
-		}
-	case '|': // Handle "||"
-		if l.peekChar() == '|' {
-			l.readChar()
-			tok = l.newToken(Or, "||")
-		} else {
-			tok = l.newToken(Illegal, "|")
-			l.reportError("caracter inválido: '|'")
-		}
 	case '{':
 		tok = l.newToken(LeftBrace, "{")
 	case '}':
@@ -119,7 +108,7 @@ func (l *Lexer) NextToken() Token {
 	case '"':
 		stringLiteral := l.readString()
 		if stringLiteral == "" {
-			l.reportError("string não finalizada")
+			l.wasmReportError("string não finalizada")
 		}
 		tok = l.newToken(String, stringLiteral)
 	case 0:
@@ -136,7 +125,7 @@ func (l *Lexer) NextToken() Token {
 			return tok
 		} else {
 			tok = l.newToken(Illegal, string(l.ch))
-			l.reportError(fmt.Sprintf("caracter inválido: '%c'", l.ch))
+			l.wasmReportError(fmt.Sprintf("caracter inválido: '%c'", l.ch))
 		}
 	}
 
@@ -144,14 +133,14 @@ func (l *Lexer) NextToken() Token {
 	return tok
 }
 
-// Helper methods
-
+// skipWhitespace pula os espaços e as novas linhas.
 func (l *Lexer) skipWhitespace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
 }
 
+// peekChar retorna o próximo caracter na sequência.
 func (l *Lexer) peekChar() byte {
 	if l.readPosition >= len(l.input) {
 		return 0
@@ -159,6 +148,7 @@ func (l *Lexer) peekChar() byte {
 	return l.input[l.readPosition]
 }
 
+// newToken cria um novo token com o tipo e o lexema fornecido.
 func (l *Lexer) newToken(tokenType TokenType, lexeme string) Token {
 	return Token{
 		Type:   tokenType,
@@ -168,106 +158,78 @@ func (l *Lexer) newToken(tokenType TokenType, lexeme string) Token {
 	}
 }
 
+// readIdentifier lê um identificador e retorna como string.
 func (l *Lexer) readIdentifier() string {
-	start := l.position
+	startPos := l.position
 	for isLetter(l.ch) || isDigit(l.ch) {
 		l.readChar()
 	}
-	return l.input[start:l.position]
+	return l.input[startPos:l.position]
 }
 
+// readNumber lê um número inteiro e retorna como string.
 func (l *Lexer) readNumber() string {
-	start := l.position
+	startPos := l.position
 	for isDigit(l.ch) {
 		l.readChar()
 	}
-	if isLetter(l.ch) {
-		l.reportError(fmt.Sprintf("número inválido: '%s%c'", l.input[start:l.position], l.ch))
-		for isLetter(l.ch) || isDigit(l.ch) {
-			l.readChar()
-		}
-	}
-	return l.input[start:l.position]
+	return l.input[startPos:l.position]
 }
 
+// readString lê uma string delimitada por aspas.
 func (l *Lexer) readString() string {
-	start := l.position + 1
-	l.readChar() // Move past the opening quote
+	l.readChar()
+	startPos := l.position
 	for l.ch != '"' && l.ch != 0 {
-		if l.ch == '\n' {
-			return "" // String não finalizada
-		}
 		l.readChar()
 	}
-	str := l.input[start:l.position]
-	l.readChar() // Move past the closing quote
-	return str
+	return l.input[startPos:l.position]
 }
 
+// skipComment ignora os comentários.
 func (l *Lexer) skipComment() {
-	if l.ch == '/' && l.peekChar() == '/' {
+	if l.ch == '/' {
 		for l.ch != '\n' && l.ch != 0 {
 			l.readChar()
 		}
-	} else if l.ch == '/' && l.peekChar() == '*' {
+	} else if l.ch == '*' {
 		l.readChar()
-		l.readChar()
-		for !(l.ch == '*' && l.peekChar() == '/') {
-			if l.ch == 0 {
-				l.reportError("comentário não finalizado")
-				return
-			}
+		for l.ch != '*' && l.peekChar() != '/' {
 			l.readChar()
 		}
-		l.readChar() // Avança sobre '*'
-		l.readChar() // Avança sobre '/'
+		l.readChar()
 	}
 }
 
+// isLetter verifica se um caracter é uma letra.
 func isLetter(ch byte) bool {
 	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_'
 }
 
+// isDigit verifica se um caracter é um dígito numérico.
 func isDigit(ch byte) bool {
 	return ch >= '0' && ch <= '9'
 }
 
+// lookupKeyword retorna o tipo do token baseado na palavra reservada.
 func lookupKeyword(lexeme string) TokenType {
 	switch lexeme {
-	case "module":
-		return KeywordModule
-	case "export":
-		return KeywordExport
-	case "fn":
-		return KeywordFn
-	case "let":
-		return KeywordLet
 	case "var":
 		return KeywordVar
+	case "let":
+		return KeywordLet
+	case "fn":
+		return KeywordFn
 	case "if":
 		return KeywordIf
 	case "else":
 		return KeywordElse
-	case "loop":
-		return KeywordLoop
-	case "break":
-		return KeywordBreak
-	case "for":
-		return KeywordFor
-	case "pseudo":
-		return KeywordPseudo
-	case "send": // Add this case for the 'send' keyword
-		return KeywordSend
 	case "true":
 		return KeywordTrue
 	case "false":
 		return KeywordFalse
-	default:
-		return Identifier
+	case "nil":
+		return KeywordNil
 	}
-}
-
-// reportError exibe um erro léxico com a linha e coluna.
-func (l *Lexer) reportError(message string) {
-	fmt.Printf("Erro léxico na linha %d, coluna %d: %s\n", l.line, l.column, message)
+	return Identifier
 }

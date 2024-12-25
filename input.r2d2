@@ -1,28 +1,36 @@
-[1, 2, 3]
+import "module" from "path"
 
-import "function" from "path"
-// import "function from "path" as PseudoFuncao
-module cookie {
-    export fn main(argv: string[]): int {
-        const constante = 34;
-        var variavel_mut = constante;
-        let variavel_imut = variavel_mut;
+module modelo {
+    export var x = 10
+    export fn soma(a: int, b: int): int {
+        var c: int = a + b // variavel mutavel
+        let d: int = c * 2 // variavel imutavel
+        const e: int = d / 2 // constante
 
-        if (i >= 2) {
-        } else if (i == 2) {
+        if e > 10 {
+            return e
+        } else if {
+            return e + 1
         } else {
+            return e - 1
         }
-
-        print("Olá, Mundo!");
-
+        
+        for i: int = 0; i < 10; i++ {
+            
+        }
+        
         loop {
             break;
         }
 
-        for (var i = 0; i < 3; i++) {
+        while i<10{
+
         }
+
+        send a
     }
 
-    send "Olá, Mundo!";
-    export pseudo fn PseudoFuncao() {}
-} 
+    fn pseudo soma(a: int, b: int) {
+      soma(a, b)
+    }
+}
