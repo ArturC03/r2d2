@@ -120,7 +120,7 @@ type
     ;
 
 variableDeclaration
-    : (VAR | LET | CONST) type IDENTIFIER (ASSIGN expression)? SEMI
+    : (VAR | LET | CONST) IDENTIFIER (COLON type)? ASSIGN expression SEMI
     ;
 
 statement
