@@ -1,36 +1,72 @@
-import "module" from "path"
+// Importação de módulos
+import "mathUtils" from "utils";
 
-module modelo {
-    export var x = 10
-    export fn soma(a: int, b: int): int {
-        var c: int = a + b // variavel mutavel
-        let d: int = c * 2 // variavel imutavel
-        const e: int = d / 2 // constante
+// Interface declarando a função de ajuste de tamanho
+interface Config {
+    export fn adjustSize(h: i32, w: i32);  // Assinatura da função (apenas declaração)
+}
 
-        if e > 10 {
-            return e
-        } else if {
-            return e + 1
-        } else {
-            return e - 1
-        }
-        
-        for i: int = 0; i < 10; i++ {
-            
-        }
-        
-        loop {
-            break;
-        }
-
-        while i<10{
-
-        }
-
-        send a
-    }
-
-    fn pseudo soma(a: int, b: int) {
-      soma(a, b)
+// Modelo que implementa a interface Config
+module Settings implements Config {
+    // Variáveis de estado do modelo
+    var i32 height = 100;   // altura mutável
+    let i32 width = 200;    // largura imutável
+    const bool isActive = true;  // constante, define se está ativo
+    
+    // Função que implementa a interface Config
+    export fn adjustSize(h: i32, w: i32) {
+        height = h;  // Atualiza altura
     }
 }
+
+// Função principal de exemplo
+fn main() {
+    // Declaração de variáveis
+    var i32 x = 10;            // Variável normal
+    let i32 y = 20;            // Variável imutável
+    const bool isAvailable = true;  // Constante booleana
+
+    // Controle de fluxo (condicional)
+    if (x > 5) {
+        send "Maior que 5";  // Envia valor para o exterior
+    } else if (y == 20) {
+        send "Valor de y é 20";
+    } else {
+        send "Nenhuma das opções";
+    }
+    
+    // Laço de repetição - for (seguindo a estrutura de C)
+    for i: i32 = 0; i < 10; i++ {
+        send i;  // Envia cada valor de i
+    }
+
+    // Laço de repetição - while
+    var i: i32 = 0;
+    while i < 5 {
+        send i;  // Envia i enquanto for menor que 5
+        i++;     // Incrementa i
+    }
+    
+    // Laço infinito - loop
+    loop {
+        send "Laço infinito!";  // Exemplo de laço sem fim, usado para situações específicas
+        break;   // Interrompe o laço imediatamente
+    }
+
+    // Usando funções internas
+    let result: i32 = addNumbers(x, y);  // Função de adição
+    send result;  // Envia o resultado
+
+    // Uso da interface através de implementações
+    Settings.adjustSize(300, 150);  // Ajusta tamanho usando a função de Config
+}
+
+pseudo fn send() {
+  addNumbers(1, 2);  // Função pseudo-não implementada
+}
+
+// Função de adição simples
+fn addNumbers(a: i32, b: i32): i32 {
+    return a + b;  // Retorno de valores
+}
+
