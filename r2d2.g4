@@ -1,41 +1,242 @@
-grammar R2D2;
+grammar r2d2;
 
-// Lexer Rules
-// Comentários
-COMMENT: '//' ~[\r\n]* -> skip;
-BLOCK_COMMENT: '/*' .*? '*/' -> skip;
+/*
+ * Parser Rules
+ */
 
-// Palavras-chave
+program
+  : importDeclaration* declaration* EOF
+  ;
+
+declaration
+  : moduleDeclaration
+  | interfaceDeclaration
+  | globalDeclaration
+  ;
+
+globalDeclaration
+  : CONST IDENTIFIER COLON typeExpression ASSIGN expression SEMI
+  ;
+
+importDeclaration
+  : IMPORT IDENTIFIER FROM STRING_LITERAL SEMI
+  ;
+
+interfaceDeclaration
+  : INTERFACE IDENTIFIER LBRACE functionDeclaration* RBRACE
+  ;
+
+moduleDeclaration
+  : MODULE IDENTIFIER (IMPLEMENTS IDENTIFIER)? LBRACE (functionDeclaration | typeDeclaration | variableDeclaration)* RBRACE
+  ;
+
+functionDeclaration
+  : (EXPORT)? (PSEUDO)? FN IDENTIFIER LPAREN parameterList? RPAREN (COLON typeExpression)? (block | SEMI)
+  ;
+
+parameterList
+  : parameter (COMMA parameter)*
+  ;
+
+parameter
+  : IDENTIFIER COLON typeExpression
+  ;
+
+typeExpression
+  : baseType arrayDimensions?
+  ;
+
+arrayDimensions
+  : (LBRACK (INT_LITERAL)? RBRACK)+
+  ;
+
+baseType
+  : IDENTIFIER
+  | TYPE
+  | genericType
+  ;
+
+genericType
+  : IDENTIFIER LT typeExpression (COMMA typeExpression)* GT
+  ;
+
+typeDeclaration
+  : TYPE IDENTIFIER LBRACE (variableDeclaration)* RBRACE
+  ;
+
+variableDeclaration
+  : (VAR | LET | CONST) IDENTIFIER (COLON typeExpression)? ASSIGN expression SEMI
+  ;
+
+statement
+  : variableDeclaration
+  | expressionStatement
+  | ifStatement
+  | forStatement
+  | whileStatement
+  | loopStatement
+  | loopControl
+  | returnStatement
+  | switchStatement
+  | block
+  | assignmentDeclaration
+  ;
+
+expressionStatement
+  : expression SEMI
+  ;
+
+ifStatement
+  : IF LPAREN expression RPAREN block (ELSE IF LPAREN expression RPAREN block)* (ELSE block)?
+  ;
+
+forStatement
+  : FOR LPAREN simpleFor RPAREN block
+  ;
+
+assignmentDeclaration
+  : assignment SEMI
+  ;
+
+assignment
+  : IDENTIFIER assignmentOperator expression
+  | IDENTIFIER (INCREMENT | DECREMENT)
+  ;
+
+assignmentOperator
+  : ASSIGN
+  | PLUS_ASSIGN
+  | MINUS_ASSIGN
+  | MULT_ASSIGN
+  | DIV_ASSIGN
+  | MOD_ASSIGN
+  ;
+
+simpleFor
+  : (variableDeclaration | assignment)? SEMI expression? SEMI (assignment)?
+  ;
+
+whileStatement
+  : WHILE LPAREN expression RPAREN block
+  ;
+
+loopStatement
+  : LOOP block
+  ;
+
+loopControl
+  : (BREAK | CONTINUE) SEMI
+  ;
+
+returnStatement
+  : RETURN expression? SEMI
+  ;
+
+expression
+  : logicalExpression
+  ;
+
+logicalExpression
+  : comparisonExpression ((AND | OR) comparisonExpression)*
+  ;
+
+comparisonExpression
+  : additiveExpression ((EQ | NEQ | LT | GT | LEQ | GEQ) additiveExpression)*
+  ;
+
+additiveExpression
+  : multiplicativeExpression ((PLUS | MINUS) multiplicativeExpression)*
+  ;
+
+multiplicativeExpression
+  : unaryExpression ((MULT | DIV | MOD) unaryExpression)*
+  ;
+
+unaryExpression
+  : (NOT | MINUS | INCREMENT | DECREMENT) unaryExpression
+  | memberExpression
+  ;
+
+memberExpression
+  : primaryExpression memberPart*
+  ;
+
+memberPart
+  : LBRACK expression RBRACK
+  | DOT IDENTIFIER
+  | INCREMENT
+  | DECREMENT
+  | LPAREN argumentList? RPAREN
+  ;
+
+argumentList
+  : expression (COMMA expression)*
+  ;
+
+primaryExpression
+  : IDENTIFIER
+  | literal
+  | LPAREN expression RPAREN
+  | arrayLiteral
+  ;
+
+arrayLiteral
+  : LBRACK (expression (COMMA expression)*)? RBRACK
+  ;
+
+literal
+  : INT_LITERAL
+  | FLOAT_LITERAL
+  | STRING_LITERAL
+  | BOOL_LITERAL
+  ;
+
+block
+  : LBRACE statement* RBRACE
+  ;
+
+switchStatement
+  : SWITCH LPAREN expression RPAREN LBRACE switchCase* defaultCase? RBRACE
+  ;
+
+switchCase
+  : CASE expression COLON block
+  ;
+
+defaultCase
+  : DEFAULT COLON block
+  ;
+
+/*
+ * Lexer Rules
+ */
+
+// Keywords
+IMPORT: 'import';
+FROM: 'from';
 INTERFACE: 'interface';
 MODULE: 'module';
 IMPLEMENTS: 'implements';
-IMPORT: 'import';
-FROM: 'from';
 EXPORT: 'export';
-FUNC: 'fn';
+FN: 'fn';
 PSEUDO: 'pseudo';
-IF: 'if';
-ELSE: 'else';
-FOR: 'for';
-WHILE: 'while';
-LOOP: 'loop';
-BREAK: 'break';
-RETURN: 'return';
-SEND: 'send';
 VAR: 'var';
 LET: 'let';
 CONST: 'const';
+IF: 'if';
+ELSE: 'else';
+LOOP: 'loop';
+FOR: 'for';
+WHILE: 'while';
+BREAK: 'break';
+SEND: 'send';
+CONTINUE: 'continue';
+RETURN: 'return';
+SWITCH: 'switch';
+CASE: 'case';
+DEFAULT: 'default';
 
-// Tipos Primitivos
-TYPE: (
-    'i8' | 'i16' | 'i32' | 'i64' |    // Inteiros com sinal
-    'u8' | 'u16' | 'u32' | 'u64' |    // Inteiros sem sinal
-    'f32' | 'f64' |                   // Ponto flutuante
-    'bool' | 'string' | 'void'        // Outros tipos básicos
-);
-
-// Operadores básicos (C-like)
-ASSIGN: '=';
+// Operators
 PLUS: '+';
 MINUS: '-';
 MULT: '*';
@@ -43,6 +244,12 @@ DIV: '/';
 MOD: '%';
 INCREMENT: '++';
 DECREMENT: '--';
+ASSIGN: '=';
+PLUS_ASSIGN: '+=';
+MINUS_ASSIGN: '-=';
+MULT_ASSIGN: '*=';
+DIV_ASSIGN: '/=';
+MOD_ASSIGN: '%=';
 EQ: '==';
 NEQ: '!=';
 LT: '<';
@@ -53,7 +260,7 @@ AND: '&&';
 OR: '||';
 NOT: '!';
 
-// Pontuação
+// Delimiters
 LPAREN: '(';
 RPAREN: ')';
 LBRACE: '{';
@@ -65,139 +272,113 @@ DOT: '.';
 COLON: ':';
 SEMI: ';';
 
-// Identificadores e literais
-IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
-INTEGER: [0-9]+;
-FLOAT: [0-9]+ '.' [0-9]+;
-STRING_LITERAL: '"' (~["\r\n\\] | '\\' .)* '"';
-BOOL_LITERAL: 'true' | 'false';
+// Identifiers and literals
+IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
 
-// Ignorar whitespace
-WS: [ \t\r\n]+ -> skip;
+TYPE
+  : 'i8' | 'i16' | 'i32' | 'i64'
+  | 'u8' | 'u16' | 'u32' | 'u64'
+  | 'f32' | 'f64'
+  | 'bool' | 'string' | 'void'
+  ;
 
-// Parser Rules
-program
-    : (importDeclaration | interfaceDeclaration | moduleDeclaration | functionDeclaration)*
-    ;
+STRING_LITERAL
+  : '"' (~["\\\r\n] | '\\' .)* '"'
+  ;
 
-importDeclaration
-    : IMPORT STRING_LITERAL FROM STRING_LITERAL SEMI
-    ;
+BOOL_LITERAL
+  : 'true'
+  | 'false'
+  ;
 
-interfaceDeclaration
-    : INTERFACE IDENTIFIER LBRACE
-        (exportFunctionDeclaration)*
-      RBRACE
-    ;
+INT_LITERAL
+  : DecimalIntegerLiteral
+  | HexIntegerLiteral
+  | OctalIntegerLiteral
+  | BinaryIntegerLiteral
+  ;
 
-moduleDeclaration
-    : MODULE IDENTIFIER (IMPLEMENTS IDENTIFIER)? LBRACE
-        (variableDeclaration | functionDeclaration)*
-      RBRACE
-    ;
+fragment DecimalIntegerLiteral
+  : SignPart? DecimalNumeral
+  ;
 
-exportFunctionDeclaration
-    : EXPORT FUNC IDENTIFIER LPAREN parameterList? RPAREN (COLON type)? SEMI
-    ;
+fragment HexIntegerLiteral
+  : '0' [xX] HexDigits
+  ;
 
-functionDeclaration
-    : (EXPORT | PSEUDO)? FUNC IDENTIFIER LPAREN parameterList? RPAREN (COLON type)?
-      (block | SEMI)
-    ;
+fragment OctalIntegerLiteral
+  : '0' OctalDigits
+  ;
 
-parameterList
-    : parameter (COMMA parameter)*
-    ;
+fragment BinaryIntegerLiteral
+  : '0' [bB] BinaryDigits
+  ;
 
-parameter
-    : IDENTIFIER COLON type
-    ;
+FLOAT_LITERAL
+  : SignPart? DecimalNumeral '.' DecimalDigits? ExponentPart?
+  | SignPart? '.' DecimalDigits ExponentPart?
+  | SignPart? DecimalNumeral ExponentPart
+  ;
 
-type
-    : TYPE                         // Tipos primitivos
-    | IDENTIFIER                   // Tipos definidos pelo usuário
-    | type LBRACK INTEGER? RBRACK  // Arrays
-    ;
+fragment SignPart
+  : [+-]
+  ;
 
-variableDeclaration
-    : (VAR | LET | CONST) IDENTIFIER (COLON type)? ASSIGN expression SEMI
-    ;
+fragment DecimalNumeral
+  : '0'
+  | NonZeroDigit DecimalDigits?
+  ;
 
-statement
-    : variableDeclaration
-    | expressionStatement
-    | ifStatement
-    | forStatement
-    | whileStatement
-    | loopStatement
-    | breakStatement
-    | returnStatement
-    | block
-    ;
+fragment DecimalDigits
+  : DecimalDigit+
+  ;
 
-expressionStatement
-    : expression SEMI
-    ;
+fragment DecimalDigit
+  : [0-9]
+  ;
 
-ifStatement
-    : IF LPAREN expression RPAREN 
-      block
-      (ELSE IF LPAREN expression RPAREN block)*
-      (ELSE block)?
-    ;
+fragment NonZeroDigit
+  : [1-9]
+  ;
 
-forStatement
-    : FOR (IDENTIFIER COLON)? type? IDENTIFIER? ASSIGN expression SEMI 
-          expression SEMI 
-          (expression | IDENTIFIER (INCREMENT | DECREMENT))
-      block
-    ;
+fragment HexDigits
+  : HexDigit+
+  ;
 
-whileStatement
-    : WHILE LPAREN expression RPAREN block
-    ;
+fragment HexDigit
+  : [0-9a-fA-F]
+  ;
 
-loopStatement
-    : LOOP block
-    ;
+fragment OctalDigits
+  : OctalDigit+
+  ;
 
-breakStatement
-    : BREAK SEMI
-    ;
 
-returnStatement
-    : RETURN expression? SEMI
-    ;
+fragment OctalDigit
+  : [0-7]
+  ;
 
-expression
-    : primary
-    | IDENTIFIER
-    | functionCall
-    | IDENTIFIER DOT IDENTIFIER            // Acesso a membros
-    | IDENTIFIER (INCREMENT | DECREMENT)   // Pós incremento/decremento
-    | (INCREMENT | DECREMENT) IDENTIFIER   // Pré incremento/decremento
-    | LPAREN expression RPAREN
-    | expression (MULT | DIV | MOD) expression
-    | expression (PLUS | MINUS) expression
-    | expression (LT | GT | LEQ | GEQ) expression
-    | expression (EQ | NEQ) expression
-    | expression AND expression
-    | expression OR expression
-    | NOT expression
-    | SEND expression
-    ;
+fragment BinaryDigits
+  : BinaryDigit+
+  ;
 
-primary
-    : INTEGER
-    | FLOAT
-    | STRING_LITERAL
-    | BOOL_LITERAL
-    ;
+fragment BinaryDigit
+  : [01]
+  ;
 
-functionCall
-    : IDENTIFIER LPAREN (expression (COMMA expression)*)? RPAREN
-    ;
+fragment ExponentPart
+  : [eE] SignPart? DecimalDigits
+  ;
 
-block
-    : LBRACE statement* RBRACE
-    ;
+// Comments and whitespace
+COMMENT
+  : '//' ~[\r\n]* -> skip
+  ;
+
+BLOCK_COMMENT
+  : '/*' .*? '*/' -> skip
+  ;
+
+WHITESPACE
+  : [ \t\r\n\u000C\u00A0\u2028\u2029]+ -> skip
+  ;
