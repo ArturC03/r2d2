@@ -1,4 +1,4 @@
-// Code generated from r2d2.g4 by ANTLR 4.13.2. DO NOT EDIT.
+// Code generated from R2D2.g4 by ANTLR 4.13.2. DO NOT EDIT.
 
 package parser
 
@@ -14,14 +14,14 @@ var _ = fmt.Printf
 var _ = sync.Once{}
 var _ = unicode.IsLetter
 
-type r2d2Lexer struct {
+type R2D2Lexer struct {
 	*antlr.BaseLexer
 	channelNames []string
 	modeNames    []string
 	// TODO: EOF string
 }
 
-var R2d2LexerLexerStaticData struct {
+var R2D2LexerLexerStaticData struct {
 	once                   sync.Once
 	serializedATN          []int32
 	ChannelNames           []string
@@ -35,7 +35,7 @@ var R2d2LexerLexerStaticData struct {
 }
 
 func r2d2lexerLexerInit() {
-	staticData := &R2d2LexerLexerStaticData
+	staticData := &R2D2LexerLexerStaticData
 	staticData.ChannelNames = []string{
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN",
 	}
@@ -349,97 +349,97 @@ func r2d2lexerLexerInit() {
 	}
 }
 
-// r2d2LexerInit initializes any static state used to implement r2d2Lexer. By default the
+// R2D2LexerInit initializes any static state used to implement R2D2Lexer. By default the
 // static state used to implement the lexer is lazily initialized during the first call to
-// Newr2d2Lexer(). You can call this function if you wish to initialize the static state ahead
+// NewR2D2Lexer(). You can call this function if you wish to initialize the static state ahead
 // of time.
-func R2d2LexerInit() {
-	staticData := &R2d2LexerLexerStaticData
+func R2D2LexerInit() {
+	staticData := &R2D2LexerLexerStaticData
 	staticData.once.Do(r2d2lexerLexerInit)
 }
 
-// Newr2d2Lexer produces a new lexer instance for the optional input antlr.CharStream.
-func Newr2d2Lexer(input antlr.CharStream) *r2d2Lexer {
-	R2d2LexerInit()
-	l := new(r2d2Lexer)
+// NewR2D2Lexer produces a new lexer instance for the optional input antlr.CharStream.
+func NewR2D2Lexer(input antlr.CharStream) *R2D2Lexer {
+	R2D2LexerInit()
+	l := new(R2D2Lexer)
 	l.BaseLexer = antlr.NewBaseLexer(input)
-	staticData := &R2d2LexerLexerStaticData
+	staticData := &R2D2LexerLexerStaticData
 	l.Interpreter = antlr.NewLexerATNSimulator(l, staticData.atn, staticData.decisionToDFA, staticData.PredictionContextCache)
 	l.channelNames = staticData.ChannelNames
 	l.modeNames = staticData.ModeNames
 	l.RuleNames = staticData.RuleNames
 	l.LiteralNames = staticData.LiteralNames
 	l.SymbolicNames = staticData.SymbolicNames
-	l.GrammarFileName = "r2d2.g4"
+	l.GrammarFileName = "R2D2.g4"
 	// TODO: l.EOF = antlr.TokenEOF
 
 	return l
 }
 
-// r2d2Lexer tokens.
+// R2D2Lexer tokens.
 const (
-	r2d2LexerIMPORT         = 1
-	r2d2LexerFROM           = 2
-	r2d2LexerINTERFACE      = 3
-	r2d2LexerMODULE         = 4
-	r2d2LexerIMPLEMENTS     = 5
-	r2d2LexerEXPORT         = 6
-	r2d2LexerFN             = 7
-	r2d2LexerPSEUDO         = 8
-	r2d2LexerVAR            = 9
-	r2d2LexerLET            = 10
-	r2d2LexerCONST          = 11
-	r2d2LexerIF             = 12
-	r2d2LexerELSE           = 13
-	r2d2LexerLOOP           = 14
-	r2d2LexerFOR            = 15
-	r2d2LexerWHILE          = 16
-	r2d2LexerBREAK          = 17
-	r2d2LexerSEND           = 18
-	r2d2LexerCONTINUE       = 19
-	r2d2LexerRETURN         = 20
-	r2d2LexerSWITCH         = 21
-	r2d2LexerCASE           = 22
-	r2d2LexerDEFAULT        = 23
-	r2d2LexerPLUS           = 24
-	r2d2LexerMINUS          = 25
-	r2d2LexerMULT           = 26
-	r2d2LexerDIV            = 27
-	r2d2LexerMOD            = 28
-	r2d2LexerINCREMENT      = 29
-	r2d2LexerDECREMENT      = 30
-	r2d2LexerASSIGN         = 31
-	r2d2LexerPLUS_ASSIGN    = 32
-	r2d2LexerMINUS_ASSIGN   = 33
-	r2d2LexerMULT_ASSIGN    = 34
-	r2d2LexerDIV_ASSIGN     = 35
-	r2d2LexerMOD_ASSIGN     = 36
-	r2d2LexerEQ             = 37
-	r2d2LexerNEQ            = 38
-	r2d2LexerLT             = 39
-	r2d2LexerGT             = 40
-	r2d2LexerLEQ            = 41
-	r2d2LexerGEQ            = 42
-	r2d2LexerAND            = 43
-	r2d2LexerOR             = 44
-	r2d2LexerNOT            = 45
-	r2d2LexerLPAREN         = 46
-	r2d2LexerRPAREN         = 47
-	r2d2LexerLBRACE         = 48
-	r2d2LexerRBRACE         = 49
-	r2d2LexerLBRACK         = 50
-	r2d2LexerRBRACK         = 51
-	r2d2LexerCOMMA          = 52
-	r2d2LexerDOT            = 53
-	r2d2LexerCOLON          = 54
-	r2d2LexerSEMI           = 55
-	r2d2LexerIDENTIFIER     = 56
-	r2d2LexerTYPE           = 57
-	r2d2LexerSTRING_LITERAL = 58
-	r2d2LexerBOOL_LITERAL   = 59
-	r2d2LexerINT_LITERAL    = 60
-	r2d2LexerFLOAT_LITERAL  = 61
-	r2d2LexerCOMMENT        = 62
-	r2d2LexerBLOCK_COMMENT  = 63
-	r2d2LexerWHITESPACE     = 64
+	R2D2LexerIMPORT         = 1
+	R2D2LexerFROM           = 2
+	R2D2LexerINTERFACE      = 3
+	R2D2LexerMODULE         = 4
+	R2D2LexerIMPLEMENTS     = 5
+	R2D2LexerEXPORT         = 6
+	R2D2LexerFN             = 7
+	R2D2LexerPSEUDO         = 8
+	R2D2LexerVAR            = 9
+	R2D2LexerLET            = 10
+	R2D2LexerCONST          = 11
+	R2D2LexerIF             = 12
+	R2D2LexerELSE           = 13
+	R2D2LexerLOOP           = 14
+	R2D2LexerFOR            = 15
+	R2D2LexerWHILE          = 16
+	R2D2LexerBREAK          = 17
+	R2D2LexerSEND           = 18
+	R2D2LexerCONTINUE       = 19
+	R2D2LexerRETURN         = 20
+	R2D2LexerSWITCH         = 21
+	R2D2LexerCASE           = 22
+	R2D2LexerDEFAULT        = 23
+	R2D2LexerPLUS           = 24
+	R2D2LexerMINUS          = 25
+	R2D2LexerMULT           = 26
+	R2D2LexerDIV            = 27
+	R2D2LexerMOD            = 28
+	R2D2LexerINCREMENT      = 29
+	R2D2LexerDECREMENT      = 30
+	R2D2LexerASSIGN         = 31
+	R2D2LexerPLUS_ASSIGN    = 32
+	R2D2LexerMINUS_ASSIGN   = 33
+	R2D2LexerMULT_ASSIGN    = 34
+	R2D2LexerDIV_ASSIGN     = 35
+	R2D2LexerMOD_ASSIGN     = 36
+	R2D2LexerEQ             = 37
+	R2D2LexerNEQ            = 38
+	R2D2LexerLT             = 39
+	R2D2LexerGT             = 40
+	R2D2LexerLEQ            = 41
+	R2D2LexerGEQ            = 42
+	R2D2LexerAND            = 43
+	R2D2LexerOR             = 44
+	R2D2LexerNOT            = 45
+	R2D2LexerLPAREN         = 46
+	R2D2LexerRPAREN         = 47
+	R2D2LexerLBRACE         = 48
+	R2D2LexerRBRACE         = 49
+	R2D2LexerLBRACK         = 50
+	R2D2LexerRBRACK         = 51
+	R2D2LexerCOMMA          = 52
+	R2D2LexerDOT            = 53
+	R2D2LexerCOLON          = 54
+	R2D2LexerSEMI           = 55
+	R2D2LexerIDENTIFIER     = 56
+	R2D2LexerTYPE           = 57
+	R2D2LexerSTRING_LITERAL = 58
+	R2D2LexerBOOL_LITERAL   = 59
+	R2D2LexerINT_LITERAL    = 60
+	R2D2LexerFLOAT_LITERAL  = 61
+	R2D2LexerCOMMENT        = 62
+	R2D2LexerBLOCK_COMMENT  = 63
+	R2D2LexerWHITESPACE     = 64
 )

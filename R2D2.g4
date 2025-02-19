@@ -1,4 +1,4 @@
-grammar r2d2;
+grammar R2D2;
 
 /*
  * Parser Rules

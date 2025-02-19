@@ -1,11 +1,11 @@
-// Code generated from r2d2.g4 by ANTLR 4.13.2. DO NOT EDIT.
+// Code generated from R2D2.g4 by ANTLR 4.13.2. DO NOT EDIT.
 
-package parser // r2d2
+package parser // R2D2
 
 import "github.com/antlr4-go/antlr/v4"
 
-// r2d2Listener is a complete listener for a parse tree produced by r2d2Parser.
-type r2d2Listener interface {
+// R2D2Listener is a complete listener for a parse tree produced by R2D2Parser.
+type R2D2Listener interface {
 	antlr.ParseTreeListener
 
 	// EnterProgram is called when entering the program production.

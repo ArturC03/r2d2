@@ -1,6 +1,6 @@
-// Code generated from r2d2.g4 by ANTLR 4.13.2. DO NOT EDIT.
+// Code generated from R2D2.g4 by ANTLR 4.13.2. DO NOT EDIT.
 
-package parser // r2d2
+package parser // R2D2
 
 import (
 	"fmt"
@@ -15,11 +15,11 @@ var _ = fmt.Printf
 var _ = strconv.Itoa
 var _ = sync.Once{}
 
-type r2d2Parser struct {
+type R2D2Parser struct {
 	*antlr.BaseParser
 }
 
-var R2d2ParserStaticData struct {
+var R2D2ParserStaticData struct {
 	once                   sync.Once
 	serializedATN          []int32
 	LiteralNames           []string
@@ -31,7 +31,7 @@ var R2d2ParserStaticData struct {
 }
 
 func r2d2ParserInit() {
-	staticData := &R2d2ParserStaticData
+	staticData := &R2D2ParserStaticData
 	staticData.LiteralNames = []string{
 		"", "'import'", "'from'", "'interface'", "'module'", "'implements'",
 		"'export'", "'fn'", "'pseudo'", "'var'", "'let'", "'const'", "'if'",
@@ -275,144 +275,144 @@ func r2d2ParserInit() {
 	}
 }
 
-// r2d2ParserInit initializes any static state used to implement r2d2Parser. By default the
+// R2D2ParserInit initializes any static state used to implement R2D2Parser. By default the
 // static state used to implement the parser is lazily initialized during the first call to
-// Newr2d2Parser(). You can call this function if you wish to initialize the static state ahead
+// NewR2D2Parser(). You can call this function if you wish to initialize the static state ahead
 // of time.
-func R2d2ParserInit() {
-	staticData := &R2d2ParserStaticData
+func R2D2ParserInit() {
+	staticData := &R2D2ParserStaticData
 	staticData.once.Do(r2d2ParserInit)
 }
 
-// Newr2d2Parser produces a new parser instance for the optional input antlr.TokenStream.
-func Newr2d2Parser(input antlr.TokenStream) *r2d2Parser {
-	R2d2ParserInit()
-	this := new(r2d2Parser)
+// NewR2D2Parser produces a new parser instance for the optional input antlr.TokenStream.
+func NewR2D2Parser(input antlr.TokenStream) *R2D2Parser {
+	R2D2ParserInit()
+	this := new(R2D2Parser)
 	this.BaseParser = antlr.NewBaseParser(input)
-	staticData := &R2d2ParserStaticData
+	staticData := &R2D2ParserStaticData
 	this.Interpreter = antlr.NewParserATNSimulator(this, staticData.atn, staticData.decisionToDFA, staticData.PredictionContextCache)
 	this.RuleNames = staticData.RuleNames
 	this.LiteralNames = staticData.LiteralNames
 	this.SymbolicNames = staticData.SymbolicNames
-	this.GrammarFileName = "r2d2.g4"
+	this.GrammarFileName = "R2D2.g4"
 
 	return this
 }
 
-// r2d2Parser tokens.
+// R2D2Parser tokens.
 const (
-	r2d2ParserEOF            = antlr.TokenEOF
-	r2d2ParserIMPORT         = 1
-	r2d2ParserFROM           = 2
-	r2d2ParserINTERFACE      = 3
-	r2d2ParserMODULE         = 4
-	r2d2ParserIMPLEMENTS     = 5
-	r2d2ParserEXPORT         = 6
-	r2d2ParserFN             = 7
-	r2d2ParserPSEUDO         = 8
-	r2d2ParserVAR            = 9
-	r2d2ParserLET            = 10
-	r2d2ParserCONST          = 11
-	r2d2ParserIF             = 12
-	r2d2ParserELSE           = 13
-	r2d2ParserLOOP           = 14
-	r2d2ParserFOR            = 15
-	r2d2ParserWHILE          = 16
-	r2d2ParserBREAK          = 17
-	r2d2ParserSEND           = 18
-	r2d2ParserCONTINUE       = 19
-	r2d2ParserRETURN         = 20
-	r2d2ParserSWITCH         = 21
-	r2d2ParserCASE           = 22
-	r2d2ParserDEFAULT        = 23
-	r2d2ParserPLUS           = 24
-	r2d2ParserMINUS          = 25
-	r2d2ParserMULT           = 26
-	r2d2ParserDIV            = 27
-	r2d2ParserMOD            = 28
-	r2d2ParserINCREMENT      = 29
-	r2d2ParserDECREMENT      = 30
-	r2d2ParserASSIGN         = 31
-	r2d2ParserPLUS_ASSIGN    = 32
-	r2d2ParserMINUS_ASSIGN   = 33
-	r2d2ParserMULT_ASSIGN    = 34
-	r2d2ParserDIV_ASSIGN     = 35
-	r2d2ParserMOD_ASSIGN     = 36
-	r2d2ParserEQ             = 37
-	r2d2ParserNEQ            = 38
-	r2d2ParserLT             = 39
-	r2d2ParserGT             = 40
-	r2d2ParserLEQ            = 41
-	r2d2ParserGEQ            = 42
-	r2d2ParserAND            = 43
-	r2d2ParserOR             = 44
-	r2d2ParserNOT            = 45
-	r2d2ParserLPAREN         = 46
-	r2d2ParserRPAREN         = 47
-	r2d2ParserLBRACE         = 48
-	r2d2ParserRBRACE         = 49
-	r2d2ParserLBRACK         = 50
-	r2d2ParserRBRACK         = 51
-	r2d2ParserCOMMA          = 52
-	r2d2ParserDOT            = 53
-	r2d2ParserCOLON          = 54
-	r2d2ParserSEMI           = 55
-	r2d2ParserIDENTIFIER     = 56
-	r2d2ParserTYPE           = 57
-	r2d2ParserSTRING_LITERAL = 58
-	r2d2ParserBOOL_LITERAL   = 59
-	r2d2ParserINT_LITERAL    = 60
-	r2d2ParserFLOAT_LITERAL  = 61
-	r2d2ParserCOMMENT        = 62
-	r2d2ParserBLOCK_COMMENT  = 63
-	r2d2ParserWHITESPACE     = 64
+	R2D2ParserEOF            = antlr.TokenEOF
+	R2D2ParserIMPORT         = 1
+	R2D2ParserFROM           = 2
+	R2D2ParserINTERFACE      = 3
+	R2D2ParserMODULE         = 4
+	R2D2ParserIMPLEMENTS     = 5
+	R2D2ParserEXPORT         = 6
+	R2D2ParserFN             = 7
+	R2D2ParserPSEUDO         = 8
+	R2D2ParserVAR            = 9
+	R2D2ParserLET            = 10
+	R2D2ParserCONST          = 11
+	R2D2ParserIF             = 12
+	R2D2ParserELSE           = 13
+	R2D2ParserLOOP           = 14
+	R2D2ParserFOR            = 15
+	R2D2ParserWHILE          = 16
+	R2D2ParserBREAK          = 17
+	R2D2ParserSEND           = 18
+	R2D2ParserCONTINUE       = 19
+	R2D2ParserRETURN         = 20
+	R2D2ParserSWITCH         = 21
+	R2D2ParserCASE           = 22
+	R2D2ParserDEFAULT        = 23
+	R2D2ParserPLUS           = 24
+	R2D2ParserMINUS          = 25
+	R2D2ParserMULT           = 26
+	R2D2ParserDIV            = 27
+	R2D2ParserMOD            = 28
+	R2D2ParserINCREMENT      = 29
+	R2D2ParserDECREMENT      = 30
+	R2D2ParserASSIGN         = 31
+	R2D2ParserPLUS_ASSIGN    = 32
+	R2D2ParserMINUS_ASSIGN   = 33
+	R2D2ParserMULT_ASSIGN    = 34
+	R2D2ParserDIV_ASSIGN     = 35
+	R2D2ParserMOD_ASSIGN     = 36
+	R2D2ParserEQ             = 37
+	R2D2ParserNEQ            = 38
+	R2D2ParserLT             = 39
+	R2D2ParserGT             = 40
+	R2D2ParserLEQ            = 41
+	R2D2ParserGEQ            = 42
+	R2D2ParserAND            = 43
+	R2D2ParserOR             = 44
+	R2D2ParserNOT            = 45
+	R2D2ParserLPAREN         = 46
+	R2D2ParserRPAREN         = 47
+	R2D2ParserLBRACE         = 48
+	R2D2ParserRBRACE         = 49
+	R2D2ParserLBRACK         = 50
+	R2D2ParserRBRACK         = 51
+	R2D2ParserCOMMA          = 52
+	R2D2ParserDOT            = 53
+	R2D2ParserCOLON          = 54
+	R2D2ParserSEMI           = 55
+	R2D2ParserIDENTIFIER     = 56
+	R2D2ParserTYPE           = 57
+	R2D2ParserSTRING_LITERAL = 58
+	R2D2ParserBOOL_LITERAL   = 59
+	R2D2ParserINT_LITERAL    = 60
+	R2D2ParserFLOAT_LITERAL  = 61
+	R2D2ParserCOMMENT        = 62
+	R2D2ParserBLOCK_COMMENT  = 63
+	R2D2ParserWHITESPACE     = 64
 )
 
-// r2d2Parser rules.
+// R2D2Parser rules.
 const (
-	r2d2ParserRULE_program                  = 0
-	r2d2ParserRULE_declaration              = 1
-	r2d2ParserRULE_globalDeclaration        = 2
-	r2d2ParserRULE_importDeclaration        = 3
-	r2d2ParserRULE_interfaceDeclaration     = 4
-	r2d2ParserRULE_moduleDeclaration        = 5
-	r2d2ParserRULE_functionDeclaration      = 6
-	r2d2ParserRULE_parameterList            = 7
-	r2d2ParserRULE_parameter                = 8
-	r2d2ParserRULE_typeExpression           = 9
-	r2d2ParserRULE_arrayDimensions          = 10
-	r2d2ParserRULE_baseType                 = 11
-	r2d2ParserRULE_genericType              = 12
-	r2d2ParserRULE_typeDeclaration          = 13
-	r2d2ParserRULE_variableDeclaration      = 14
-	r2d2ParserRULE_statement                = 15
-	r2d2ParserRULE_expressionStatement      = 16
-	r2d2ParserRULE_ifStatement              = 17
-	r2d2ParserRULE_forStatement             = 18
-	r2d2ParserRULE_assignmentDeclaration    = 19
-	r2d2ParserRULE_assignment               = 20
-	r2d2ParserRULE_assignmentOperator       = 21
-	r2d2ParserRULE_simpleFor                = 22
-	r2d2ParserRULE_whileStatement           = 23
-	r2d2ParserRULE_loopStatement            = 24
-	r2d2ParserRULE_loopControl              = 25
-	r2d2ParserRULE_returnStatement          = 26
-	r2d2ParserRULE_expression               = 27
-	r2d2ParserRULE_logicalExpression        = 28
-	r2d2ParserRULE_comparisonExpression     = 29
-	r2d2ParserRULE_additiveExpression       = 30
-	r2d2ParserRULE_multiplicativeExpression = 31
-	r2d2ParserRULE_unaryExpression          = 32
-	r2d2ParserRULE_memberExpression         = 33
-	r2d2ParserRULE_memberPart               = 34
-	r2d2ParserRULE_argumentList             = 35
-	r2d2ParserRULE_primaryExpression        = 36
-	r2d2ParserRULE_arrayLiteral             = 37
-	r2d2ParserRULE_literal                  = 38
-	r2d2ParserRULE_block                    = 39
-	r2d2ParserRULE_switchStatement          = 40
-	r2d2ParserRULE_switchCase               = 41
-	r2d2ParserRULE_defaultCase              = 42
+	R2D2ParserRULE_program                  = 0
+	R2D2ParserRULE_declaration              = 1
+	R2D2ParserRULE_globalDeclaration        = 2
+	R2D2ParserRULE_importDeclaration        = 3
+	R2D2ParserRULE_interfaceDeclaration     = 4
+	R2D2ParserRULE_moduleDeclaration        = 5
+	R2D2ParserRULE_functionDeclaration      = 6
+	R2D2ParserRULE_parameterList            = 7
+	R2D2ParserRULE_parameter                = 8
+	R2D2ParserRULE_typeExpression           = 9
+	R2D2ParserRULE_arrayDimensions          = 10
+	R2D2ParserRULE_baseType                 = 11
+	R2D2ParserRULE_genericType              = 12
+	R2D2ParserRULE_typeDeclaration          = 13
+	R2D2ParserRULE_variableDeclaration      = 14
+	R2D2ParserRULE_statement                = 15
+	R2D2ParserRULE_expressionStatement      = 16
+	R2D2ParserRULE_ifStatement              = 17
+	R2D2ParserRULE_forStatement             = 18
+	R2D2ParserRULE_assignmentDeclaration    = 19
+	R2D2ParserRULE_assignment               = 20
+	R2D2ParserRULE_assignmentOperator       = 21
+	R2D2ParserRULE_simpleFor                = 22
+	R2D2ParserRULE_whileStatement           = 23
+	R2D2ParserRULE_loopStatement            = 24
+	R2D2ParserRULE_loopControl              = 25
+	R2D2ParserRULE_returnStatement          = 26
+	R2D2ParserRULE_expression               = 27
+	R2D2ParserRULE_logicalExpression        = 28
+	R2D2ParserRULE_comparisonExpression     = 29
+	R2D2ParserRULE_additiveExpression       = 30
+	R2D2ParserRULE_multiplicativeExpression = 31
+	R2D2ParserRULE_unaryExpression          = 32
+	R2D2ParserRULE_memberExpression         = 33
+	R2D2ParserRULE_memberPart               = 34
+	R2D2ParserRULE_argumentList             = 35
+	R2D2ParserRULE_primaryExpression        = 36
+	R2D2ParserRULE_arrayLiteral             = 37
+	R2D2ParserRULE_literal                  = 38
+	R2D2ParserRULE_block                    = 39
+	R2D2ParserRULE_switchStatement          = 40
+	R2D2ParserRULE_switchCase               = 41
+	R2D2ParserRULE_defaultCase              = 42
 )
 
 // IProgramContext is an interface to support dynamic dispatch.
@@ -441,13 +441,13 @@ type ProgramContext struct {
 func NewEmptyProgramContext() *ProgramContext {
 	var p = new(ProgramContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_program
+	p.RuleIndex = R2D2ParserRULE_program
 	return p
 }
 
 func InitEmptyProgramContext(p *ProgramContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_program
+	p.RuleIndex = R2D2ParserRULE_program
 }
 
 func (*ProgramContext) IsProgramContext() {}
@@ -458,7 +458,7 @@ func NewProgramContext(parser antlr.Parser, parent antlr.ParserRuleContext, invo
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_program
+	p.RuleIndex = R2D2ParserRULE_program
 
 	return p
 }
@@ -466,7 +466,7 @@ func NewProgramContext(parser antlr.Parser, parent antlr.ParserRuleContext, invo
 func (s *ProgramContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ProgramContext) EOF() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserEOF, 0)
+	return s.GetToken(R2D2ParserEOF, 0)
 }
 
 func (s *ProgramContext) AllImportDeclaration() []IImportDeclarationContext {
@@ -560,20 +560,20 @@ func (s *ProgramContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 }
 
 func (s *ProgramContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterProgram(s)
 	}
 }
 
 func (s *ProgramContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitProgram(s)
 	}
 }
 
 func (s *ProgramContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitProgram(s)
 
 	default:
@@ -581,9 +581,9 @@ func (s *ProgramContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) Program() (localctx IProgramContext) {
+func (p *R2D2Parser) Program() (localctx IProgramContext) {
 	localctx = NewProgramContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 0, r2d2ParserRULE_program)
+	p.EnterRule(localctx, 0, R2D2ParserRULE_program)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -594,7 +594,7 @@ func (p *r2d2Parser) Program() (localctx IProgramContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	for _la == r2d2ParserIMPORT {
+	for _la == R2D2ParserIMPORT {
 		{
 			p.SetState(86)
 			p.ImportDeclaration()
@@ -629,7 +629,7 @@ func (p *r2d2Parser) Program() (localctx IProgramContext) {
 	}
 	{
 		p.SetState(98)
-		p.Match(r2d2ParserEOF)
+		p.Match(R2D2ParserEOF)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -673,13 +673,13 @@ type DeclarationContext struct {
 func NewEmptyDeclarationContext() *DeclarationContext {
 	var p = new(DeclarationContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_declaration
+	p.RuleIndex = R2D2ParserRULE_declaration
 	return p
 }
 
 func InitEmptyDeclarationContext(p *DeclarationContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_declaration
+	p.RuleIndex = R2D2ParserRULE_declaration
 }
 
 func (*DeclarationContext) IsDeclarationContext() {}
@@ -690,7 +690,7 @@ func NewDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleContext, 
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_declaration
+	p.RuleIndex = R2D2ParserRULE_declaration
 
 	return p
 }
@@ -754,20 +754,20 @@ func (s *DeclarationContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 }
 
 func (s *DeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterDeclaration(s)
 	}
 }
 
 func (s *DeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitDeclaration(s)
 	}
 }
 
 func (s *DeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitDeclaration(s)
 
 	default:
@@ -775,9 +775,9 @@ func (s *DeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} 
 	}
 }
 
-func (p *r2d2Parser) Declaration() (localctx IDeclarationContext) {
+func (p *R2D2Parser) Declaration() (localctx IDeclarationContext) {
 	localctx = NewDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 2, r2d2ParserRULE_declaration)
+	p.EnterRule(localctx, 2, R2D2ParserRULE_declaration)
 	p.SetState(103)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
@@ -785,21 +785,21 @@ func (p *r2d2Parser) Declaration() (localctx IDeclarationContext) {
 	}
 
 	switch p.GetTokenStream().LA(1) {
-	case r2d2ParserMODULE:
+	case R2D2ParserMODULE:
 		p.EnterOuterAlt(localctx, 1)
 		{
 			p.SetState(100)
 			p.ModuleDeclaration()
 		}
 
-	case r2d2ParserINTERFACE:
+	case R2D2ParserINTERFACE:
 		p.EnterOuterAlt(localctx, 2)
 		{
 			p.SetState(101)
 			p.InterfaceDeclaration()
 		}
 
-	case r2d2ParserCONST:
+	case R2D2ParserCONST:
 		p.EnterOuterAlt(localctx, 3)
 		{
 			p.SetState(102)
@@ -852,13 +852,13 @@ type GlobalDeclarationContext struct {
 func NewEmptyGlobalDeclarationContext() *GlobalDeclarationContext {
 	var p = new(GlobalDeclarationContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_globalDeclaration
+	p.RuleIndex = R2D2ParserRULE_globalDeclaration
 	return p
 }
 
 func InitEmptyGlobalDeclarationContext(p *GlobalDeclarationContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_globalDeclaration
+	p.RuleIndex = R2D2ParserRULE_globalDeclaration
 }
 
 func (*GlobalDeclarationContext) IsGlobalDeclarationContext() {}
@@ -869,7 +869,7 @@ func NewGlobalDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleCon
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_globalDeclaration
+	p.RuleIndex = R2D2ParserRULE_globalDeclaration
 
 	return p
 }
@@ -877,15 +877,15 @@ func NewGlobalDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleCon
 func (s *GlobalDeclarationContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *GlobalDeclarationContext) CONST() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCONST, 0)
+	return s.GetToken(R2D2ParserCONST, 0)
 }
 
 func (s *GlobalDeclarationContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *GlobalDeclarationContext) COLON() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCOLON, 0)
+	return s.GetToken(R2D2ParserCOLON, 0)
 }
 
 func (s *GlobalDeclarationContext) TypeExpression() ITypeExpressionContext {
@@ -905,7 +905,7 @@ func (s *GlobalDeclarationContext) TypeExpression() ITypeExpressionContext {
 }
 
 func (s *GlobalDeclarationContext) ASSIGN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserASSIGN, 0)
+	return s.GetToken(R2D2ParserASSIGN, 0)
 }
 
 func (s *GlobalDeclarationContext) Expression() IExpressionContext {
@@ -925,7 +925,7 @@ func (s *GlobalDeclarationContext) Expression() IExpressionContext {
 }
 
 func (s *GlobalDeclarationContext) SEMI() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSEMI, 0)
+	return s.GetToken(R2D2ParserSEMI, 0)
 }
 
 func (s *GlobalDeclarationContext) GetRuleContext() antlr.RuleContext {
@@ -937,20 +937,20 @@ func (s *GlobalDeclarationContext) ToStringTree(ruleNames []string, recog antlr.
 }
 
 func (s *GlobalDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterGlobalDeclaration(s)
 	}
 }
 
 func (s *GlobalDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitGlobalDeclaration(s)
 	}
 }
 
 func (s *GlobalDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitGlobalDeclaration(s)
 
 	default:
@@ -958,13 +958,13 @@ func (s *GlobalDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interf
 	}
 }
 
-func (p *r2d2Parser) GlobalDeclaration() (localctx IGlobalDeclarationContext) {
+func (p *R2D2Parser) GlobalDeclaration() (localctx IGlobalDeclarationContext) {
 	localctx = NewGlobalDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 4, r2d2ParserRULE_globalDeclaration)
+	p.EnterRule(localctx, 4, R2D2ParserRULE_globalDeclaration)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(105)
-		p.Match(r2d2ParserCONST)
+		p.Match(R2D2ParserCONST)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -972,7 +972,7 @@ func (p *r2d2Parser) GlobalDeclaration() (localctx IGlobalDeclarationContext) {
 	}
 	{
 		p.SetState(106)
-		p.Match(r2d2ParserIDENTIFIER)
+		p.Match(R2D2ParserIDENTIFIER)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -980,7 +980,7 @@ func (p *r2d2Parser) GlobalDeclaration() (localctx IGlobalDeclarationContext) {
 	}
 	{
 		p.SetState(107)
-		p.Match(r2d2ParserCOLON)
+		p.Match(R2D2ParserCOLON)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -992,7 +992,7 @@ func (p *r2d2Parser) GlobalDeclaration() (localctx IGlobalDeclarationContext) {
 	}
 	{
 		p.SetState(109)
-		p.Match(r2d2ParserASSIGN)
+		p.Match(R2D2ParserASSIGN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1004,7 +1004,7 @@ func (p *r2d2Parser) GlobalDeclaration() (localctx IGlobalDeclarationContext) {
 	}
 	{
 		p.SetState(111)
-		p.Match(r2d2ParserSEMI)
+		p.Match(R2D2ParserSEMI)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1050,13 +1050,13 @@ type ImportDeclarationContext struct {
 func NewEmptyImportDeclarationContext() *ImportDeclarationContext {
 	var p = new(ImportDeclarationContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_importDeclaration
+	p.RuleIndex = R2D2ParserRULE_importDeclaration
 	return p
 }
 
 func InitEmptyImportDeclarationContext(p *ImportDeclarationContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_importDeclaration
+	p.RuleIndex = R2D2ParserRULE_importDeclaration
 }
 
 func (*ImportDeclarationContext) IsImportDeclarationContext() {}
@@ -1067,7 +1067,7 @@ func NewImportDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleCon
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_importDeclaration
+	p.RuleIndex = R2D2ParserRULE_importDeclaration
 
 	return p
 }
@@ -1075,23 +1075,23 @@ func NewImportDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleCon
 func (s *ImportDeclarationContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ImportDeclarationContext) IMPORT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIMPORT, 0)
+	return s.GetToken(R2D2ParserIMPORT, 0)
 }
 
 func (s *ImportDeclarationContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *ImportDeclarationContext) FROM() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserFROM, 0)
+	return s.GetToken(R2D2ParserFROM, 0)
 }
 
 func (s *ImportDeclarationContext) STRING_LITERAL() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSTRING_LITERAL, 0)
+	return s.GetToken(R2D2ParserSTRING_LITERAL, 0)
 }
 
 func (s *ImportDeclarationContext) SEMI() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSEMI, 0)
+	return s.GetToken(R2D2ParserSEMI, 0)
 }
 
 func (s *ImportDeclarationContext) GetRuleContext() antlr.RuleContext {
@@ -1103,20 +1103,20 @@ func (s *ImportDeclarationContext) ToStringTree(ruleNames []string, recog antlr.
 }
 
 func (s *ImportDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterImportDeclaration(s)
 	}
 }
 
 func (s *ImportDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitImportDeclaration(s)
 	}
 }
 
 func (s *ImportDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitImportDeclaration(s)
 
 	default:
@@ -1124,13 +1124,13 @@ func (s *ImportDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interf
 	}
 }
 
-func (p *r2d2Parser) ImportDeclaration() (localctx IImportDeclarationContext) {
+func (p *R2D2Parser) ImportDeclaration() (localctx IImportDeclarationContext) {
 	localctx = NewImportDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 6, r2d2ParserRULE_importDeclaration)
+	p.EnterRule(localctx, 6, R2D2ParserRULE_importDeclaration)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(113)
-		p.Match(r2d2ParserIMPORT)
+		p.Match(R2D2ParserIMPORT)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1138,7 +1138,7 @@ func (p *r2d2Parser) ImportDeclaration() (localctx IImportDeclarationContext) {
 	}
 	{
 		p.SetState(114)
-		p.Match(r2d2ParserIDENTIFIER)
+		p.Match(R2D2ParserIDENTIFIER)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1146,7 +1146,7 @@ func (p *r2d2Parser) ImportDeclaration() (localctx IImportDeclarationContext) {
 	}
 	{
 		p.SetState(115)
-		p.Match(r2d2ParserFROM)
+		p.Match(R2D2ParserFROM)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1154,7 +1154,7 @@ func (p *r2d2Parser) ImportDeclaration() (localctx IImportDeclarationContext) {
 	}
 	{
 		p.SetState(116)
-		p.Match(r2d2ParserSTRING_LITERAL)
+		p.Match(R2D2ParserSTRING_LITERAL)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1162,7 +1162,7 @@ func (p *r2d2Parser) ImportDeclaration() (localctx IImportDeclarationContext) {
 	}
 	{
 		p.SetState(117)
-		p.Match(r2d2ParserSEMI)
+		p.Match(R2D2ParserSEMI)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1209,13 +1209,13 @@ type InterfaceDeclarationContext struct {
 func NewEmptyInterfaceDeclarationContext() *InterfaceDeclarationContext {
 	var p = new(InterfaceDeclarationContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_interfaceDeclaration
+	p.RuleIndex = R2D2ParserRULE_interfaceDeclaration
 	return p
 }
 
 func InitEmptyInterfaceDeclarationContext(p *InterfaceDeclarationContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_interfaceDeclaration
+	p.RuleIndex = R2D2ParserRULE_interfaceDeclaration
 }
 
 func (*InterfaceDeclarationContext) IsInterfaceDeclarationContext() {}
@@ -1226,7 +1226,7 @@ func NewInterfaceDeclarationContext(parser antlr.Parser, parent antlr.ParserRule
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_interfaceDeclaration
+	p.RuleIndex = R2D2ParserRULE_interfaceDeclaration
 
 	return p
 }
@@ -1234,19 +1234,19 @@ func NewInterfaceDeclarationContext(parser antlr.Parser, parent antlr.ParserRule
 func (s *InterfaceDeclarationContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *InterfaceDeclarationContext) INTERFACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserINTERFACE, 0)
+	return s.GetToken(R2D2ParserINTERFACE, 0)
 }
 
 func (s *InterfaceDeclarationContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *InterfaceDeclarationContext) LBRACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLBRACE, 0)
+	return s.GetToken(R2D2ParserLBRACE, 0)
 }
 
 func (s *InterfaceDeclarationContext) RBRACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRBRACE, 0)
+	return s.GetToken(R2D2ParserRBRACE, 0)
 }
 
 func (s *InterfaceDeclarationContext) AllFunctionDeclaration() []IFunctionDeclarationContext {
@@ -1299,20 +1299,20 @@ func (s *InterfaceDeclarationContext) ToStringTree(ruleNames []string, recog ant
 }
 
 func (s *InterfaceDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterInterfaceDeclaration(s)
 	}
 }
 
 func (s *InterfaceDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitInterfaceDeclaration(s)
 	}
 }
 
 func (s *InterfaceDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitInterfaceDeclaration(s)
 
 	default:
@@ -1320,15 +1320,15 @@ func (s *InterfaceDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) int
 	}
 }
 
-func (p *r2d2Parser) InterfaceDeclaration() (localctx IInterfaceDeclarationContext) {
+func (p *R2D2Parser) InterfaceDeclaration() (localctx IInterfaceDeclarationContext) {
 	localctx = NewInterfaceDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 8, r2d2ParserRULE_interfaceDeclaration)
+	p.EnterRule(localctx, 8, R2D2ParserRULE_interfaceDeclaration)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(119)
-		p.Match(r2d2ParserINTERFACE)
+		p.Match(R2D2ParserINTERFACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1336,7 +1336,7 @@ func (p *r2d2Parser) InterfaceDeclaration() (localctx IInterfaceDeclarationConte
 	}
 	{
 		p.SetState(120)
-		p.Match(r2d2ParserIDENTIFIER)
+		p.Match(R2D2ParserIDENTIFIER)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1344,7 +1344,7 @@ func (p *r2d2Parser) InterfaceDeclaration() (localctx IInterfaceDeclarationConte
 	}
 	{
 		p.SetState(121)
-		p.Match(r2d2ParserLBRACE)
+		p.Match(R2D2ParserLBRACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1372,7 +1372,7 @@ func (p *r2d2Parser) InterfaceDeclaration() (localctx IInterfaceDeclarationConte
 	}
 	{
 		p.SetState(128)
-		p.Match(r2d2ParserRBRACE)
+		p.Match(R2D2ParserRBRACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1425,13 +1425,13 @@ type ModuleDeclarationContext struct {
 func NewEmptyModuleDeclarationContext() *ModuleDeclarationContext {
 	var p = new(ModuleDeclarationContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_moduleDeclaration
+	p.RuleIndex = R2D2ParserRULE_moduleDeclaration
 	return p
 }
 
 func InitEmptyModuleDeclarationContext(p *ModuleDeclarationContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_moduleDeclaration
+	p.RuleIndex = R2D2ParserRULE_moduleDeclaration
 }
 
 func (*ModuleDeclarationContext) IsModuleDeclarationContext() {}
@@ -1442,7 +1442,7 @@ func NewModuleDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleCon
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_moduleDeclaration
+	p.RuleIndex = R2D2ParserRULE_moduleDeclaration
 
 	return p
 }
@@ -1450,27 +1450,27 @@ func NewModuleDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleCon
 func (s *ModuleDeclarationContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ModuleDeclarationContext) MODULE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserMODULE, 0)
+	return s.GetToken(R2D2ParserMODULE, 0)
 }
 
 func (s *ModuleDeclarationContext) AllIDENTIFIER() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserIDENTIFIER)
+	return s.GetTokens(R2D2ParserIDENTIFIER)
 }
 
 func (s *ModuleDeclarationContext) IDENTIFIER(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, i)
+	return s.GetToken(R2D2ParserIDENTIFIER, i)
 }
 
 func (s *ModuleDeclarationContext) LBRACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLBRACE, 0)
+	return s.GetToken(R2D2ParserLBRACE, 0)
 }
 
 func (s *ModuleDeclarationContext) RBRACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRBRACE, 0)
+	return s.GetToken(R2D2ParserRBRACE, 0)
 }
 
 func (s *ModuleDeclarationContext) IMPLEMENTS() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIMPLEMENTS, 0)
+	return s.GetToken(R2D2ParserIMPLEMENTS, 0)
 }
 
 func (s *ModuleDeclarationContext) AllFunctionDeclaration() []IFunctionDeclarationContext {
@@ -1605,20 +1605,20 @@ func (s *ModuleDeclarationContext) ToStringTree(ruleNames []string, recog antlr.
 }
 
 func (s *ModuleDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterModuleDeclaration(s)
 	}
 }
 
 func (s *ModuleDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitModuleDeclaration(s)
 	}
 }
 
 func (s *ModuleDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitModuleDeclaration(s)
 
 	default:
@@ -1626,15 +1626,15 @@ func (s *ModuleDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interf
 	}
 }
 
-func (p *r2d2Parser) ModuleDeclaration() (localctx IModuleDeclarationContext) {
+func (p *R2D2Parser) ModuleDeclaration() (localctx IModuleDeclarationContext) {
 	localctx = NewModuleDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 10, r2d2ParserRULE_moduleDeclaration)
+	p.EnterRule(localctx, 10, R2D2ParserRULE_moduleDeclaration)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(130)
-		p.Match(r2d2ParserMODULE)
+		p.Match(R2D2ParserMODULE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1642,7 +1642,7 @@ func (p *r2d2Parser) ModuleDeclaration() (localctx IModuleDeclarationContext) {
 	}
 	{
 		p.SetState(131)
-		p.Match(r2d2ParserIDENTIFIER)
+		p.Match(R2D2ParserIDENTIFIER)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1655,10 +1655,10 @@ func (p *r2d2Parser) ModuleDeclaration() (localctx IModuleDeclarationContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == r2d2ParserIMPLEMENTS {
+	if _la == R2D2ParserIMPLEMENTS {
 		{
 			p.SetState(132)
-			p.Match(r2d2ParserIMPLEMENTS)
+			p.Match(R2D2ParserIMPLEMENTS)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -1666,7 +1666,7 @@ func (p *r2d2Parser) ModuleDeclaration() (localctx IModuleDeclarationContext) {
 		}
 		{
 			p.SetState(133)
-			p.Match(r2d2ParserIDENTIFIER)
+			p.Match(R2D2ParserIDENTIFIER)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -1676,7 +1676,7 @@ func (p *r2d2Parser) ModuleDeclaration() (localctx IModuleDeclarationContext) {
 	}
 	{
 		p.SetState(136)
-		p.Match(r2d2ParserLBRACE)
+		p.Match(R2D2ParserLBRACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1697,19 +1697,19 @@ func (p *r2d2Parser) ModuleDeclaration() (localctx IModuleDeclarationContext) {
 		}
 
 		switch p.GetTokenStream().LA(1) {
-		case r2d2ParserEXPORT, r2d2ParserFN, r2d2ParserPSEUDO:
+		case R2D2ParserEXPORT, R2D2ParserFN, R2D2ParserPSEUDO:
 			{
 				p.SetState(137)
 				p.FunctionDeclaration()
 			}
 
-		case r2d2ParserTYPE:
+		case R2D2ParserTYPE:
 			{
 				p.SetState(138)
 				p.TypeDeclaration()
 			}
 
-		case r2d2ParserVAR, r2d2ParserLET, r2d2ParserCONST:
+		case R2D2ParserVAR, R2D2ParserLET, R2D2ParserCONST:
 			{
 				p.SetState(139)
 				p.VariableDeclaration()
@@ -1729,7 +1729,7 @@ func (p *r2d2Parser) ModuleDeclaration() (localctx IModuleDeclarationContext) {
 	}
 	{
 		p.SetState(145)
-		p.Match(r2d2ParserRBRACE)
+		p.Match(R2D2ParserRBRACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1781,13 +1781,13 @@ type FunctionDeclarationContext struct {
 func NewEmptyFunctionDeclarationContext() *FunctionDeclarationContext {
 	var p = new(FunctionDeclarationContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_functionDeclaration
+	p.RuleIndex = R2D2ParserRULE_functionDeclaration
 	return p
 }
 
 func InitEmptyFunctionDeclarationContext(p *FunctionDeclarationContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_functionDeclaration
+	p.RuleIndex = R2D2ParserRULE_functionDeclaration
 }
 
 func (*FunctionDeclarationContext) IsFunctionDeclarationContext() {}
@@ -1798,7 +1798,7 @@ func NewFunctionDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleC
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_functionDeclaration
+	p.RuleIndex = R2D2ParserRULE_functionDeclaration
 
 	return p
 }
@@ -1806,19 +1806,19 @@ func NewFunctionDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleC
 func (s *FunctionDeclarationContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *FunctionDeclarationContext) FN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserFN, 0)
+	return s.GetToken(R2D2ParserFN, 0)
 }
 
 func (s *FunctionDeclarationContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *FunctionDeclarationContext) LPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLPAREN, 0)
+	return s.GetToken(R2D2ParserLPAREN, 0)
 }
 
 func (s *FunctionDeclarationContext) RPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRPAREN, 0)
+	return s.GetToken(R2D2ParserRPAREN, 0)
 }
 
 func (s *FunctionDeclarationContext) Block() IBlockContext {
@@ -1838,15 +1838,15 @@ func (s *FunctionDeclarationContext) Block() IBlockContext {
 }
 
 func (s *FunctionDeclarationContext) SEMI() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSEMI, 0)
+	return s.GetToken(R2D2ParserSEMI, 0)
 }
 
 func (s *FunctionDeclarationContext) EXPORT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserEXPORT, 0)
+	return s.GetToken(R2D2ParserEXPORT, 0)
 }
 
 func (s *FunctionDeclarationContext) PSEUDO() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserPSEUDO, 0)
+	return s.GetToken(R2D2ParserPSEUDO, 0)
 }
 
 func (s *FunctionDeclarationContext) ParameterList() IParameterListContext {
@@ -1866,7 +1866,7 @@ func (s *FunctionDeclarationContext) ParameterList() IParameterListContext {
 }
 
 func (s *FunctionDeclarationContext) COLON() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCOLON, 0)
+	return s.GetToken(R2D2ParserCOLON, 0)
 }
 
 func (s *FunctionDeclarationContext) TypeExpression() ITypeExpressionContext {
@@ -1894,20 +1894,20 @@ func (s *FunctionDeclarationContext) ToStringTree(ruleNames []string, recog antl
 }
 
 func (s *FunctionDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterFunctionDeclaration(s)
 	}
 }
 
 func (s *FunctionDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitFunctionDeclaration(s)
 	}
 }
 
 func (s *FunctionDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitFunctionDeclaration(s)
 
 	default:
@@ -1915,9 +1915,9 @@ func (s *FunctionDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) inte
 	}
 }
 
-func (p *r2d2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext) {
+func (p *R2D2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext) {
 	localctx = NewFunctionDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 12, r2d2ParserRULE_functionDeclaration)
+	p.EnterRule(localctx, 12, R2D2ParserRULE_functionDeclaration)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -1928,10 +1928,10 @@ func (p *r2d2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == r2d2ParserEXPORT {
+	if _la == R2D2ParserEXPORT {
 		{
 			p.SetState(147)
-			p.Match(r2d2ParserEXPORT)
+			p.Match(R2D2ParserEXPORT)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -1946,10 +1946,10 @@ func (p *r2d2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == r2d2ParserPSEUDO {
+	if _la == R2D2ParserPSEUDO {
 		{
 			p.SetState(150)
-			p.Match(r2d2ParserPSEUDO)
+			p.Match(R2D2ParserPSEUDO)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -1959,7 +1959,7 @@ func (p *r2d2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext
 	}
 	{
 		p.SetState(153)
-		p.Match(r2d2ParserFN)
+		p.Match(R2D2ParserFN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1967,7 +1967,7 @@ func (p *r2d2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext
 	}
 	{
 		p.SetState(154)
-		p.Match(r2d2ParserIDENTIFIER)
+		p.Match(R2D2ParserIDENTIFIER)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1975,7 +1975,7 @@ func (p *r2d2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext
 	}
 	{
 		p.SetState(155)
-		p.Match(r2d2ParserLPAREN)
+		p.Match(R2D2ParserLPAREN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -1988,7 +1988,7 @@ func (p *r2d2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == r2d2ParserIDENTIFIER {
+	if _la == R2D2ParserIDENTIFIER {
 		{
 			p.SetState(156)
 			p.ParameterList()
@@ -1997,7 +1997,7 @@ func (p *r2d2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext
 	}
 	{
 		p.SetState(159)
-		p.Match(r2d2ParserRPAREN)
+		p.Match(R2D2ParserRPAREN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -2010,10 +2010,10 @@ func (p *r2d2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == r2d2ParserCOLON {
+	if _la == R2D2ParserCOLON {
 		{
 			p.SetState(160)
-			p.Match(r2d2ParserCOLON)
+			p.Match(R2D2ParserCOLON)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -2032,16 +2032,16 @@ func (p *r2d2Parser) FunctionDeclaration() (localctx IFunctionDeclarationContext
 	}
 
 	switch p.GetTokenStream().LA(1) {
-	case r2d2ParserLBRACE:
+	case R2D2ParserLBRACE:
 		{
 			p.SetState(164)
 			p.Block()
 		}
 
-	case r2d2ParserSEMI:
+	case R2D2ParserSEMI:
 		{
 			p.SetState(165)
-			p.Match(r2d2ParserSEMI)
+			p.Match(R2D2ParserSEMI)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -2091,13 +2091,13 @@ type ParameterListContext struct {
 func NewEmptyParameterListContext() *ParameterListContext {
 	var p = new(ParameterListContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_parameterList
+	p.RuleIndex = R2D2ParserRULE_parameterList
 	return p
 }
 
 func InitEmptyParameterListContext(p *ParameterListContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_parameterList
+	p.RuleIndex = R2D2ParserRULE_parameterList
 }
 
 func (*ParameterListContext) IsParameterListContext() {}
@@ -2108,7 +2108,7 @@ func NewParameterListContext(parser antlr.Parser, parent antlr.ParserRuleContext
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_parameterList
+	p.RuleIndex = R2D2ParserRULE_parameterList
 
 	return p
 }
@@ -2157,11 +2157,11 @@ func (s *ParameterListContext) Parameter(i int) IParameterContext {
 }
 
 func (s *ParameterListContext) AllCOMMA() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserCOMMA)
+	return s.GetTokens(R2D2ParserCOMMA)
 }
 
 func (s *ParameterListContext) COMMA(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCOMMA, i)
+	return s.GetToken(R2D2ParserCOMMA, i)
 }
 
 func (s *ParameterListContext) GetRuleContext() antlr.RuleContext {
@@ -2173,20 +2173,20 @@ func (s *ParameterListContext) ToStringTree(ruleNames []string, recog antlr.Reco
 }
 
 func (s *ParameterListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterParameterList(s)
 	}
 }
 
 func (s *ParameterListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitParameterList(s)
 	}
 }
 
 func (s *ParameterListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitParameterList(s)
 
 	default:
@@ -2194,9 +2194,9 @@ func (s *ParameterListContext) Accept(visitor antlr.ParseTreeVisitor) interface{
 	}
 }
 
-func (p *r2d2Parser) ParameterList() (localctx IParameterListContext) {
+func (p *R2D2Parser) ParameterList() (localctx IParameterListContext) {
 	localctx = NewParameterListContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 14, r2d2ParserRULE_parameterList)
+	p.EnterRule(localctx, 14, R2D2ParserRULE_parameterList)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -2211,10 +2211,10 @@ func (p *r2d2Parser) ParameterList() (localctx IParameterListContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	for _la == r2d2ParserCOMMA {
+	for _la == R2D2ParserCOMMA {
 		{
 			p.SetState(169)
-			p.Match(r2d2ParserCOMMA)
+			p.Match(R2D2ParserCOMMA)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -2270,13 +2270,13 @@ type ParameterContext struct {
 func NewEmptyParameterContext() *ParameterContext {
 	var p = new(ParameterContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_parameter
+	p.RuleIndex = R2D2ParserRULE_parameter
 	return p
 }
 
 func InitEmptyParameterContext(p *ParameterContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_parameter
+	p.RuleIndex = R2D2ParserRULE_parameter
 }
 
 func (*ParameterContext) IsParameterContext() {}
@@ -2287,7 +2287,7 @@ func NewParameterContext(parser antlr.Parser, parent antlr.ParserRuleContext, in
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_parameter
+	p.RuleIndex = R2D2ParserRULE_parameter
 
 	return p
 }
@@ -2295,11 +2295,11 @@ func NewParameterContext(parser antlr.Parser, parent antlr.ParserRuleContext, in
 func (s *ParameterContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ParameterContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *ParameterContext) COLON() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCOLON, 0)
+	return s.GetToken(R2D2ParserCOLON, 0)
 }
 
 func (s *ParameterContext) TypeExpression() ITypeExpressionContext {
@@ -2327,20 +2327,20 @@ func (s *ParameterContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 }
 
 func (s *ParameterContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterParameter(s)
 	}
 }
 
 func (s *ParameterContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitParameter(s)
 	}
 }
 
 func (s *ParameterContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitParameter(s)
 
 	default:
@@ -2348,13 +2348,13 @@ func (s *ParameterContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) Parameter() (localctx IParameterContext) {
+func (p *R2D2Parser) Parameter() (localctx IParameterContext) {
 	localctx = NewParameterContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 16, r2d2ParserRULE_parameter)
+	p.EnterRule(localctx, 16, R2D2ParserRULE_parameter)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(176)
-		p.Match(r2d2ParserIDENTIFIER)
+		p.Match(R2D2ParserIDENTIFIER)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -2362,7 +2362,7 @@ func (p *r2d2Parser) Parameter() (localctx IParameterContext) {
 	}
 	{
 		p.SetState(177)
-		p.Match(r2d2ParserCOLON)
+		p.Match(R2D2ParserCOLON)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -2409,13 +2409,13 @@ type TypeExpressionContext struct {
 func NewEmptyTypeExpressionContext() *TypeExpressionContext {
 	var p = new(TypeExpressionContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_typeExpression
+	p.RuleIndex = R2D2ParserRULE_typeExpression
 	return p
 }
 
 func InitEmptyTypeExpressionContext(p *TypeExpressionContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_typeExpression
+	p.RuleIndex = R2D2ParserRULE_typeExpression
 }
 
 func (*TypeExpressionContext) IsTypeExpressionContext() {}
@@ -2426,7 +2426,7 @@ func NewTypeExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContex
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_typeExpression
+	p.RuleIndex = R2D2ParserRULE_typeExpression
 
 	return p
 }
@@ -2474,20 +2474,20 @@ func (s *TypeExpressionContext) ToStringTree(ruleNames []string, recog antlr.Rec
 }
 
 func (s *TypeExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterTypeExpression(s)
 	}
 }
 
 func (s *TypeExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitTypeExpression(s)
 	}
 }
 
 func (s *TypeExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitTypeExpression(s)
 
 	default:
@@ -2495,9 +2495,9 @@ func (s *TypeExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface
 	}
 }
 
-func (p *r2d2Parser) TypeExpression() (localctx ITypeExpressionContext) {
+func (p *R2D2Parser) TypeExpression() (localctx ITypeExpressionContext) {
 	localctx = NewTypeExpressionContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 18, r2d2ParserRULE_typeExpression)
+	p.EnterRule(localctx, 18, R2D2ParserRULE_typeExpression)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -2512,7 +2512,7 @@ func (p *r2d2Parser) TypeExpression() (localctx ITypeExpressionContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == r2d2ParserLBRACK {
+	if _la == R2D2ParserLBRACK {
 		{
 			p.SetState(181)
 			p.ArrayDimensions()
@@ -2560,13 +2560,13 @@ type ArrayDimensionsContext struct {
 func NewEmptyArrayDimensionsContext() *ArrayDimensionsContext {
 	var p = new(ArrayDimensionsContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_arrayDimensions
+	p.RuleIndex = R2D2ParserRULE_arrayDimensions
 	return p
 }
 
 func InitEmptyArrayDimensionsContext(p *ArrayDimensionsContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_arrayDimensions
+	p.RuleIndex = R2D2ParserRULE_arrayDimensions
 }
 
 func (*ArrayDimensionsContext) IsArrayDimensionsContext() {}
@@ -2577,7 +2577,7 @@ func NewArrayDimensionsContext(parser antlr.Parser, parent antlr.ParserRuleConte
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_arrayDimensions
+	p.RuleIndex = R2D2ParserRULE_arrayDimensions
 
 	return p
 }
@@ -2585,27 +2585,27 @@ func NewArrayDimensionsContext(parser antlr.Parser, parent antlr.ParserRuleConte
 func (s *ArrayDimensionsContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ArrayDimensionsContext) AllLBRACK() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserLBRACK)
+	return s.GetTokens(R2D2ParserLBRACK)
 }
 
 func (s *ArrayDimensionsContext) LBRACK(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLBRACK, i)
+	return s.GetToken(R2D2ParserLBRACK, i)
 }
 
 func (s *ArrayDimensionsContext) AllRBRACK() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserRBRACK)
+	return s.GetTokens(R2D2ParserRBRACK)
 }
 
 func (s *ArrayDimensionsContext) RBRACK(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRBRACK, i)
+	return s.GetToken(R2D2ParserRBRACK, i)
 }
 
 func (s *ArrayDimensionsContext) AllINT_LITERAL() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserINT_LITERAL)
+	return s.GetTokens(R2D2ParserINT_LITERAL)
 }
 
 func (s *ArrayDimensionsContext) INT_LITERAL(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserINT_LITERAL, i)
+	return s.GetToken(R2D2ParserINT_LITERAL, i)
 }
 
 func (s *ArrayDimensionsContext) GetRuleContext() antlr.RuleContext {
@@ -2617,20 +2617,20 @@ func (s *ArrayDimensionsContext) ToStringTree(ruleNames []string, recog antlr.Re
 }
 
 func (s *ArrayDimensionsContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterArrayDimensions(s)
 	}
 }
 
 func (s *ArrayDimensionsContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitArrayDimensions(s)
 	}
 }
 
 func (s *ArrayDimensionsContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitArrayDimensions(s)
 
 	default:
@@ -2638,9 +2638,9 @@ func (s *ArrayDimensionsContext) Accept(visitor antlr.ParseTreeVisitor) interfac
 	}
 }
 
-func (p *r2d2Parser) ArrayDimensions() (localctx IArrayDimensionsContext) {
+func (p *R2D2Parser) ArrayDimensions() (localctx IArrayDimensionsContext) {
 	localctx = NewArrayDimensionsContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 20, r2d2ParserRULE_arrayDimensions)
+	p.EnterRule(localctx, 20, R2D2ParserRULE_arrayDimensions)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -2651,10 +2651,10 @@ func (p *r2d2Parser) ArrayDimensions() (localctx IArrayDimensionsContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	for ok := true; ok; ok = _la == r2d2ParserLBRACK {
+	for ok := true; ok; ok = _la == R2D2ParserLBRACK {
 		{
 			p.SetState(184)
-			p.Match(r2d2ParserLBRACK)
+			p.Match(R2D2ParserLBRACK)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -2667,10 +2667,10 @@ func (p *r2d2Parser) ArrayDimensions() (localctx IArrayDimensionsContext) {
 		}
 		_la = p.GetTokenStream().LA(1)
 
-		if _la == r2d2ParserINT_LITERAL {
+		if _la == R2D2ParserINT_LITERAL {
 			{
 				p.SetState(185)
-				p.Match(r2d2ParserINT_LITERAL)
+				p.Match(R2D2ParserINT_LITERAL)
 				if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
@@ -2680,7 +2680,7 @@ func (p *r2d2Parser) ArrayDimensions() (localctx IArrayDimensionsContext) {
 		}
 		{
 			p.SetState(188)
-			p.Match(r2d2ParserRBRACK)
+			p.Match(R2D2ParserRBRACK)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -2732,13 +2732,13 @@ type BaseTypeContext struct {
 func NewEmptyBaseTypeContext() *BaseTypeContext {
 	var p = new(BaseTypeContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_baseType
+	p.RuleIndex = R2D2ParserRULE_baseType
 	return p
 }
 
 func InitEmptyBaseTypeContext(p *BaseTypeContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_baseType
+	p.RuleIndex = R2D2ParserRULE_baseType
 }
 
 func (*BaseTypeContext) IsBaseTypeContext() {}
@@ -2749,7 +2749,7 @@ func NewBaseTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, inv
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_baseType
+	p.RuleIndex = R2D2ParserRULE_baseType
 
 	return p
 }
@@ -2757,11 +2757,11 @@ func NewBaseTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, inv
 func (s *BaseTypeContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *BaseTypeContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *BaseTypeContext) TYPE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserTYPE, 0)
+	return s.GetToken(R2D2ParserTYPE, 0)
 }
 
 func (s *BaseTypeContext) GenericType() IGenericTypeContext {
@@ -2789,20 +2789,20 @@ func (s *BaseTypeContext) ToStringTree(ruleNames []string, recog antlr.Recognize
 }
 
 func (s *BaseTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterBaseType(s)
 	}
 }
 
 func (s *BaseTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitBaseType(s)
 	}
 }
 
 func (s *BaseTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitBaseType(s)
 
 	default:
@@ -2810,9 +2810,9 @@ func (s *BaseTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) BaseType() (localctx IBaseTypeContext) {
+func (p *R2D2Parser) BaseType() (localctx IBaseTypeContext) {
 	localctx = NewBaseTypeContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 22, r2d2ParserRULE_baseType)
+	p.EnterRule(localctx, 22, R2D2ParserRULE_baseType)
 	p.SetState(196)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
@@ -2824,7 +2824,7 @@ func (p *r2d2Parser) BaseType() (localctx IBaseTypeContext) {
 		p.EnterOuterAlt(localctx, 1)
 		{
 			p.SetState(193)
-			p.Match(r2d2ParserIDENTIFIER)
+			p.Match(R2D2ParserIDENTIFIER)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -2835,7 +2835,7 @@ func (p *r2d2Parser) BaseType() (localctx IBaseTypeContext) {
 		p.EnterOuterAlt(localctx, 2)
 		{
 			p.SetState(194)
-			p.Match(r2d2ParserTYPE)
+			p.Match(R2D2ParserTYPE)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -2894,13 +2894,13 @@ type GenericTypeContext struct {
 func NewEmptyGenericTypeContext() *GenericTypeContext {
 	var p = new(GenericTypeContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_genericType
+	p.RuleIndex = R2D2ParserRULE_genericType
 	return p
 }
 
 func InitEmptyGenericTypeContext(p *GenericTypeContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_genericType
+	p.RuleIndex = R2D2ParserRULE_genericType
 }
 
 func (*GenericTypeContext) IsGenericTypeContext() {}
@@ -2911,7 +2911,7 @@ func NewGenericTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, 
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_genericType
+	p.RuleIndex = R2D2ParserRULE_genericType
 
 	return p
 }
@@ -2919,11 +2919,11 @@ func NewGenericTypeContext(parser antlr.Parser, parent antlr.ParserRuleContext, 
 func (s *GenericTypeContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *GenericTypeContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *GenericTypeContext) LT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLT, 0)
+	return s.GetToken(R2D2ParserLT, 0)
 }
 
 func (s *GenericTypeContext) AllTypeExpression() []ITypeExpressionContext {
@@ -2968,15 +2968,15 @@ func (s *GenericTypeContext) TypeExpression(i int) ITypeExpressionContext {
 }
 
 func (s *GenericTypeContext) GT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserGT, 0)
+	return s.GetToken(R2D2ParserGT, 0)
 }
 
 func (s *GenericTypeContext) AllCOMMA() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserCOMMA)
+	return s.GetTokens(R2D2ParserCOMMA)
 }
 
 func (s *GenericTypeContext) COMMA(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCOMMA, i)
+	return s.GetToken(R2D2ParserCOMMA, i)
 }
 
 func (s *GenericTypeContext) GetRuleContext() antlr.RuleContext {
@@ -2988,20 +2988,20 @@ func (s *GenericTypeContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 }
 
 func (s *GenericTypeContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterGenericType(s)
 	}
 }
 
 func (s *GenericTypeContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitGenericType(s)
 	}
 }
 
 func (s *GenericTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitGenericType(s)
 
 	default:
@@ -3009,15 +3009,15 @@ func (s *GenericTypeContext) Accept(visitor antlr.ParseTreeVisitor) interface{} 
 	}
 }
 
-func (p *r2d2Parser) GenericType() (localctx IGenericTypeContext) {
+func (p *R2D2Parser) GenericType() (localctx IGenericTypeContext) {
 	localctx = NewGenericTypeContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 24, r2d2ParserRULE_genericType)
+	p.EnterRule(localctx, 24, R2D2ParserRULE_genericType)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(198)
-		p.Match(r2d2ParserIDENTIFIER)
+		p.Match(R2D2ParserIDENTIFIER)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -3025,7 +3025,7 @@ func (p *r2d2Parser) GenericType() (localctx IGenericTypeContext) {
 	}
 	{
 		p.SetState(199)
-		p.Match(r2d2ParserLT)
+		p.Match(R2D2ParserLT)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -3042,10 +3042,10 @@ func (p *r2d2Parser) GenericType() (localctx IGenericTypeContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	for _la == r2d2ParserCOMMA {
+	for _la == R2D2ParserCOMMA {
 		{
 			p.SetState(201)
-			p.Match(r2d2ParserCOMMA)
+			p.Match(R2D2ParserCOMMA)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -3065,7 +3065,7 @@ func (p *r2d2Parser) GenericType() (localctx IGenericTypeContext) {
 	}
 	{
 		p.SetState(208)
-		p.Match(r2d2ParserGT)
+		p.Match(R2D2ParserGT)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -3112,13 +3112,13 @@ type TypeDeclarationContext struct {
 func NewEmptyTypeDeclarationContext() *TypeDeclarationContext {
 	var p = new(TypeDeclarationContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_typeDeclaration
+	p.RuleIndex = R2D2ParserRULE_typeDeclaration
 	return p
 }
 
 func InitEmptyTypeDeclarationContext(p *TypeDeclarationContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_typeDeclaration
+	p.RuleIndex = R2D2ParserRULE_typeDeclaration
 }
 
 func (*TypeDeclarationContext) IsTypeDeclarationContext() {}
@@ -3129,7 +3129,7 @@ func NewTypeDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleConte
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_typeDeclaration
+	p.RuleIndex = R2D2ParserRULE_typeDeclaration
 
 	return p
 }
@@ -3137,19 +3137,19 @@ func NewTypeDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleConte
 func (s *TypeDeclarationContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *TypeDeclarationContext) TYPE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserTYPE, 0)
+	return s.GetToken(R2D2ParserTYPE, 0)
 }
 
 func (s *TypeDeclarationContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *TypeDeclarationContext) LBRACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLBRACE, 0)
+	return s.GetToken(R2D2ParserLBRACE, 0)
 }
 
 func (s *TypeDeclarationContext) RBRACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRBRACE, 0)
+	return s.GetToken(R2D2ParserRBRACE, 0)
 }
 
 func (s *TypeDeclarationContext) AllVariableDeclaration() []IVariableDeclarationContext {
@@ -3202,20 +3202,20 @@ func (s *TypeDeclarationContext) ToStringTree(ruleNames []string, recog antlr.Re
 }
 
 func (s *TypeDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterTypeDeclaration(s)
 	}
 }
 
 func (s *TypeDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitTypeDeclaration(s)
 	}
 }
 
 func (s *TypeDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitTypeDeclaration(s)
 
 	default:
@@ -3223,15 +3223,15 @@ func (s *TypeDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interfac
 	}
 }
 
-func (p *r2d2Parser) TypeDeclaration() (localctx ITypeDeclarationContext) {
+func (p *R2D2Parser) TypeDeclaration() (localctx ITypeDeclarationContext) {
 	localctx = NewTypeDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 26, r2d2ParserRULE_typeDeclaration)
+	p.EnterRule(localctx, 26, R2D2ParserRULE_typeDeclaration)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(210)
-		p.Match(r2d2ParserTYPE)
+		p.Match(R2D2ParserTYPE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -3239,7 +3239,7 @@ func (p *r2d2Parser) TypeDeclaration() (localctx ITypeDeclarationContext) {
 	}
 	{
 		p.SetState(211)
-		p.Match(r2d2ParserIDENTIFIER)
+		p.Match(R2D2ParserIDENTIFIER)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -3247,7 +3247,7 @@ func (p *r2d2Parser) TypeDeclaration() (localctx ITypeDeclarationContext) {
 	}
 	{
 		p.SetState(212)
-		p.Match(r2d2ParserLBRACE)
+		p.Match(R2D2ParserLBRACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -3275,7 +3275,7 @@ func (p *r2d2Parser) TypeDeclaration() (localctx ITypeDeclarationContext) {
 	}
 	{
 		p.SetState(219)
-		p.Match(r2d2ParserRBRACE)
+		p.Match(R2D2ParserRBRACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -3325,13 +3325,13 @@ type VariableDeclarationContext struct {
 func NewEmptyVariableDeclarationContext() *VariableDeclarationContext {
 	var p = new(VariableDeclarationContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_variableDeclaration
+	p.RuleIndex = R2D2ParserRULE_variableDeclaration
 	return p
 }
 
 func InitEmptyVariableDeclarationContext(p *VariableDeclarationContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_variableDeclaration
+	p.RuleIndex = R2D2ParserRULE_variableDeclaration
 }
 
 func (*VariableDeclarationContext) IsVariableDeclarationContext() {}
@@ -3342,7 +3342,7 @@ func NewVariableDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleC
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_variableDeclaration
+	p.RuleIndex = R2D2ParserRULE_variableDeclaration
 
 	return p
 }
@@ -3350,11 +3350,11 @@ func NewVariableDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleC
 func (s *VariableDeclarationContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *VariableDeclarationContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *VariableDeclarationContext) ASSIGN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserASSIGN, 0)
+	return s.GetToken(R2D2ParserASSIGN, 0)
 }
 
 func (s *VariableDeclarationContext) Expression() IExpressionContext {
@@ -3374,23 +3374,23 @@ func (s *VariableDeclarationContext) Expression() IExpressionContext {
 }
 
 func (s *VariableDeclarationContext) SEMI() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSEMI, 0)
+	return s.GetToken(R2D2ParserSEMI, 0)
 }
 
 func (s *VariableDeclarationContext) VAR() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserVAR, 0)
+	return s.GetToken(R2D2ParserVAR, 0)
 }
 
 func (s *VariableDeclarationContext) LET() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLET, 0)
+	return s.GetToken(R2D2ParserLET, 0)
 }
 
 func (s *VariableDeclarationContext) CONST() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCONST, 0)
+	return s.GetToken(R2D2ParserCONST, 0)
 }
 
 func (s *VariableDeclarationContext) COLON() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCOLON, 0)
+	return s.GetToken(R2D2ParserCOLON, 0)
 }
 
 func (s *VariableDeclarationContext) TypeExpression() ITypeExpressionContext {
@@ -3418,20 +3418,20 @@ func (s *VariableDeclarationContext) ToStringTree(ruleNames []string, recog antl
 }
 
 func (s *VariableDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterVariableDeclaration(s)
 	}
 }
 
 func (s *VariableDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitVariableDeclaration(s)
 	}
 }
 
 func (s *VariableDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitVariableDeclaration(s)
 
 	default:
@@ -3439,9 +3439,9 @@ func (s *VariableDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) inte
 	}
 }
 
-func (p *r2d2Parser) VariableDeclaration() (localctx IVariableDeclarationContext) {
+func (p *R2D2Parser) VariableDeclaration() (localctx IVariableDeclarationContext) {
 	localctx = NewVariableDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 28, r2d2ParserRULE_variableDeclaration)
+	p.EnterRule(localctx, 28, R2D2ParserRULE_variableDeclaration)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -3458,7 +3458,7 @@ func (p *r2d2Parser) VariableDeclaration() (localctx IVariableDeclarationContext
 	}
 	{
 		p.SetState(222)
-		p.Match(r2d2ParserIDENTIFIER)
+		p.Match(R2D2ParserIDENTIFIER)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -3471,10 +3471,10 @@ func (p *r2d2Parser) VariableDeclaration() (localctx IVariableDeclarationContext
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == r2d2ParserCOLON {
+	if _la == R2D2ParserCOLON {
 		{
 			p.SetState(223)
-			p.Match(r2d2ParserCOLON)
+			p.Match(R2D2ParserCOLON)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -3488,7 +3488,7 @@ func (p *r2d2Parser) VariableDeclaration() (localctx IVariableDeclarationContext
 	}
 	{
 		p.SetState(227)
-		p.Match(r2d2ParserASSIGN)
+		p.Match(R2D2ParserASSIGN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -3500,7 +3500,7 @@ func (p *r2d2Parser) VariableDeclaration() (localctx IVariableDeclarationContext
 	}
 	{
 		p.SetState(229)
-		p.Match(r2d2ParserSEMI)
+		p.Match(R2D2ParserSEMI)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -3552,13 +3552,13 @@ type StatementContext struct {
 func NewEmptyStatementContext() *StatementContext {
 	var p = new(StatementContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_statement
+	p.RuleIndex = R2D2ParserRULE_statement
 	return p
 }
 
 func InitEmptyStatementContext(p *StatementContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_statement
+	p.RuleIndex = R2D2ParserRULE_statement
 }
 
 func (*StatementContext) IsStatementContext() {}
@@ -3569,7 +3569,7 @@ func NewStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, in
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_statement
+	p.RuleIndex = R2D2ParserRULE_statement
 
 	return p
 }
@@ -3761,20 +3761,20 @@ func (s *StatementContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 }
 
 func (s *StatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterStatement(s)
 	}
 }
 
 func (s *StatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitStatement(s)
 	}
 }
 
 func (s *StatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitStatement(s)
 
 	default:
@@ -3782,9 +3782,9 @@ func (s *StatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) Statement() (localctx IStatementContext) {
+func (p *R2D2Parser) Statement() (localctx IStatementContext) {
 	localctx = NewStatementContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 30, r2d2ParserRULE_statement)
+	p.EnterRule(localctx, 30, R2D2ParserRULE_statement)
 	p.SetState(242)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
@@ -3909,13 +3909,13 @@ type ExpressionStatementContext struct {
 func NewEmptyExpressionStatementContext() *ExpressionStatementContext {
 	var p = new(ExpressionStatementContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_expressionStatement
+	p.RuleIndex = R2D2ParserRULE_expressionStatement
 	return p
 }
 
 func InitEmptyExpressionStatementContext(p *ExpressionStatementContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_expressionStatement
+	p.RuleIndex = R2D2ParserRULE_expressionStatement
 }
 
 func (*ExpressionStatementContext) IsExpressionStatementContext() {}
@@ -3926,7 +3926,7 @@ func NewExpressionStatementContext(parser antlr.Parser, parent antlr.ParserRuleC
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_expressionStatement
+	p.RuleIndex = R2D2ParserRULE_expressionStatement
 
 	return p
 }
@@ -3950,7 +3950,7 @@ func (s *ExpressionStatementContext) Expression() IExpressionContext {
 }
 
 func (s *ExpressionStatementContext) SEMI() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSEMI, 0)
+	return s.GetToken(R2D2ParserSEMI, 0)
 }
 
 func (s *ExpressionStatementContext) GetRuleContext() antlr.RuleContext {
@@ -3962,20 +3962,20 @@ func (s *ExpressionStatementContext) ToStringTree(ruleNames []string, recog antl
 }
 
 func (s *ExpressionStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterExpressionStatement(s)
 	}
 }
 
 func (s *ExpressionStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitExpressionStatement(s)
 	}
 }
 
 func (s *ExpressionStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitExpressionStatement(s)
 
 	default:
@@ -3983,9 +3983,9 @@ func (s *ExpressionStatementContext) Accept(visitor antlr.ParseTreeVisitor) inte
 	}
 }
 
-func (p *r2d2Parser) ExpressionStatement() (localctx IExpressionStatementContext) {
+func (p *R2D2Parser) ExpressionStatement() (localctx IExpressionStatementContext) {
 	localctx = NewExpressionStatementContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 32, r2d2ParserRULE_expressionStatement)
+	p.EnterRule(localctx, 32, R2D2ParserRULE_expressionStatement)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(244)
@@ -3993,7 +3993,7 @@ func (p *r2d2Parser) ExpressionStatement() (localctx IExpressionStatementContext
 	}
 	{
 		p.SetState(245)
-		p.Match(r2d2ParserSEMI)
+		p.Match(R2D2ParserSEMI)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -4046,13 +4046,13 @@ type IfStatementContext struct {
 func NewEmptyIfStatementContext() *IfStatementContext {
 	var p = new(IfStatementContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_ifStatement
+	p.RuleIndex = R2D2ParserRULE_ifStatement
 	return p
 }
 
 func InitEmptyIfStatementContext(p *IfStatementContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_ifStatement
+	p.RuleIndex = R2D2ParserRULE_ifStatement
 }
 
 func (*IfStatementContext) IsIfStatementContext() {}
@@ -4063,7 +4063,7 @@ func NewIfStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, 
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_ifStatement
+	p.RuleIndex = R2D2ParserRULE_ifStatement
 
 	return p
 }
@@ -4071,19 +4071,19 @@ func NewIfStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext, 
 func (s *IfStatementContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *IfStatementContext) AllIF() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserIF)
+	return s.GetTokens(R2D2ParserIF)
 }
 
 func (s *IfStatementContext) IF(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIF, i)
+	return s.GetToken(R2D2ParserIF, i)
 }
 
 func (s *IfStatementContext) AllLPAREN() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserLPAREN)
+	return s.GetTokens(R2D2ParserLPAREN)
 }
 
 func (s *IfStatementContext) LPAREN(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLPAREN, i)
+	return s.GetToken(R2D2ParserLPAREN, i)
 }
 
 func (s *IfStatementContext) AllExpression() []IExpressionContext {
@@ -4128,11 +4128,11 @@ func (s *IfStatementContext) Expression(i int) IExpressionContext {
 }
 
 func (s *IfStatementContext) AllRPAREN() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserRPAREN)
+	return s.GetTokens(R2D2ParserRPAREN)
 }
 
 func (s *IfStatementContext) RPAREN(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRPAREN, i)
+	return s.GetToken(R2D2ParserRPAREN, i)
 }
 
 func (s *IfStatementContext) AllBlock() []IBlockContext {
@@ -4177,11 +4177,11 @@ func (s *IfStatementContext) Block(i int) IBlockContext {
 }
 
 func (s *IfStatementContext) AllELSE() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserELSE)
+	return s.GetTokens(R2D2ParserELSE)
 }
 
 func (s *IfStatementContext) ELSE(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserELSE, i)
+	return s.GetToken(R2D2ParserELSE, i)
 }
 
 func (s *IfStatementContext) GetRuleContext() antlr.RuleContext {
@@ -4193,20 +4193,20 @@ func (s *IfStatementContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 }
 
 func (s *IfStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterIfStatement(s)
 	}
 }
 
 func (s *IfStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitIfStatement(s)
 	}
 }
 
 func (s *IfStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitIfStatement(s)
 
 	default:
@@ -4214,9 +4214,9 @@ func (s *IfStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} 
 	}
 }
 
-func (p *r2d2Parser) IfStatement() (localctx IIfStatementContext) {
+func (p *R2D2Parser) IfStatement() (localctx IIfStatementContext) {
 	localctx = NewIfStatementContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 34, r2d2ParserRULE_ifStatement)
+	p.EnterRule(localctx, 34, R2D2ParserRULE_ifStatement)
 	var _la int
 
 	var _alt int
@@ -4224,7 +4224,7 @@ func (p *r2d2Parser) IfStatement() (localctx IIfStatementContext) {
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(247)
-		p.Match(r2d2ParserIF)
+		p.Match(R2D2ParserIF)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -4232,7 +4232,7 @@ func (p *r2d2Parser) IfStatement() (localctx IIfStatementContext) {
 	}
 	{
 		p.SetState(248)
-		p.Match(r2d2ParserLPAREN)
+		p.Match(R2D2ParserLPAREN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -4244,7 +4244,7 @@ func (p *r2d2Parser) IfStatement() (localctx IIfStatementContext) {
 	}
 	{
 		p.SetState(250)
-		p.Match(r2d2ParserRPAREN)
+		p.Match(R2D2ParserRPAREN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -4267,7 +4267,7 @@ func (p *r2d2Parser) IfStatement() (localctx IIfStatementContext) {
 		if _alt == 1 {
 			{
 				p.SetState(252)
-				p.Match(r2d2ParserELSE)
+				p.Match(R2D2ParserELSE)
 				if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
@@ -4275,7 +4275,7 @@ func (p *r2d2Parser) IfStatement() (localctx IIfStatementContext) {
 			}
 			{
 				p.SetState(253)
-				p.Match(r2d2ParserIF)
+				p.Match(R2D2ParserIF)
 				if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
@@ -4283,7 +4283,7 @@ func (p *r2d2Parser) IfStatement() (localctx IIfStatementContext) {
 			}
 			{
 				p.SetState(254)
-				p.Match(r2d2ParserLPAREN)
+				p.Match(R2D2ParserLPAREN)
 				if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
@@ -4295,7 +4295,7 @@ func (p *r2d2Parser) IfStatement() (localctx IIfStatementContext) {
 			}
 			{
 				p.SetState(256)
-				p.Match(r2d2ParserRPAREN)
+				p.Match(R2D2ParserRPAREN)
 				if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
@@ -4324,10 +4324,10 @@ func (p *r2d2Parser) IfStatement() (localctx IIfStatementContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == r2d2ParserELSE {
+	if _la == R2D2ParserELSE {
 		{
 			p.SetState(264)
-			p.Match(r2d2ParserELSE)
+			p.Match(R2D2ParserELSE)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -4379,13 +4379,13 @@ type ForStatementContext struct {
 func NewEmptyForStatementContext() *ForStatementContext {
 	var p = new(ForStatementContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_forStatement
+	p.RuleIndex = R2D2ParserRULE_forStatement
 	return p
 }
 
 func InitEmptyForStatementContext(p *ForStatementContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_forStatement
+	p.RuleIndex = R2D2ParserRULE_forStatement
 }
 
 func (*ForStatementContext) IsForStatementContext() {}
@@ -4396,7 +4396,7 @@ func NewForStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext,
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_forStatement
+	p.RuleIndex = R2D2ParserRULE_forStatement
 
 	return p
 }
@@ -4404,11 +4404,11 @@ func NewForStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext,
 func (s *ForStatementContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ForStatementContext) FOR() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserFOR, 0)
+	return s.GetToken(R2D2ParserFOR, 0)
 }
 
 func (s *ForStatementContext) LPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLPAREN, 0)
+	return s.GetToken(R2D2ParserLPAREN, 0)
 }
 
 func (s *ForStatementContext) SimpleFor() ISimpleForContext {
@@ -4428,7 +4428,7 @@ func (s *ForStatementContext) SimpleFor() ISimpleForContext {
 }
 
 func (s *ForStatementContext) RPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRPAREN, 0)
+	return s.GetToken(R2D2ParserRPAREN, 0)
 }
 
 func (s *ForStatementContext) Block() IBlockContext {
@@ -4456,20 +4456,20 @@ func (s *ForStatementContext) ToStringTree(ruleNames []string, recog antlr.Recog
 }
 
 func (s *ForStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterForStatement(s)
 	}
 }
 
 func (s *ForStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitForStatement(s)
 	}
 }
 
 func (s *ForStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitForStatement(s)
 
 	default:
@@ -4477,13 +4477,13 @@ func (s *ForStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{}
 	}
 }
 
-func (p *r2d2Parser) ForStatement() (localctx IForStatementContext) {
+func (p *R2D2Parser) ForStatement() (localctx IForStatementContext) {
 	localctx = NewForStatementContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 36, r2d2ParserRULE_forStatement)
+	p.EnterRule(localctx, 36, R2D2ParserRULE_forStatement)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(268)
-		p.Match(r2d2ParserFOR)
+		p.Match(R2D2ParserFOR)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -4491,7 +4491,7 @@ func (p *r2d2Parser) ForStatement() (localctx IForStatementContext) {
 	}
 	{
 		p.SetState(269)
-		p.Match(r2d2ParserLPAREN)
+		p.Match(R2D2ParserLPAREN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -4503,7 +4503,7 @@ func (p *r2d2Parser) ForStatement() (localctx IForStatementContext) {
 	}
 	{
 		p.SetState(271)
-		p.Match(r2d2ParserRPAREN)
+		p.Match(R2D2ParserRPAREN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -4550,13 +4550,13 @@ type AssignmentDeclarationContext struct {
 func NewEmptyAssignmentDeclarationContext() *AssignmentDeclarationContext {
 	var p = new(AssignmentDeclarationContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_assignmentDeclaration
+	p.RuleIndex = R2D2ParserRULE_assignmentDeclaration
 	return p
 }
 
 func InitEmptyAssignmentDeclarationContext(p *AssignmentDeclarationContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_assignmentDeclaration
+	p.RuleIndex = R2D2ParserRULE_assignmentDeclaration
 }
 
 func (*AssignmentDeclarationContext) IsAssignmentDeclarationContext() {}
@@ -4567,7 +4567,7 @@ func NewAssignmentDeclarationContext(parser antlr.Parser, parent antlr.ParserRul
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_assignmentDeclaration
+	p.RuleIndex = R2D2ParserRULE_assignmentDeclaration
 
 	return p
 }
@@ -4591,7 +4591,7 @@ func (s *AssignmentDeclarationContext) Assignment() IAssignmentContext {
 }
 
 func (s *AssignmentDeclarationContext) SEMI() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSEMI, 0)
+	return s.GetToken(R2D2ParserSEMI, 0)
 }
 
 func (s *AssignmentDeclarationContext) GetRuleContext() antlr.RuleContext {
@@ -4603,20 +4603,20 @@ func (s *AssignmentDeclarationContext) ToStringTree(ruleNames []string, recog an
 }
 
 func (s *AssignmentDeclarationContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterAssignmentDeclaration(s)
 	}
 }
 
 func (s *AssignmentDeclarationContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitAssignmentDeclaration(s)
 	}
 }
 
 func (s *AssignmentDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitAssignmentDeclaration(s)
 
 	default:
@@ -4624,9 +4624,9 @@ func (s *AssignmentDeclarationContext) Accept(visitor antlr.ParseTreeVisitor) in
 	}
 }
 
-func (p *r2d2Parser) AssignmentDeclaration() (localctx IAssignmentDeclarationContext) {
+func (p *R2D2Parser) AssignmentDeclaration() (localctx IAssignmentDeclarationContext) {
 	localctx = NewAssignmentDeclarationContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 38, r2d2ParserRULE_assignmentDeclaration)
+	p.EnterRule(localctx, 38, R2D2ParserRULE_assignmentDeclaration)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(274)
@@ -4634,7 +4634,7 @@ func (p *r2d2Parser) AssignmentDeclaration() (localctx IAssignmentDeclarationCon
 	}
 	{
 		p.SetState(275)
-		p.Match(r2d2ParserSEMI)
+		p.Match(R2D2ParserSEMI)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -4680,13 +4680,13 @@ type AssignmentContext struct {
 func NewEmptyAssignmentContext() *AssignmentContext {
 	var p = new(AssignmentContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_assignment
+	p.RuleIndex = R2D2ParserRULE_assignment
 	return p
 }
 
 func InitEmptyAssignmentContext(p *AssignmentContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_assignment
+	p.RuleIndex = R2D2ParserRULE_assignment
 }
 
 func (*AssignmentContext) IsAssignmentContext() {}
@@ -4697,7 +4697,7 @@ func NewAssignmentContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_assignment
+	p.RuleIndex = R2D2ParserRULE_assignment
 
 	return p
 }
@@ -4705,7 +4705,7 @@ func NewAssignmentContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 func (s *AssignmentContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *AssignmentContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *AssignmentContext) AssignmentOperator() IAssignmentOperatorContext {
@@ -4741,11 +4741,11 @@ func (s *AssignmentContext) Expression() IExpressionContext {
 }
 
 func (s *AssignmentContext) INCREMENT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserINCREMENT, 0)
+	return s.GetToken(R2D2ParserINCREMENT, 0)
 }
 
 func (s *AssignmentContext) DECREMENT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserDECREMENT, 0)
+	return s.GetToken(R2D2ParserDECREMENT, 0)
 }
 
 func (s *AssignmentContext) GetRuleContext() antlr.RuleContext {
@@ -4757,20 +4757,20 @@ func (s *AssignmentContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 }
 
 func (s *AssignmentContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterAssignment(s)
 	}
 }
 
 func (s *AssignmentContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitAssignment(s)
 	}
 }
 
 func (s *AssignmentContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitAssignment(s)
 
 	default:
@@ -4778,9 +4778,9 @@ func (s *AssignmentContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) Assignment() (localctx IAssignmentContext) {
+func (p *R2D2Parser) Assignment() (localctx IAssignmentContext) {
 	localctx = NewAssignmentContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 40, r2d2ParserRULE_assignment)
+	p.EnterRule(localctx, 40, R2D2ParserRULE_assignment)
 	var _la int
 
 	p.SetState(283)
@@ -4794,7 +4794,7 @@ func (p *r2d2Parser) Assignment() (localctx IAssignmentContext) {
 		p.EnterOuterAlt(localctx, 1)
 		{
 			p.SetState(277)
-			p.Match(r2d2ParserIDENTIFIER)
+			p.Match(R2D2ParserIDENTIFIER)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -4813,7 +4813,7 @@ func (p *r2d2Parser) Assignment() (localctx IAssignmentContext) {
 		p.EnterOuterAlt(localctx, 2)
 		{
 			p.SetState(281)
-			p.Match(r2d2ParserIDENTIFIER)
+			p.Match(R2D2ParserIDENTIFIER)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -4823,7 +4823,7 @@ func (p *r2d2Parser) Assignment() (localctx IAssignmentContext) {
 			p.SetState(282)
 			_la = p.GetTokenStream().LA(1)
 
-			if !(_la == r2d2ParserINCREMENT || _la == r2d2ParserDECREMENT) {
+			if !(_la == R2D2ParserINCREMENT || _la == R2D2ParserDECREMENT) {
 				p.GetErrorHandler().RecoverInline(p)
 			} else {
 				p.GetErrorHandler().ReportMatch(p)
@@ -4875,13 +4875,13 @@ type AssignmentOperatorContext struct {
 func NewEmptyAssignmentOperatorContext() *AssignmentOperatorContext {
 	var p = new(AssignmentOperatorContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_assignmentOperator
+	p.RuleIndex = R2D2ParserRULE_assignmentOperator
 	return p
 }
 
 func InitEmptyAssignmentOperatorContext(p *AssignmentOperatorContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_assignmentOperator
+	p.RuleIndex = R2D2ParserRULE_assignmentOperator
 }
 
 func (*AssignmentOperatorContext) IsAssignmentOperatorContext() {}
@@ -4892,7 +4892,7 @@ func NewAssignmentOperatorContext(parser antlr.Parser, parent antlr.ParserRuleCo
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_assignmentOperator
+	p.RuleIndex = R2D2ParserRULE_assignmentOperator
 
 	return p
 }
@@ -4900,27 +4900,27 @@ func NewAssignmentOperatorContext(parser antlr.Parser, parent antlr.ParserRuleCo
 func (s *AssignmentOperatorContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *AssignmentOperatorContext) ASSIGN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserASSIGN, 0)
+	return s.GetToken(R2D2ParserASSIGN, 0)
 }
 
 func (s *AssignmentOperatorContext) PLUS_ASSIGN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserPLUS_ASSIGN, 0)
+	return s.GetToken(R2D2ParserPLUS_ASSIGN, 0)
 }
 
 func (s *AssignmentOperatorContext) MINUS_ASSIGN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserMINUS_ASSIGN, 0)
+	return s.GetToken(R2D2ParserMINUS_ASSIGN, 0)
 }
 
 func (s *AssignmentOperatorContext) MULT_ASSIGN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserMULT_ASSIGN, 0)
+	return s.GetToken(R2D2ParserMULT_ASSIGN, 0)
 }
 
 func (s *AssignmentOperatorContext) DIV_ASSIGN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserDIV_ASSIGN, 0)
+	return s.GetToken(R2D2ParserDIV_ASSIGN, 0)
 }
 
 func (s *AssignmentOperatorContext) MOD_ASSIGN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserMOD_ASSIGN, 0)
+	return s.GetToken(R2D2ParserMOD_ASSIGN, 0)
 }
 
 func (s *AssignmentOperatorContext) GetRuleContext() antlr.RuleContext {
@@ -4932,20 +4932,20 @@ func (s *AssignmentOperatorContext) ToStringTree(ruleNames []string, recog antlr
 }
 
 func (s *AssignmentOperatorContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterAssignmentOperator(s)
 	}
 }
 
 func (s *AssignmentOperatorContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitAssignmentOperator(s)
 	}
 }
 
 func (s *AssignmentOperatorContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitAssignmentOperator(s)
 
 	default:
@@ -4953,9 +4953,9 @@ func (s *AssignmentOperatorContext) Accept(visitor antlr.ParseTreeVisitor) inter
 	}
 }
 
-func (p *r2d2Parser) AssignmentOperator() (localctx IAssignmentOperatorContext) {
+func (p *R2D2Parser) AssignmentOperator() (localctx IAssignmentOperatorContext) {
 	localctx = NewAssignmentOperatorContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 42, r2d2ParserRULE_assignmentOperator)
+	p.EnterRule(localctx, 42, R2D2ParserRULE_assignmentOperator)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -5011,13 +5011,13 @@ type SimpleForContext struct {
 func NewEmptySimpleForContext() *SimpleForContext {
 	var p = new(SimpleForContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_simpleFor
+	p.RuleIndex = R2D2ParserRULE_simpleFor
 	return p
 }
 
 func InitEmptySimpleForContext(p *SimpleForContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_simpleFor
+	p.RuleIndex = R2D2ParserRULE_simpleFor
 }
 
 func (*SimpleForContext) IsSimpleForContext() {}
@@ -5028,7 +5028,7 @@ func NewSimpleForContext(parser antlr.Parser, parent antlr.ParserRuleContext, in
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_simpleFor
+	p.RuleIndex = R2D2ParserRULE_simpleFor
 
 	return p
 }
@@ -5036,11 +5036,11 @@ func NewSimpleForContext(parser antlr.Parser, parent antlr.ParserRuleContext, in
 func (s *SimpleForContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *SimpleForContext) AllSEMI() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserSEMI)
+	return s.GetTokens(R2D2ParserSEMI)
 }
 
 func (s *SimpleForContext) SEMI(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSEMI, i)
+	return s.GetToken(R2D2ParserSEMI, i)
 }
 
 func (s *SimpleForContext) VariableDeclaration() IVariableDeclarationContext {
@@ -5125,20 +5125,20 @@ func (s *SimpleForContext) ToStringTree(ruleNames []string, recog antlr.Recogniz
 }
 
 func (s *SimpleForContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterSimpleFor(s)
 	}
 }
 
 func (s *SimpleForContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitSimpleFor(s)
 	}
 }
 
 func (s *SimpleForContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitSimpleFor(s)
 
 	default:
@@ -5146,9 +5146,9 @@ func (s *SimpleForContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) SimpleFor() (localctx ISimpleForContext) {
+func (p *R2D2Parser) SimpleFor() (localctx ISimpleForContext) {
 	localctx = NewSimpleForContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 44, r2d2ParserRULE_simpleFor)
+	p.EnterRule(localctx, 44, R2D2ParserRULE_simpleFor)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -5158,25 +5158,25 @@ func (p *r2d2Parser) SimpleFor() (localctx ISimpleForContext) {
 		goto errorExit
 	}
 	switch p.GetTokenStream().LA(1) {
-	case r2d2ParserVAR, r2d2ParserLET, r2d2ParserCONST:
+	case R2D2ParserVAR, R2D2ParserLET, R2D2ParserCONST:
 		{
 			p.SetState(287)
 			p.VariableDeclaration()
 		}
 
-	case r2d2ParserIDENTIFIER:
+	case R2D2ParserIDENTIFIER:
 		{
 			p.SetState(288)
 			p.Assignment()
 		}
 
-	case r2d2ParserSEMI:
+	case R2D2ParserSEMI:
 
 	default:
 	}
 	{
 		p.SetState(291)
-		p.Match(r2d2ParserSEMI)
+		p.Match(R2D2ParserSEMI)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -5198,7 +5198,7 @@ func (p *r2d2Parser) SimpleFor() (localctx ISimpleForContext) {
 	}
 	{
 		p.SetState(295)
-		p.Match(r2d2ParserSEMI)
+		p.Match(R2D2ParserSEMI)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -5211,7 +5211,7 @@ func (p *r2d2Parser) SimpleFor() (localctx ISimpleForContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == r2d2ParserIDENTIFIER {
+	if _la == R2D2ParserIDENTIFIER {
 		{
 			p.SetState(296)
 			p.Assignment()
@@ -5258,13 +5258,13 @@ type WhileStatementContext struct {
 func NewEmptyWhileStatementContext() *WhileStatementContext {
 	var p = new(WhileStatementContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_whileStatement
+	p.RuleIndex = R2D2ParserRULE_whileStatement
 	return p
 }
 
 func InitEmptyWhileStatementContext(p *WhileStatementContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_whileStatement
+	p.RuleIndex = R2D2ParserRULE_whileStatement
 }
 
 func (*WhileStatementContext) IsWhileStatementContext() {}
@@ -5275,7 +5275,7 @@ func NewWhileStatementContext(parser antlr.Parser, parent antlr.ParserRuleContex
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_whileStatement
+	p.RuleIndex = R2D2ParserRULE_whileStatement
 
 	return p
 }
@@ -5283,11 +5283,11 @@ func NewWhileStatementContext(parser antlr.Parser, parent antlr.ParserRuleContex
 func (s *WhileStatementContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *WhileStatementContext) WHILE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserWHILE, 0)
+	return s.GetToken(R2D2ParserWHILE, 0)
 }
 
 func (s *WhileStatementContext) LPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLPAREN, 0)
+	return s.GetToken(R2D2ParserLPAREN, 0)
 }
 
 func (s *WhileStatementContext) Expression() IExpressionContext {
@@ -5307,7 +5307,7 @@ func (s *WhileStatementContext) Expression() IExpressionContext {
 }
 
 func (s *WhileStatementContext) RPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRPAREN, 0)
+	return s.GetToken(R2D2ParserRPAREN, 0)
 }
 
 func (s *WhileStatementContext) Block() IBlockContext {
@@ -5335,20 +5335,20 @@ func (s *WhileStatementContext) ToStringTree(ruleNames []string, recog antlr.Rec
 }
 
 func (s *WhileStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterWhileStatement(s)
 	}
 }
 
 func (s *WhileStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitWhileStatement(s)
 	}
 }
 
 func (s *WhileStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitWhileStatement(s)
 
 	default:
@@ -5356,13 +5356,13 @@ func (s *WhileStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface
 	}
 }
 
-func (p *r2d2Parser) WhileStatement() (localctx IWhileStatementContext) {
+func (p *R2D2Parser) WhileStatement() (localctx IWhileStatementContext) {
 	localctx = NewWhileStatementContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 46, r2d2ParserRULE_whileStatement)
+	p.EnterRule(localctx, 46, R2D2ParserRULE_whileStatement)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(299)
-		p.Match(r2d2ParserWHILE)
+		p.Match(R2D2ParserWHILE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -5370,7 +5370,7 @@ func (p *r2d2Parser) WhileStatement() (localctx IWhileStatementContext) {
 	}
 	{
 		p.SetState(300)
-		p.Match(r2d2ParserLPAREN)
+		p.Match(R2D2ParserLPAREN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -5382,7 +5382,7 @@ func (p *r2d2Parser) WhileStatement() (localctx IWhileStatementContext) {
 	}
 	{
 		p.SetState(302)
-		p.Match(r2d2ParserRPAREN)
+		p.Match(R2D2ParserRPAREN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -5429,13 +5429,13 @@ type LoopStatementContext struct {
 func NewEmptyLoopStatementContext() *LoopStatementContext {
 	var p = new(LoopStatementContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_loopStatement
+	p.RuleIndex = R2D2ParserRULE_loopStatement
 	return p
 }
 
 func InitEmptyLoopStatementContext(p *LoopStatementContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_loopStatement
+	p.RuleIndex = R2D2ParserRULE_loopStatement
 }
 
 func (*LoopStatementContext) IsLoopStatementContext() {}
@@ -5446,7 +5446,7 @@ func NewLoopStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_loopStatement
+	p.RuleIndex = R2D2ParserRULE_loopStatement
 
 	return p
 }
@@ -5454,7 +5454,7 @@ func NewLoopStatementContext(parser antlr.Parser, parent antlr.ParserRuleContext
 func (s *LoopStatementContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *LoopStatementContext) LOOP() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLOOP, 0)
+	return s.GetToken(R2D2ParserLOOP, 0)
 }
 
 func (s *LoopStatementContext) Block() IBlockContext {
@@ -5482,20 +5482,20 @@ func (s *LoopStatementContext) ToStringTree(ruleNames []string, recog antlr.Reco
 }
 
 func (s *LoopStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterLoopStatement(s)
 	}
 }
 
 func (s *LoopStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitLoopStatement(s)
 	}
 }
 
 func (s *LoopStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitLoopStatement(s)
 
 	default:
@@ -5503,13 +5503,13 @@ func (s *LoopStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{
 	}
 }
 
-func (p *r2d2Parser) LoopStatement() (localctx ILoopStatementContext) {
+func (p *R2D2Parser) LoopStatement() (localctx ILoopStatementContext) {
 	localctx = NewLoopStatementContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 48, r2d2ParserRULE_loopStatement)
+	p.EnterRule(localctx, 48, R2D2ParserRULE_loopStatement)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(305)
-		p.Match(r2d2ParserLOOP)
+		p.Match(R2D2ParserLOOP)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -5557,13 +5557,13 @@ type LoopControlContext struct {
 func NewEmptyLoopControlContext() *LoopControlContext {
 	var p = new(LoopControlContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_loopControl
+	p.RuleIndex = R2D2ParserRULE_loopControl
 	return p
 }
 
 func InitEmptyLoopControlContext(p *LoopControlContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_loopControl
+	p.RuleIndex = R2D2ParserRULE_loopControl
 }
 
 func (*LoopControlContext) IsLoopControlContext() {}
@@ -5574,7 +5574,7 @@ func NewLoopControlContext(parser antlr.Parser, parent antlr.ParserRuleContext, 
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_loopControl
+	p.RuleIndex = R2D2ParserRULE_loopControl
 
 	return p
 }
@@ -5582,15 +5582,15 @@ func NewLoopControlContext(parser antlr.Parser, parent antlr.ParserRuleContext, 
 func (s *LoopControlContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *LoopControlContext) SEMI() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSEMI, 0)
+	return s.GetToken(R2D2ParserSEMI, 0)
 }
 
 func (s *LoopControlContext) BREAK() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserBREAK, 0)
+	return s.GetToken(R2D2ParserBREAK, 0)
 }
 
 func (s *LoopControlContext) CONTINUE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCONTINUE, 0)
+	return s.GetToken(R2D2ParserCONTINUE, 0)
 }
 
 func (s *LoopControlContext) GetRuleContext() antlr.RuleContext {
@@ -5602,20 +5602,20 @@ func (s *LoopControlContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 }
 
 func (s *LoopControlContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterLoopControl(s)
 	}
 }
 
 func (s *LoopControlContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitLoopControl(s)
 	}
 }
 
 func (s *LoopControlContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitLoopControl(s)
 
 	default:
@@ -5623,9 +5623,9 @@ func (s *LoopControlContext) Accept(visitor antlr.ParseTreeVisitor) interface{} 
 	}
 }
 
-func (p *r2d2Parser) LoopControl() (localctx ILoopControlContext) {
+func (p *R2D2Parser) LoopControl() (localctx ILoopControlContext) {
 	localctx = NewLoopControlContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 50, r2d2ParserRULE_loopControl)
+	p.EnterRule(localctx, 50, R2D2ParserRULE_loopControl)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -5633,7 +5633,7 @@ func (p *r2d2Parser) LoopControl() (localctx ILoopControlContext) {
 		p.SetState(308)
 		_la = p.GetTokenStream().LA(1)
 
-		if !(_la == r2d2ParserBREAK || _la == r2d2ParserCONTINUE) {
+		if !(_la == R2D2ParserBREAK || _la == R2D2ParserCONTINUE) {
 			p.GetErrorHandler().RecoverInline(p)
 		} else {
 			p.GetErrorHandler().ReportMatch(p)
@@ -5642,7 +5642,7 @@ func (p *r2d2Parser) LoopControl() (localctx ILoopControlContext) {
 	}
 	{
 		p.SetState(309)
-		p.Match(r2d2ParserSEMI)
+		p.Match(R2D2ParserSEMI)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -5686,13 +5686,13 @@ type ReturnStatementContext struct {
 func NewEmptyReturnStatementContext() *ReturnStatementContext {
 	var p = new(ReturnStatementContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_returnStatement
+	p.RuleIndex = R2D2ParserRULE_returnStatement
 	return p
 }
 
 func InitEmptyReturnStatementContext(p *ReturnStatementContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_returnStatement
+	p.RuleIndex = R2D2ParserRULE_returnStatement
 }
 
 func (*ReturnStatementContext) IsReturnStatementContext() {}
@@ -5703,7 +5703,7 @@ func NewReturnStatementContext(parser antlr.Parser, parent antlr.ParserRuleConte
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_returnStatement
+	p.RuleIndex = R2D2ParserRULE_returnStatement
 
 	return p
 }
@@ -5711,11 +5711,11 @@ func NewReturnStatementContext(parser antlr.Parser, parent antlr.ParserRuleConte
 func (s *ReturnStatementContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ReturnStatementContext) RETURN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRETURN, 0)
+	return s.GetToken(R2D2ParserRETURN, 0)
 }
 
 func (s *ReturnStatementContext) SEMI() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSEMI, 0)
+	return s.GetToken(R2D2ParserSEMI, 0)
 }
 
 func (s *ReturnStatementContext) Expression() IExpressionContext {
@@ -5743,20 +5743,20 @@ func (s *ReturnStatementContext) ToStringTree(ruleNames []string, recog antlr.Re
 }
 
 func (s *ReturnStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterReturnStatement(s)
 	}
 }
 
 func (s *ReturnStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitReturnStatement(s)
 	}
 }
 
 func (s *ReturnStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitReturnStatement(s)
 
 	default:
@@ -5764,15 +5764,15 @@ func (s *ReturnStatementContext) Accept(visitor antlr.ParseTreeVisitor) interfac
 	}
 }
 
-func (p *r2d2Parser) ReturnStatement() (localctx IReturnStatementContext) {
+func (p *R2D2Parser) ReturnStatement() (localctx IReturnStatementContext) {
 	localctx = NewReturnStatementContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 52, r2d2ParserRULE_returnStatement)
+	p.EnterRule(localctx, 52, R2D2ParserRULE_returnStatement)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(311)
-		p.Match(r2d2ParserRETURN)
+		p.Match(R2D2ParserRETURN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -5794,7 +5794,7 @@ func (p *r2d2Parser) ReturnStatement() (localctx IReturnStatementContext) {
 	}
 	{
 		p.SetState(315)
-		p.Match(r2d2ParserSEMI)
+		p.Match(R2D2ParserSEMI)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -5836,13 +5836,13 @@ type ExpressionContext struct {
 func NewEmptyExpressionContext() *ExpressionContext {
 	var p = new(ExpressionContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_expression
+	p.RuleIndex = R2D2ParserRULE_expression
 	return p
 }
 
 func InitEmptyExpressionContext(p *ExpressionContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_expression
+	p.RuleIndex = R2D2ParserRULE_expression
 }
 
 func (*ExpressionContext) IsExpressionContext() {}
@@ -5853,7 +5853,7 @@ func NewExpressionContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_expression
+	p.RuleIndex = R2D2ParserRULE_expression
 
 	return p
 }
@@ -5885,20 +5885,20 @@ func (s *ExpressionContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 }
 
 func (s *ExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterExpression(s)
 	}
 }
 
 func (s *ExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitExpression(s)
 	}
 }
 
 func (s *ExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitExpression(s)
 
 	default:
@@ -5906,9 +5906,9 @@ func (s *ExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) Expression() (localctx IExpressionContext) {
+func (p *R2D2Parser) Expression() (localctx IExpressionContext) {
 	localctx = NewExpressionContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 54, r2d2ParserRULE_expression)
+	p.EnterRule(localctx, 54, R2D2ParserRULE_expression)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(317)
@@ -5955,13 +5955,13 @@ type LogicalExpressionContext struct {
 func NewEmptyLogicalExpressionContext() *LogicalExpressionContext {
 	var p = new(LogicalExpressionContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_logicalExpression
+	p.RuleIndex = R2D2ParserRULE_logicalExpression
 	return p
 }
 
 func InitEmptyLogicalExpressionContext(p *LogicalExpressionContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_logicalExpression
+	p.RuleIndex = R2D2ParserRULE_logicalExpression
 }
 
 func (*LogicalExpressionContext) IsLogicalExpressionContext() {}
@@ -5972,7 +5972,7 @@ func NewLogicalExpressionContext(parser antlr.Parser, parent antlr.ParserRuleCon
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_logicalExpression
+	p.RuleIndex = R2D2ParserRULE_logicalExpression
 
 	return p
 }
@@ -6021,19 +6021,19 @@ func (s *LogicalExpressionContext) ComparisonExpression(i int) IComparisonExpres
 }
 
 func (s *LogicalExpressionContext) AllAND() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserAND)
+	return s.GetTokens(R2D2ParserAND)
 }
 
 func (s *LogicalExpressionContext) AND(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserAND, i)
+	return s.GetToken(R2D2ParserAND, i)
 }
 
 func (s *LogicalExpressionContext) AllOR() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserOR)
+	return s.GetTokens(R2D2ParserOR)
 }
 
 func (s *LogicalExpressionContext) OR(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserOR, i)
+	return s.GetToken(R2D2ParserOR, i)
 }
 
 func (s *LogicalExpressionContext) GetRuleContext() antlr.RuleContext {
@@ -6045,20 +6045,20 @@ func (s *LogicalExpressionContext) ToStringTree(ruleNames []string, recog antlr.
 }
 
 func (s *LogicalExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterLogicalExpression(s)
 	}
 }
 
 func (s *LogicalExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitLogicalExpression(s)
 	}
 }
 
 func (s *LogicalExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitLogicalExpression(s)
 
 	default:
@@ -6066,9 +6066,9 @@ func (s *LogicalExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interf
 	}
 }
 
-func (p *r2d2Parser) LogicalExpression() (localctx ILogicalExpressionContext) {
+func (p *R2D2Parser) LogicalExpression() (localctx ILogicalExpressionContext) {
 	localctx = NewLogicalExpressionContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 56, r2d2ParserRULE_logicalExpression)
+	p.EnterRule(localctx, 56, R2D2ParserRULE_logicalExpression)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -6083,12 +6083,12 @@ func (p *r2d2Parser) LogicalExpression() (localctx ILogicalExpressionContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	for _la == r2d2ParserAND || _la == r2d2ParserOR {
+	for _la == R2D2ParserAND || _la == R2D2ParserOR {
 		{
 			p.SetState(320)
 			_la = p.GetTokenStream().LA(1)
 
-			if !(_la == r2d2ParserAND || _la == r2d2ParserOR) {
+			if !(_la == R2D2ParserAND || _la == R2D2ParserOR) {
 				p.GetErrorHandler().RecoverInline(p)
 			} else {
 				p.GetErrorHandler().ReportMatch(p)
@@ -6156,13 +6156,13 @@ type ComparisonExpressionContext struct {
 func NewEmptyComparisonExpressionContext() *ComparisonExpressionContext {
 	var p = new(ComparisonExpressionContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_comparisonExpression
+	p.RuleIndex = R2D2ParserRULE_comparisonExpression
 	return p
 }
 
 func InitEmptyComparisonExpressionContext(p *ComparisonExpressionContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_comparisonExpression
+	p.RuleIndex = R2D2ParserRULE_comparisonExpression
 }
 
 func (*ComparisonExpressionContext) IsComparisonExpressionContext() {}
@@ -6173,7 +6173,7 @@ func NewComparisonExpressionContext(parser antlr.Parser, parent antlr.ParserRule
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_comparisonExpression
+	p.RuleIndex = R2D2ParserRULE_comparisonExpression
 
 	return p
 }
@@ -6222,51 +6222,51 @@ func (s *ComparisonExpressionContext) AdditiveExpression(i int) IAdditiveExpress
 }
 
 func (s *ComparisonExpressionContext) AllEQ() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserEQ)
+	return s.GetTokens(R2D2ParserEQ)
 }
 
 func (s *ComparisonExpressionContext) EQ(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserEQ, i)
+	return s.GetToken(R2D2ParserEQ, i)
 }
 
 func (s *ComparisonExpressionContext) AllNEQ() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserNEQ)
+	return s.GetTokens(R2D2ParserNEQ)
 }
 
 func (s *ComparisonExpressionContext) NEQ(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserNEQ, i)
+	return s.GetToken(R2D2ParserNEQ, i)
 }
 
 func (s *ComparisonExpressionContext) AllLT() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserLT)
+	return s.GetTokens(R2D2ParserLT)
 }
 
 func (s *ComparisonExpressionContext) LT(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLT, i)
+	return s.GetToken(R2D2ParserLT, i)
 }
 
 func (s *ComparisonExpressionContext) AllGT() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserGT)
+	return s.GetTokens(R2D2ParserGT)
 }
 
 func (s *ComparisonExpressionContext) GT(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserGT, i)
+	return s.GetToken(R2D2ParserGT, i)
 }
 
 func (s *ComparisonExpressionContext) AllLEQ() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserLEQ)
+	return s.GetTokens(R2D2ParserLEQ)
 }
 
 func (s *ComparisonExpressionContext) LEQ(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLEQ, i)
+	return s.GetToken(R2D2ParserLEQ, i)
 }
 
 func (s *ComparisonExpressionContext) AllGEQ() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserGEQ)
+	return s.GetTokens(R2D2ParserGEQ)
 }
 
 func (s *ComparisonExpressionContext) GEQ(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserGEQ, i)
+	return s.GetToken(R2D2ParserGEQ, i)
 }
 
 func (s *ComparisonExpressionContext) GetRuleContext() antlr.RuleContext {
@@ -6278,20 +6278,20 @@ func (s *ComparisonExpressionContext) ToStringTree(ruleNames []string, recog ant
 }
 
 func (s *ComparisonExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterComparisonExpression(s)
 	}
 }
 
 func (s *ComparisonExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitComparisonExpression(s)
 	}
 }
 
 func (s *ComparisonExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitComparisonExpression(s)
 
 	default:
@@ -6299,9 +6299,9 @@ func (s *ComparisonExpressionContext) Accept(visitor antlr.ParseTreeVisitor) int
 	}
 }
 
-func (p *r2d2Parser) ComparisonExpression() (localctx IComparisonExpressionContext) {
+func (p *R2D2Parser) ComparisonExpression() (localctx IComparisonExpressionContext) {
 	localctx = NewComparisonExpressionContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 58, r2d2ParserRULE_comparisonExpression)
+	p.EnterRule(localctx, 58, R2D2ParserRULE_comparisonExpression)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -6381,13 +6381,13 @@ type AdditiveExpressionContext struct {
 func NewEmptyAdditiveExpressionContext() *AdditiveExpressionContext {
 	var p = new(AdditiveExpressionContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_additiveExpression
+	p.RuleIndex = R2D2ParserRULE_additiveExpression
 	return p
 }
 
 func InitEmptyAdditiveExpressionContext(p *AdditiveExpressionContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_additiveExpression
+	p.RuleIndex = R2D2ParserRULE_additiveExpression
 }
 
 func (*AdditiveExpressionContext) IsAdditiveExpressionContext() {}
@@ -6398,7 +6398,7 @@ func NewAdditiveExpressionContext(parser antlr.Parser, parent antlr.ParserRuleCo
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_additiveExpression
+	p.RuleIndex = R2D2ParserRULE_additiveExpression
 
 	return p
 }
@@ -6447,19 +6447,19 @@ func (s *AdditiveExpressionContext) MultiplicativeExpression(i int) IMultiplicat
 }
 
 func (s *AdditiveExpressionContext) AllPLUS() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserPLUS)
+	return s.GetTokens(R2D2ParserPLUS)
 }
 
 func (s *AdditiveExpressionContext) PLUS(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserPLUS, i)
+	return s.GetToken(R2D2ParserPLUS, i)
 }
 
 func (s *AdditiveExpressionContext) AllMINUS() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserMINUS)
+	return s.GetTokens(R2D2ParserMINUS)
 }
 
 func (s *AdditiveExpressionContext) MINUS(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserMINUS, i)
+	return s.GetToken(R2D2ParserMINUS, i)
 }
 
 func (s *AdditiveExpressionContext) GetRuleContext() antlr.RuleContext {
@@ -6471,20 +6471,20 @@ func (s *AdditiveExpressionContext) ToStringTree(ruleNames []string, recog antlr
 }
 
 func (s *AdditiveExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterAdditiveExpression(s)
 	}
 }
 
 func (s *AdditiveExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitAdditiveExpression(s)
 	}
 }
 
 func (s *AdditiveExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitAdditiveExpression(s)
 
 	default:
@@ -6492,9 +6492,9 @@ func (s *AdditiveExpressionContext) Accept(visitor antlr.ParseTreeVisitor) inter
 	}
 }
 
-func (p *r2d2Parser) AdditiveExpression() (localctx IAdditiveExpressionContext) {
+func (p *R2D2Parser) AdditiveExpression() (localctx IAdditiveExpressionContext) {
 	localctx = NewAdditiveExpressionContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 60, r2d2ParserRULE_additiveExpression)
+	p.EnterRule(localctx, 60, R2D2ParserRULE_additiveExpression)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -6509,12 +6509,12 @@ func (p *r2d2Parser) AdditiveExpression() (localctx IAdditiveExpressionContext) 
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	for _la == r2d2ParserPLUS || _la == r2d2ParserMINUS {
+	for _la == R2D2ParserPLUS || _la == R2D2ParserMINUS {
 		{
 			p.SetState(336)
 			_la = p.GetTokenStream().LA(1)
 
-			if !(_la == r2d2ParserPLUS || _la == r2d2ParserMINUS) {
+			if !(_la == R2D2ParserPLUS || _la == R2D2ParserMINUS) {
 				p.GetErrorHandler().RecoverInline(p)
 			} else {
 				p.GetErrorHandler().ReportMatch(p)
@@ -6576,13 +6576,13 @@ type MultiplicativeExpressionContext struct {
 func NewEmptyMultiplicativeExpressionContext() *MultiplicativeExpressionContext {
 	var p = new(MultiplicativeExpressionContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_multiplicativeExpression
+	p.RuleIndex = R2D2ParserRULE_multiplicativeExpression
 	return p
 }
 
 func InitEmptyMultiplicativeExpressionContext(p *MultiplicativeExpressionContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_multiplicativeExpression
+	p.RuleIndex = R2D2ParserRULE_multiplicativeExpression
 }
 
 func (*MultiplicativeExpressionContext) IsMultiplicativeExpressionContext() {}
@@ -6593,7 +6593,7 @@ func NewMultiplicativeExpressionContext(parser antlr.Parser, parent antlr.Parser
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_multiplicativeExpression
+	p.RuleIndex = R2D2ParserRULE_multiplicativeExpression
 
 	return p
 }
@@ -6642,27 +6642,27 @@ func (s *MultiplicativeExpressionContext) UnaryExpression(i int) IUnaryExpressio
 }
 
 func (s *MultiplicativeExpressionContext) AllMULT() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserMULT)
+	return s.GetTokens(R2D2ParserMULT)
 }
 
 func (s *MultiplicativeExpressionContext) MULT(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserMULT, i)
+	return s.GetToken(R2D2ParserMULT, i)
 }
 
 func (s *MultiplicativeExpressionContext) AllDIV() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserDIV)
+	return s.GetTokens(R2D2ParserDIV)
 }
 
 func (s *MultiplicativeExpressionContext) DIV(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserDIV, i)
+	return s.GetToken(R2D2ParserDIV, i)
 }
 
 func (s *MultiplicativeExpressionContext) AllMOD() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserMOD)
+	return s.GetTokens(R2D2ParserMOD)
 }
 
 func (s *MultiplicativeExpressionContext) MOD(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserMOD, i)
+	return s.GetToken(R2D2ParserMOD, i)
 }
 
 func (s *MultiplicativeExpressionContext) GetRuleContext() antlr.RuleContext {
@@ -6674,20 +6674,20 @@ func (s *MultiplicativeExpressionContext) ToStringTree(ruleNames []string, recog
 }
 
 func (s *MultiplicativeExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterMultiplicativeExpression(s)
 	}
 }
 
 func (s *MultiplicativeExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitMultiplicativeExpression(s)
 	}
 }
 
 func (s *MultiplicativeExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitMultiplicativeExpression(s)
 
 	default:
@@ -6695,9 +6695,9 @@ func (s *MultiplicativeExpressionContext) Accept(visitor antlr.ParseTreeVisitor)
 	}
 }
 
-func (p *r2d2Parser) MultiplicativeExpression() (localctx IMultiplicativeExpressionContext) {
+func (p *R2D2Parser) MultiplicativeExpression() (localctx IMultiplicativeExpressionContext) {
 	localctx = NewMultiplicativeExpressionContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 62, r2d2ParserRULE_multiplicativeExpression)
+	p.EnterRule(localctx, 62, R2D2ParserRULE_multiplicativeExpression)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -6777,13 +6777,13 @@ type UnaryExpressionContext struct {
 func NewEmptyUnaryExpressionContext() *UnaryExpressionContext {
 	var p = new(UnaryExpressionContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_unaryExpression
+	p.RuleIndex = R2D2ParserRULE_unaryExpression
 	return p
 }
 
 func InitEmptyUnaryExpressionContext(p *UnaryExpressionContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_unaryExpression
+	p.RuleIndex = R2D2ParserRULE_unaryExpression
 }
 
 func (*UnaryExpressionContext) IsUnaryExpressionContext() {}
@@ -6794,7 +6794,7 @@ func NewUnaryExpressionContext(parser antlr.Parser, parent antlr.ParserRuleConte
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_unaryExpression
+	p.RuleIndex = R2D2ParserRULE_unaryExpression
 
 	return p
 }
@@ -6818,19 +6818,19 @@ func (s *UnaryExpressionContext) UnaryExpression() IUnaryExpressionContext {
 }
 
 func (s *UnaryExpressionContext) NOT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserNOT, 0)
+	return s.GetToken(R2D2ParserNOT, 0)
 }
 
 func (s *UnaryExpressionContext) MINUS() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserMINUS, 0)
+	return s.GetToken(R2D2ParserMINUS, 0)
 }
 
 func (s *UnaryExpressionContext) INCREMENT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserINCREMENT, 0)
+	return s.GetToken(R2D2ParserINCREMENT, 0)
 }
 
 func (s *UnaryExpressionContext) DECREMENT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserDECREMENT, 0)
+	return s.GetToken(R2D2ParserDECREMENT, 0)
 }
 
 func (s *UnaryExpressionContext) MemberExpression() IMemberExpressionContext {
@@ -6858,20 +6858,20 @@ func (s *UnaryExpressionContext) ToStringTree(ruleNames []string, recog antlr.Re
 }
 
 func (s *UnaryExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterUnaryExpression(s)
 	}
 }
 
 func (s *UnaryExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitUnaryExpression(s)
 	}
 }
 
 func (s *UnaryExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitUnaryExpression(s)
 
 	default:
@@ -6879,9 +6879,9 @@ func (s *UnaryExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interfac
 	}
 }
 
-func (p *r2d2Parser) UnaryExpression() (localctx IUnaryExpressionContext) {
+func (p *R2D2Parser) UnaryExpression() (localctx IUnaryExpressionContext) {
 	localctx = NewUnaryExpressionContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 64, r2d2ParserRULE_unaryExpression)
+	p.EnterRule(localctx, 64, R2D2ParserRULE_unaryExpression)
 	var _la int
 
 	p.SetState(354)
@@ -6891,7 +6891,7 @@ func (p *r2d2Parser) UnaryExpression() (localctx IUnaryExpressionContext) {
 	}
 
 	switch p.GetTokenStream().LA(1) {
-	case r2d2ParserMINUS, r2d2ParserINCREMENT, r2d2ParserDECREMENT, r2d2ParserNOT:
+	case R2D2ParserMINUS, R2D2ParserINCREMENT, R2D2ParserDECREMENT, R2D2ParserNOT:
 		p.EnterOuterAlt(localctx, 1)
 		{
 			p.SetState(351)
@@ -6909,7 +6909,7 @@ func (p *r2d2Parser) UnaryExpression() (localctx IUnaryExpressionContext) {
 			p.UnaryExpression()
 		}
 
-	case r2d2ParserLPAREN, r2d2ParserLBRACK, r2d2ParserIDENTIFIER, r2d2ParserSTRING_LITERAL, r2d2ParserBOOL_LITERAL, r2d2ParserINT_LITERAL, r2d2ParserFLOAT_LITERAL:
+	case R2D2ParserLPAREN, R2D2ParserLBRACK, R2D2ParserIDENTIFIER, R2D2ParserSTRING_LITERAL, R2D2ParserBOOL_LITERAL, R2D2ParserINT_LITERAL, R2D2ParserFLOAT_LITERAL:
 		p.EnterOuterAlt(localctx, 2)
 		{
 			p.SetState(353)
@@ -6958,13 +6958,13 @@ type MemberExpressionContext struct {
 func NewEmptyMemberExpressionContext() *MemberExpressionContext {
 	var p = new(MemberExpressionContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_memberExpression
+	p.RuleIndex = R2D2ParserRULE_memberExpression
 	return p
 }
 
 func InitEmptyMemberExpressionContext(p *MemberExpressionContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_memberExpression
+	p.RuleIndex = R2D2ParserRULE_memberExpression
 }
 
 func (*MemberExpressionContext) IsMemberExpressionContext() {}
@@ -6975,7 +6975,7 @@ func NewMemberExpressionContext(parser antlr.Parser, parent antlr.ParserRuleCont
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_memberExpression
+	p.RuleIndex = R2D2ParserRULE_memberExpression
 
 	return p
 }
@@ -7048,20 +7048,20 @@ func (s *MemberExpressionContext) ToStringTree(ruleNames []string, recog antlr.R
 }
 
 func (s *MemberExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterMemberExpression(s)
 	}
 }
 
 func (s *MemberExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitMemberExpression(s)
 	}
 }
 
 func (s *MemberExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitMemberExpression(s)
 
 	default:
@@ -7069,9 +7069,9 @@ func (s *MemberExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interfa
 	}
 }
 
-func (p *r2d2Parser) MemberExpression() (localctx IMemberExpressionContext) {
+func (p *R2D2Parser) MemberExpression() (localctx IMemberExpressionContext) {
 	localctx = NewMemberExpressionContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 66, r2d2ParserRULE_memberExpression)
+	p.EnterRule(localctx, 66, R2D2ParserRULE_memberExpression)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -7144,13 +7144,13 @@ type MemberPartContext struct {
 func NewEmptyMemberPartContext() *MemberPartContext {
 	var p = new(MemberPartContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_memberPart
+	p.RuleIndex = R2D2ParserRULE_memberPart
 	return p
 }
 
 func InitEmptyMemberPartContext(p *MemberPartContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_memberPart
+	p.RuleIndex = R2D2ParserRULE_memberPart
 }
 
 func (*MemberPartContext) IsMemberPartContext() {}
@@ -7161,7 +7161,7 @@ func NewMemberPartContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_memberPart
+	p.RuleIndex = R2D2ParserRULE_memberPart
 
 	return p
 }
@@ -7169,7 +7169,7 @@ func NewMemberPartContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 func (s *MemberPartContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *MemberPartContext) LBRACK() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLBRACK, 0)
+	return s.GetToken(R2D2ParserLBRACK, 0)
 }
 
 func (s *MemberPartContext) Expression() IExpressionContext {
@@ -7189,31 +7189,31 @@ func (s *MemberPartContext) Expression() IExpressionContext {
 }
 
 func (s *MemberPartContext) RBRACK() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRBRACK, 0)
+	return s.GetToken(R2D2ParserRBRACK, 0)
 }
 
 func (s *MemberPartContext) DOT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserDOT, 0)
+	return s.GetToken(R2D2ParserDOT, 0)
 }
 
 func (s *MemberPartContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *MemberPartContext) INCREMENT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserINCREMENT, 0)
+	return s.GetToken(R2D2ParserINCREMENT, 0)
 }
 
 func (s *MemberPartContext) DECREMENT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserDECREMENT, 0)
+	return s.GetToken(R2D2ParserDECREMENT, 0)
 }
 
 func (s *MemberPartContext) LPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLPAREN, 0)
+	return s.GetToken(R2D2ParserLPAREN, 0)
 }
 
 func (s *MemberPartContext) RPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRPAREN, 0)
+	return s.GetToken(R2D2ParserRPAREN, 0)
 }
 
 func (s *MemberPartContext) ArgumentList() IArgumentListContext {
@@ -7241,20 +7241,20 @@ func (s *MemberPartContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 }
 
 func (s *MemberPartContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterMemberPart(s)
 	}
 }
 
 func (s *MemberPartContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitMemberPart(s)
 	}
 }
 
 func (s *MemberPartContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitMemberPart(s)
 
 	default:
@@ -7262,9 +7262,9 @@ func (s *MemberPartContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) MemberPart() (localctx IMemberPartContext) {
+func (p *R2D2Parser) MemberPart() (localctx IMemberPartContext) {
 	localctx = NewMemberPartContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 68, r2d2ParserRULE_memberPart)
+	p.EnterRule(localctx, 68, R2D2ParserRULE_memberPart)
 	var _la int
 
 	p.SetState(376)
@@ -7274,11 +7274,11 @@ func (p *r2d2Parser) MemberPart() (localctx IMemberPartContext) {
 	}
 
 	switch p.GetTokenStream().LA(1) {
-	case r2d2ParserLBRACK:
+	case R2D2ParserLBRACK:
 		p.EnterOuterAlt(localctx, 1)
 		{
 			p.SetState(363)
-			p.Match(r2d2ParserLBRACK)
+			p.Match(R2D2ParserLBRACK)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -7290,18 +7290,18 @@ func (p *r2d2Parser) MemberPart() (localctx IMemberPartContext) {
 		}
 		{
 			p.SetState(365)
-			p.Match(r2d2ParserRBRACK)
+			p.Match(R2D2ParserRBRACK)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 			}
 		}
 
-	case r2d2ParserDOT:
+	case R2D2ParserDOT:
 		p.EnterOuterAlt(localctx, 2)
 		{
 			p.SetState(367)
-			p.Match(r2d2ParserDOT)
+			p.Match(R2D2ParserDOT)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -7309,40 +7309,40 @@ func (p *r2d2Parser) MemberPart() (localctx IMemberPartContext) {
 		}
 		{
 			p.SetState(368)
-			p.Match(r2d2ParserIDENTIFIER)
+			p.Match(R2D2ParserIDENTIFIER)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 			}
 		}
 
-	case r2d2ParserINCREMENT:
+	case R2D2ParserINCREMENT:
 		p.EnterOuterAlt(localctx, 3)
 		{
 			p.SetState(369)
-			p.Match(r2d2ParserINCREMENT)
+			p.Match(R2D2ParserINCREMENT)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 			}
 		}
 
-	case r2d2ParserDECREMENT:
+	case R2D2ParserDECREMENT:
 		p.EnterOuterAlt(localctx, 4)
 		{
 			p.SetState(370)
-			p.Match(r2d2ParserDECREMENT)
+			p.Match(R2D2ParserDECREMENT)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 			}
 		}
 
-	case r2d2ParserLPAREN:
+	case R2D2ParserLPAREN:
 		p.EnterOuterAlt(localctx, 5)
 		{
 			p.SetState(371)
-			p.Match(r2d2ParserLPAREN)
+			p.Match(R2D2ParserLPAREN)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -7364,7 +7364,7 @@ func (p *r2d2Parser) MemberPart() (localctx IMemberPartContext) {
 		}
 		{
 			p.SetState(375)
-			p.Match(r2d2ParserRPAREN)
+			p.Match(R2D2ParserRPAREN)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -7414,13 +7414,13 @@ type ArgumentListContext struct {
 func NewEmptyArgumentListContext() *ArgumentListContext {
 	var p = new(ArgumentListContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_argumentList
+	p.RuleIndex = R2D2ParserRULE_argumentList
 	return p
 }
 
 func InitEmptyArgumentListContext(p *ArgumentListContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_argumentList
+	p.RuleIndex = R2D2ParserRULE_argumentList
 }
 
 func (*ArgumentListContext) IsArgumentListContext() {}
@@ -7431,7 +7431,7 @@ func NewArgumentListContext(parser antlr.Parser, parent antlr.ParserRuleContext,
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_argumentList
+	p.RuleIndex = R2D2ParserRULE_argumentList
 
 	return p
 }
@@ -7480,11 +7480,11 @@ func (s *ArgumentListContext) Expression(i int) IExpressionContext {
 }
 
 func (s *ArgumentListContext) AllCOMMA() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserCOMMA)
+	return s.GetTokens(R2D2ParserCOMMA)
 }
 
 func (s *ArgumentListContext) COMMA(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCOMMA, i)
+	return s.GetToken(R2D2ParserCOMMA, i)
 }
 
 func (s *ArgumentListContext) GetRuleContext() antlr.RuleContext {
@@ -7496,20 +7496,20 @@ func (s *ArgumentListContext) ToStringTree(ruleNames []string, recog antlr.Recog
 }
 
 func (s *ArgumentListContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterArgumentList(s)
 	}
 }
 
 func (s *ArgumentListContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitArgumentList(s)
 	}
 }
 
 func (s *ArgumentListContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitArgumentList(s)
 
 	default:
@@ -7517,9 +7517,9 @@ func (s *ArgumentListContext) Accept(visitor antlr.ParseTreeVisitor) interface{}
 	}
 }
 
-func (p *r2d2Parser) ArgumentList() (localctx IArgumentListContext) {
+func (p *R2D2Parser) ArgumentList() (localctx IArgumentListContext) {
 	localctx = NewArgumentListContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 70, r2d2ParserRULE_argumentList)
+	p.EnterRule(localctx, 70, R2D2ParserRULE_argumentList)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -7534,10 +7534,10 @@ func (p *r2d2Parser) ArgumentList() (localctx IArgumentListContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	for _la == r2d2ParserCOMMA {
+	for _la == R2D2ParserCOMMA {
 		{
 			p.SetState(379)
-			p.Match(r2d2ParserCOMMA)
+			p.Match(R2D2ParserCOMMA)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -7596,13 +7596,13 @@ type PrimaryExpressionContext struct {
 func NewEmptyPrimaryExpressionContext() *PrimaryExpressionContext {
 	var p = new(PrimaryExpressionContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_primaryExpression
+	p.RuleIndex = R2D2ParserRULE_primaryExpression
 	return p
 }
 
 func InitEmptyPrimaryExpressionContext(p *PrimaryExpressionContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_primaryExpression
+	p.RuleIndex = R2D2ParserRULE_primaryExpression
 }
 
 func (*PrimaryExpressionContext) IsPrimaryExpressionContext() {}
@@ -7613,7 +7613,7 @@ func NewPrimaryExpressionContext(parser antlr.Parser, parent antlr.ParserRuleCon
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_primaryExpression
+	p.RuleIndex = R2D2ParserRULE_primaryExpression
 
 	return p
 }
@@ -7621,7 +7621,7 @@ func NewPrimaryExpressionContext(parser antlr.Parser, parent antlr.ParserRuleCon
 func (s *PrimaryExpressionContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *PrimaryExpressionContext) IDENTIFIER() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserIDENTIFIER, 0)
+	return s.GetToken(R2D2ParserIDENTIFIER, 0)
 }
 
 func (s *PrimaryExpressionContext) Literal() ILiteralContext {
@@ -7641,7 +7641,7 @@ func (s *PrimaryExpressionContext) Literal() ILiteralContext {
 }
 
 func (s *PrimaryExpressionContext) LPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLPAREN, 0)
+	return s.GetToken(R2D2ParserLPAREN, 0)
 }
 
 func (s *PrimaryExpressionContext) Expression() IExpressionContext {
@@ -7661,7 +7661,7 @@ func (s *PrimaryExpressionContext) Expression() IExpressionContext {
 }
 
 func (s *PrimaryExpressionContext) RPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRPAREN, 0)
+	return s.GetToken(R2D2ParserRPAREN, 0)
 }
 
 func (s *PrimaryExpressionContext) ArrayLiteral() IArrayLiteralContext {
@@ -7689,20 +7689,20 @@ func (s *PrimaryExpressionContext) ToStringTree(ruleNames []string, recog antlr.
 }
 
 func (s *PrimaryExpressionContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterPrimaryExpression(s)
 	}
 }
 
 func (s *PrimaryExpressionContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitPrimaryExpression(s)
 	}
 }
 
 func (s *PrimaryExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitPrimaryExpression(s)
 
 	default:
@@ -7710,9 +7710,9 @@ func (s *PrimaryExpressionContext) Accept(visitor antlr.ParseTreeVisitor) interf
 	}
 }
 
-func (p *r2d2Parser) PrimaryExpression() (localctx IPrimaryExpressionContext) {
+func (p *R2D2Parser) PrimaryExpression() (localctx IPrimaryExpressionContext) {
 	localctx = NewPrimaryExpressionContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 72, r2d2ParserRULE_primaryExpression)
+	p.EnterRule(localctx, 72, R2D2ParserRULE_primaryExpression)
 	p.SetState(393)
 	p.GetErrorHandler().Sync(p)
 	if p.HasError() {
@@ -7720,29 +7720,29 @@ func (p *r2d2Parser) PrimaryExpression() (localctx IPrimaryExpressionContext) {
 	}
 
 	switch p.GetTokenStream().LA(1) {
-	case r2d2ParserIDENTIFIER:
+	case R2D2ParserIDENTIFIER:
 		p.EnterOuterAlt(localctx, 1)
 		{
 			p.SetState(386)
-			p.Match(r2d2ParserIDENTIFIER)
+			p.Match(R2D2ParserIDENTIFIER)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 			}
 		}
 
-	case r2d2ParserSTRING_LITERAL, r2d2ParserBOOL_LITERAL, r2d2ParserINT_LITERAL, r2d2ParserFLOAT_LITERAL:
+	case R2D2ParserSTRING_LITERAL, R2D2ParserBOOL_LITERAL, R2D2ParserINT_LITERAL, R2D2ParserFLOAT_LITERAL:
 		p.EnterOuterAlt(localctx, 2)
 		{
 			p.SetState(387)
 			p.Literal()
 		}
 
-	case r2d2ParserLPAREN:
+	case R2D2ParserLPAREN:
 		p.EnterOuterAlt(localctx, 3)
 		{
 			p.SetState(388)
-			p.Match(r2d2ParserLPAREN)
+			p.Match(R2D2ParserLPAREN)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
@@ -7754,14 +7754,14 @@ func (p *r2d2Parser) PrimaryExpression() (localctx IPrimaryExpressionContext) {
 		}
 		{
 			p.SetState(390)
-			p.Match(r2d2ParserRPAREN)
+			p.Match(R2D2ParserRPAREN)
 			if p.HasError() {
 				// Recognition error - abort rule
 				goto errorExit
 			}
 		}
 
-	case r2d2ParserLBRACK:
+	case R2D2ParserLBRACK:
 		p.EnterOuterAlt(localctx, 4)
 		{
 			p.SetState(392)
@@ -7813,13 +7813,13 @@ type ArrayLiteralContext struct {
 func NewEmptyArrayLiteralContext() *ArrayLiteralContext {
 	var p = new(ArrayLiteralContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_arrayLiteral
+	p.RuleIndex = R2D2ParserRULE_arrayLiteral
 	return p
 }
 
 func InitEmptyArrayLiteralContext(p *ArrayLiteralContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_arrayLiteral
+	p.RuleIndex = R2D2ParserRULE_arrayLiteral
 }
 
 func (*ArrayLiteralContext) IsArrayLiteralContext() {}
@@ -7830,7 +7830,7 @@ func NewArrayLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext,
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_arrayLiteral
+	p.RuleIndex = R2D2ParserRULE_arrayLiteral
 
 	return p
 }
@@ -7838,11 +7838,11 @@ func NewArrayLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext,
 func (s *ArrayLiteralContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *ArrayLiteralContext) LBRACK() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLBRACK, 0)
+	return s.GetToken(R2D2ParserLBRACK, 0)
 }
 
 func (s *ArrayLiteralContext) RBRACK() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRBRACK, 0)
+	return s.GetToken(R2D2ParserRBRACK, 0)
 }
 
 func (s *ArrayLiteralContext) AllExpression() []IExpressionContext {
@@ -7887,11 +7887,11 @@ func (s *ArrayLiteralContext) Expression(i int) IExpressionContext {
 }
 
 func (s *ArrayLiteralContext) AllCOMMA() []antlr.TerminalNode {
-	return s.GetTokens(r2d2ParserCOMMA)
+	return s.GetTokens(R2D2ParserCOMMA)
 }
 
 func (s *ArrayLiteralContext) COMMA(i int) antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCOMMA, i)
+	return s.GetToken(R2D2ParserCOMMA, i)
 }
 
 func (s *ArrayLiteralContext) GetRuleContext() antlr.RuleContext {
@@ -7903,20 +7903,20 @@ func (s *ArrayLiteralContext) ToStringTree(ruleNames []string, recog antlr.Recog
 }
 
 func (s *ArrayLiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterArrayLiteral(s)
 	}
 }
 
 func (s *ArrayLiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitArrayLiteral(s)
 	}
 }
 
 func (s *ArrayLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitArrayLiteral(s)
 
 	default:
@@ -7924,15 +7924,15 @@ func (s *ArrayLiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{}
 	}
 }
 
-func (p *r2d2Parser) ArrayLiteral() (localctx IArrayLiteralContext) {
+func (p *R2D2Parser) ArrayLiteral() (localctx IArrayLiteralContext) {
 	localctx = NewArrayLiteralContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 74, r2d2ParserRULE_arrayLiteral)
+	p.EnterRule(localctx, 74, R2D2ParserRULE_arrayLiteral)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(395)
-		p.Match(r2d2ParserLBRACK)
+		p.Match(R2D2ParserLBRACK)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -7957,10 +7957,10 @@ func (p *r2d2Parser) ArrayLiteral() (localctx IArrayLiteralContext) {
 		}
 		_la = p.GetTokenStream().LA(1)
 
-		for _la == r2d2ParserCOMMA {
+		for _la == R2D2ParserCOMMA {
 			{
 				p.SetState(397)
-				p.Match(r2d2ParserCOMMA)
+				p.Match(R2D2ParserCOMMA)
 				if p.HasError() {
 					// Recognition error - abort rule
 					goto errorExit
@@ -7982,7 +7982,7 @@ func (p *r2d2Parser) ArrayLiteral() (localctx IArrayLiteralContext) {
 	}
 	{
 		p.SetState(406)
-		p.Match(r2d2ParserRBRACK)
+		p.Match(R2D2ParserRBRACK)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8027,13 +8027,13 @@ type LiteralContext struct {
 func NewEmptyLiteralContext() *LiteralContext {
 	var p = new(LiteralContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_literal
+	p.RuleIndex = R2D2ParserRULE_literal
 	return p
 }
 
 func InitEmptyLiteralContext(p *LiteralContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_literal
+	p.RuleIndex = R2D2ParserRULE_literal
 }
 
 func (*LiteralContext) IsLiteralContext() {}
@@ -8044,7 +8044,7 @@ func NewLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invo
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_literal
+	p.RuleIndex = R2D2ParserRULE_literal
 
 	return p
 }
@@ -8052,19 +8052,19 @@ func NewLiteralContext(parser antlr.Parser, parent antlr.ParserRuleContext, invo
 func (s *LiteralContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *LiteralContext) INT_LITERAL() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserINT_LITERAL, 0)
+	return s.GetToken(R2D2ParserINT_LITERAL, 0)
 }
 
 func (s *LiteralContext) FLOAT_LITERAL() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserFLOAT_LITERAL, 0)
+	return s.GetToken(R2D2ParserFLOAT_LITERAL, 0)
 }
 
 func (s *LiteralContext) STRING_LITERAL() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSTRING_LITERAL, 0)
+	return s.GetToken(R2D2ParserSTRING_LITERAL, 0)
 }
 
 func (s *LiteralContext) BOOL_LITERAL() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserBOOL_LITERAL, 0)
+	return s.GetToken(R2D2ParserBOOL_LITERAL, 0)
 }
 
 func (s *LiteralContext) GetRuleContext() antlr.RuleContext {
@@ -8076,20 +8076,20 @@ func (s *LiteralContext) ToStringTree(ruleNames []string, recog antlr.Recognizer
 }
 
 func (s *LiteralContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterLiteral(s)
 	}
 }
 
 func (s *LiteralContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitLiteral(s)
 	}
 }
 
 func (s *LiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitLiteral(s)
 
 	default:
@@ -8097,9 +8097,9 @@ func (s *LiteralContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) Literal() (localctx ILiteralContext) {
+func (p *R2D2Parser) Literal() (localctx ILiteralContext) {
 	localctx = NewLiteralContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 76, r2d2ParserRULE_literal)
+	p.EnterRule(localctx, 76, R2D2ParserRULE_literal)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
@@ -8153,13 +8153,13 @@ type BlockContext struct {
 func NewEmptyBlockContext() *BlockContext {
 	var p = new(BlockContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_block
+	p.RuleIndex = R2D2ParserRULE_block
 	return p
 }
 
 func InitEmptyBlockContext(p *BlockContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_block
+	p.RuleIndex = R2D2ParserRULE_block
 }
 
 func (*BlockContext) IsBlockContext() {}
@@ -8170,7 +8170,7 @@ func NewBlockContext(parser antlr.Parser, parent antlr.ParserRuleContext, invoki
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_block
+	p.RuleIndex = R2D2ParserRULE_block
 
 	return p
 }
@@ -8178,11 +8178,11 @@ func NewBlockContext(parser antlr.Parser, parent antlr.ParserRuleContext, invoki
 func (s *BlockContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *BlockContext) LBRACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLBRACE, 0)
+	return s.GetToken(R2D2ParserLBRACE, 0)
 }
 
 func (s *BlockContext) RBRACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRBRACE, 0)
+	return s.GetToken(R2D2ParserRBRACE, 0)
 }
 
 func (s *BlockContext) AllStatement() []IStatementContext {
@@ -8235,20 +8235,20 @@ func (s *BlockContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) 
 }
 
 func (s *BlockContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterBlock(s)
 	}
 }
 
 func (s *BlockContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitBlock(s)
 	}
 }
 
 func (s *BlockContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitBlock(s)
 
 	default:
@@ -8256,15 +8256,15 @@ func (s *BlockContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) Block() (localctx IBlockContext) {
+func (p *R2D2Parser) Block() (localctx IBlockContext) {
 	localctx = NewBlockContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 78, r2d2ParserRULE_block)
+	p.EnterRule(localctx, 78, R2D2ParserRULE_block)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(410)
-		p.Match(r2d2ParserLBRACE)
+		p.Match(R2D2ParserLBRACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8292,7 +8292,7 @@ func (p *r2d2Parser) Block() (localctx IBlockContext) {
 	}
 	{
 		p.SetState(417)
-		p.Match(r2d2ParserRBRACE)
+		p.Match(R2D2ParserRBRACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8342,13 +8342,13 @@ type SwitchStatementContext struct {
 func NewEmptySwitchStatementContext() *SwitchStatementContext {
 	var p = new(SwitchStatementContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_switchStatement
+	p.RuleIndex = R2D2ParserRULE_switchStatement
 	return p
 }
 
 func InitEmptySwitchStatementContext(p *SwitchStatementContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_switchStatement
+	p.RuleIndex = R2D2ParserRULE_switchStatement
 }
 
 func (*SwitchStatementContext) IsSwitchStatementContext() {}
@@ -8359,7 +8359,7 @@ func NewSwitchStatementContext(parser antlr.Parser, parent antlr.ParserRuleConte
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_switchStatement
+	p.RuleIndex = R2D2ParserRULE_switchStatement
 
 	return p
 }
@@ -8367,11 +8367,11 @@ func NewSwitchStatementContext(parser antlr.Parser, parent antlr.ParserRuleConte
 func (s *SwitchStatementContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *SwitchStatementContext) SWITCH() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserSWITCH, 0)
+	return s.GetToken(R2D2ParserSWITCH, 0)
 }
 
 func (s *SwitchStatementContext) LPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLPAREN, 0)
+	return s.GetToken(R2D2ParserLPAREN, 0)
 }
 
 func (s *SwitchStatementContext) Expression() IExpressionContext {
@@ -8391,15 +8391,15 @@ func (s *SwitchStatementContext) Expression() IExpressionContext {
 }
 
 func (s *SwitchStatementContext) RPAREN() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRPAREN, 0)
+	return s.GetToken(R2D2ParserRPAREN, 0)
 }
 
 func (s *SwitchStatementContext) LBRACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserLBRACE, 0)
+	return s.GetToken(R2D2ParserLBRACE, 0)
 }
 
 func (s *SwitchStatementContext) RBRACE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserRBRACE, 0)
+	return s.GetToken(R2D2ParserRBRACE, 0)
 }
 
 func (s *SwitchStatementContext) AllSwitchCase() []ISwitchCaseContext {
@@ -8468,20 +8468,20 @@ func (s *SwitchStatementContext) ToStringTree(ruleNames []string, recog antlr.Re
 }
 
 func (s *SwitchStatementContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterSwitchStatement(s)
 	}
 }
 
 func (s *SwitchStatementContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitSwitchStatement(s)
 	}
 }
 
 func (s *SwitchStatementContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitSwitchStatement(s)
 
 	default:
@@ -8489,15 +8489,15 @@ func (s *SwitchStatementContext) Accept(visitor antlr.ParseTreeVisitor) interfac
 	}
 }
 
-func (p *r2d2Parser) SwitchStatement() (localctx ISwitchStatementContext) {
+func (p *R2D2Parser) SwitchStatement() (localctx ISwitchStatementContext) {
 	localctx = NewSwitchStatementContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 80, r2d2ParserRULE_switchStatement)
+	p.EnterRule(localctx, 80, R2D2ParserRULE_switchStatement)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(419)
-		p.Match(r2d2ParserSWITCH)
+		p.Match(R2D2ParserSWITCH)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8505,7 +8505,7 @@ func (p *r2d2Parser) SwitchStatement() (localctx ISwitchStatementContext) {
 	}
 	{
 		p.SetState(420)
-		p.Match(r2d2ParserLPAREN)
+		p.Match(R2D2ParserLPAREN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8517,7 +8517,7 @@ func (p *r2d2Parser) SwitchStatement() (localctx ISwitchStatementContext) {
 	}
 	{
 		p.SetState(422)
-		p.Match(r2d2ParserRPAREN)
+		p.Match(R2D2ParserRPAREN)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8525,7 +8525,7 @@ func (p *r2d2Parser) SwitchStatement() (localctx ISwitchStatementContext) {
 	}
 	{
 		p.SetState(423)
-		p.Match(r2d2ParserLBRACE)
+		p.Match(R2D2ParserLBRACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8538,7 +8538,7 @@ func (p *r2d2Parser) SwitchStatement() (localctx ISwitchStatementContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	for _la == r2d2ParserCASE {
+	for _la == R2D2ParserCASE {
 		{
 			p.SetState(424)
 			p.SwitchCase()
@@ -8558,7 +8558,7 @@ func (p *r2d2Parser) SwitchStatement() (localctx ISwitchStatementContext) {
 	}
 	_la = p.GetTokenStream().LA(1)
 
-	if _la == r2d2ParserDEFAULT {
+	if _la == R2D2ParserDEFAULT {
 		{
 			p.SetState(430)
 			p.DefaultCase()
@@ -8567,7 +8567,7 @@ func (p *r2d2Parser) SwitchStatement() (localctx ISwitchStatementContext) {
 	}
 	{
 		p.SetState(433)
-		p.Match(r2d2ParserRBRACE)
+		p.Match(R2D2ParserRBRACE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8612,13 +8612,13 @@ type SwitchCaseContext struct {
 func NewEmptySwitchCaseContext() *SwitchCaseContext {
 	var p = new(SwitchCaseContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_switchCase
+	p.RuleIndex = R2D2ParserRULE_switchCase
 	return p
 }
 
 func InitEmptySwitchCaseContext(p *SwitchCaseContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_switchCase
+	p.RuleIndex = R2D2ParserRULE_switchCase
 }
 
 func (*SwitchCaseContext) IsSwitchCaseContext() {}
@@ -8629,7 +8629,7 @@ func NewSwitchCaseContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_switchCase
+	p.RuleIndex = R2D2ParserRULE_switchCase
 
 	return p
 }
@@ -8637,7 +8637,7 @@ func NewSwitchCaseContext(parser antlr.Parser, parent antlr.ParserRuleContext, i
 func (s *SwitchCaseContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *SwitchCaseContext) CASE() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCASE, 0)
+	return s.GetToken(R2D2ParserCASE, 0)
 }
 
 func (s *SwitchCaseContext) Expression() IExpressionContext {
@@ -8657,7 +8657,7 @@ func (s *SwitchCaseContext) Expression() IExpressionContext {
 }
 
 func (s *SwitchCaseContext) COLON() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCOLON, 0)
+	return s.GetToken(R2D2ParserCOLON, 0)
 }
 
 func (s *SwitchCaseContext) Block() IBlockContext {
@@ -8685,20 +8685,20 @@ func (s *SwitchCaseContext) ToStringTree(ruleNames []string, recog antlr.Recogni
 }
 
 func (s *SwitchCaseContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterSwitchCase(s)
 	}
 }
 
 func (s *SwitchCaseContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitSwitchCase(s)
 	}
 }
 
 func (s *SwitchCaseContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitSwitchCase(s)
 
 	default:
@@ -8706,13 +8706,13 @@ func (s *SwitchCaseContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	}
 }
 
-func (p *r2d2Parser) SwitchCase() (localctx ISwitchCaseContext) {
+func (p *R2D2Parser) SwitchCase() (localctx ISwitchCaseContext) {
 	localctx = NewSwitchCaseContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 82, r2d2ParserRULE_switchCase)
+	p.EnterRule(localctx, 82, R2D2ParserRULE_switchCase)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(435)
-		p.Match(r2d2ParserCASE)
+		p.Match(R2D2ParserCASE)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8724,7 +8724,7 @@ func (p *r2d2Parser) SwitchCase() (localctx ISwitchCaseContext) {
 	}
 	{
 		p.SetState(437)
-		p.Match(r2d2ParserCOLON)
+		p.Match(R2D2ParserCOLON)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8772,13 +8772,13 @@ type DefaultCaseContext struct {
 func NewEmptyDefaultCaseContext() *DefaultCaseContext {
 	var p = new(DefaultCaseContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_defaultCase
+	p.RuleIndex = R2D2ParserRULE_defaultCase
 	return p
 }
 
 func InitEmptyDefaultCaseContext(p *DefaultCaseContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = r2d2ParserRULE_defaultCase
+	p.RuleIndex = R2D2ParserRULE_defaultCase
 }
 
 func (*DefaultCaseContext) IsDefaultCaseContext() {}
@@ -8789,7 +8789,7 @@ func NewDefaultCaseContext(parser antlr.Parser, parent antlr.ParserRuleContext, 
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = r2d2ParserRULE_defaultCase
+	p.RuleIndex = R2D2ParserRULE_defaultCase
 
 	return p
 }
@@ -8797,11 +8797,11 @@ func NewDefaultCaseContext(parser antlr.Parser, parent antlr.ParserRuleContext, 
 func (s *DefaultCaseContext) GetParser() antlr.Parser { return s.parser }
 
 func (s *DefaultCaseContext) DEFAULT() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserDEFAULT, 0)
+	return s.GetToken(R2D2ParserDEFAULT, 0)
 }
 
 func (s *DefaultCaseContext) COLON() antlr.TerminalNode {
-	return s.GetToken(r2d2ParserCOLON, 0)
+	return s.GetToken(R2D2ParserCOLON, 0)
 }
 
 func (s *DefaultCaseContext) Block() IBlockContext {
@@ -8829,20 +8829,20 @@ func (s *DefaultCaseContext) ToStringTree(ruleNames []string, recog antlr.Recogn
 }
 
 func (s *DefaultCaseContext) EnterRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.EnterDefaultCase(s)
 	}
 }
 
 func (s *DefaultCaseContext) ExitRule(listener antlr.ParseTreeListener) {
-	if listenerT, ok := listener.(r2d2Listener); ok {
+	if listenerT, ok := listener.(R2D2Listener); ok {
 		listenerT.ExitDefaultCase(s)
 	}
 }
 
 func (s *DefaultCaseContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
-	case r2d2Visitor:
+	case R2D2Visitor:
 		return t.VisitDefaultCase(s)
 
 	default:
@@ -8850,13 +8850,13 @@ func (s *DefaultCaseContext) Accept(visitor antlr.ParseTreeVisitor) interface{} 
 	}
 }
 
-func (p *r2d2Parser) DefaultCase() (localctx IDefaultCaseContext) {
+func (p *R2D2Parser) DefaultCase() (localctx IDefaultCaseContext) {
 	localctx = NewDefaultCaseContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 84, r2d2ParserRULE_defaultCase)
+	p.EnterRule(localctx, 84, R2D2ParserRULE_defaultCase)
 	p.EnterOuterAlt(localctx, 1)
 	{
 		p.SetState(440)
-		p.Match(r2d2ParserDEFAULT)
+		p.Match(R2D2ParserDEFAULT)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
@@ -8864,7 +8864,7 @@ func (p *r2d2Parser) DefaultCase() (localctx IDefaultCaseContext) {
 	}
 	{
 		p.SetState(441)
-		p.Match(r2d2ParserCOLON)
+		p.Match(R2D2ParserCOLON)
 		if p.HasError() {
 			// Recognition error - abort rule
 			goto errorExit
