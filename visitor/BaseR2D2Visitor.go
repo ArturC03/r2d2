@@ -16,7 +16,7 @@ func NewMyVisitor() *MyVisitor {
 }
 
 // Exemplo: Visitar o nó principal da gramática
-func (v *MyVisitor) VisitR2D2(ctx *parser.R2D2Context) interface{} {
+func (v *MyVisitor) VisitR2D2(ctx *parser.ProgramContext) interface{} {
 	fmt.Println("🚀 Visitando nó principal: R2D2")
 	return v.VisitChildren(ctx) // Continua visitando os filhos
 }
