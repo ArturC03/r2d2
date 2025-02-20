@@ -2,27 +2,56 @@ package main
 
 import (
 	"fmt"
-	"github.com/ArturC03/r2d2/parser"
-	"github.com/ArturC03/r2d2/visitor"
+	"log"
+
 	"github.com/antlr4-go/antlr/v4"
+	"r2d2/parser"
+	"r2d2/visitor"
 )
 
 func main() {
-	// Código de entrada para ser analisado
-	input := antlr.NewInputStream("import asd from dsa")
+	// Criar um stream de entrada
+	input := antlr.NewInputStream(`module cookie{fn main(){}}`) // Ajuste conforme a gramática
+	log.Println("✅ Input stream criado.")
 
-	// Criar Lexer, Token Stream e Parser
+	// Criar Lexer
 	lexer := parser.NewR2D2Lexer(input)
+	if lexer == nil {
+		log.Fatal("❌ Erro: Lexer não foi inicializado corretamente!")
+	}
+	log.Println("✅ Lexer criado.")
+
+	// Criar Token Stream
 	stream := antlr.NewCommonTokenStream(lexer, 0)
+	log.Println("✅ Token stream criado.")
+
+	// Criar Parser
 	p := parser.NewR2D2Parser(stream)
+	if p == nil {
+		log.Fatal("❌ Erro: Parser não foi inicializado corretamente!")
+	}
+	log.Println("✅ Parser criado.")
+
+	// Construir a árvore de parse
 	p.BuildParseTrees = true
+	tree := p.Program() // Ajuste conforme sua regra principal
+	if tree == nil {
+		log.Fatal("❌ Erro: Árvore sintática não foi criada corretamente!")
+	}
+	log.Println("✅ Árvore sintática criada.")
 
-	// Criar árvore sintática
-	tree := p.R2D2() // 🛠️ Certifica-te de usar a regra correta!
+	// Criar e aplicar o Visitor
+	v := visitor.NewR2D2Visitor()
+	if v == nil {
+		log.Fatal("❌ Erro: Visitor não foi inicializado corretamente!")
+	}
+	log.Println("✅ Visitor criado.")
 
-	// Criar e aplicar o visitor
-	v := visitor.NewMyVisitor()
-	result := v.Visit(tree)
+	// Aplicar o visitor na árvore - esta é a forma correta para ANTLR em Go
+	result := tree.Accept(v)
 
+	log.Println("✅ Visitor aplicado com sucesso.")
+
+	// Exibir o resultado
 	fmt.Println("🚀 Resultado do Visitor:", result)
 }

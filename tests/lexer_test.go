@@ -1,7 +1,7 @@
 package tests
 
 import (
-	"github.com/ArturC03/r2d2/lexer" // Caminho correto do módulo
+	"r2d2/lexer" // Caminho correto do módulo
 	"testing"
 )
 
