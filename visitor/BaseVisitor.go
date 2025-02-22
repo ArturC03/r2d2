@@ -31,22 +31,22 @@ func (v *R2D2Visitor) VisitChildren(node antlr.RuleNode) any {
 }
 
 func (v *R2D2Visitor) VisitProgram(ctx *parser.ProgramContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("Visitando Program!"))
+	// fmt.Println(r2d2Styles.InfoMessage("Visitando Program!"))
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitDeclaration(ctx *parser.DeclarationContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("Visitando Declaration: " + ctx.GetText()))
+	// fmt.Println(r2d2Styles.InfoMessage("Visitando Declaration: " + ctx.GetText()))
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("Import detectado: " + ctx.GetText()))
+	// fmt.Println(r2d2Styles.InfoMessage("Import detectado: " + ctx.GetText()))
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("Module detectado: " + ctx.GetText()))
+	// fmt.Println(r2d2Styles.InfoMessage("Module detectado: " + ctx.GetText()))
 	return v.VisitChildren(ctx)
 }
 
@@ -76,7 +76,7 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 				if stmtCtx, ok := child.(*parser.StatementContext); ok {
 
 					// If it is a function call
-					if functionCallStmt, ok := stmtCtx.GetChild(0).(*parser.FunctionCallStatementContext); ok {
+					if _, ok := stmtCtx.GetChild(0).(*parser.FunctionCallStatementContext); ok {
 						// fmt.Println(r2d2Styles.InfoMessage("Encontrado FunctionCallStatement: " + functionCallStmt.GetText()))
 					} else {
 						// Invalid statement inside pseudo function
