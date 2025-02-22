@@ -7,17 +7,14 @@ import (
 	"github.com/antlr4-go/antlr/v4"
 )
 
-// R2D2Visitor implements the parser.R2D2Visitor interface
 type R2D2Visitor struct {
 	parser.BaseR2D2Visitor
 }
 
-// NewR2D2Visitor creates a new R2D2Visitor
 func NewR2D2Visitor() *R2D2Visitor {
 	return &R2D2Visitor{}
 }
 
-// VisitChildren correctly implements the visitation of child nodes
 func (v *R2D2Visitor) VisitChildren(node antlr.RuleNode) any {
 	var result any
 
@@ -33,59 +30,58 @@ func (v *R2D2Visitor) VisitChildren(node antlr.RuleNode) any {
 	return result
 }
 
-// VisitProgram handles the Program node visitation
 func (v *R2D2Visitor) VisitProgram(ctx *parser.ProgramContext) any {
-	fmt.Println(r2d2Styles.InfoMessage.Render("🚀 Visitando Program!"))
+	fmt.Println(r2d2Styles.InfoMessage("Visitando Program!"))
 	return v.VisitChildren(ctx)
 }
 
-// VisitDeclaration handles the Declaration node visitation
 func (v *R2D2Visitor) VisitDeclaration(ctx *parser.DeclarationContext) any {
-	fmt.Println(r2d2Styles.InfoMessage.Render("📄 Visitando Declaration: " + ctx.GetText()))
+	fmt.Println(r2d2Styles.InfoMessage("Visitando Declaration: " + ctx.GetText()))
 	return v.VisitChildren(ctx)
 }
 
-// VisitImportDeclaration handles the ImportDeclaration node visitation
 func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContext) any {
-	fmt.Println(r2d2Styles.InfoMessage.Render("📥 Import detectado: " + ctx.GetText()))
+	fmt.Println(r2d2Styles.InfoMessage("Import detectado: " + ctx.GetText()))
 	return v.VisitChildren(ctx)
 }
 
-// VisitModuleDeclaration handles the ModuleDeclaration node visitation
 func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContext) any {
-	fmt.Println(r2d2Styles.InfoMessage.Render("📦 Module detectado: " + ctx.GetText()))
+	fmt.Println(r2d2Styles.InfoMessage("Module detectado: " + ctx.GetText()))
 	return v.VisitChildren(ctx)
 }
 
-// VisitFunctionDeclaration handles the FunctionDeclaration node visitation
 func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationContext) any {
-	// Example of adding validation, you can expand on this
+	// Pseudo function
 	if ctx.PSEUDO() != nil {
-		fmt.Println(r2d2Styles.WarningMessage.Render("⚠️ Pseudo function declaration detected: " + ctx.GetText()))
+		// fmt.Println(r2d2Styles.WarningMessage("Pseudo function declaration detected: " + ctx.GetText()))
+
 	} else {
-		fmt.Println(r2d2Styles.InfoMessage.Render("🔧 Function declaration: " + ctx.GetText()))
+		// Directly call InfoMessage without .Render
+		// fmt.Println(r2d2Styles.InfoMessage("Function declaration: " + ctx.GetText()))
 	}
 	return v.VisitChildren(ctx)
 }
 
-// VisitBlock handles the Block node visitation, adding pseudo function validation
 func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
-	// Verifies if the block belongs to a pseudo function
-	if parentFuncDecl, ok := ctx.GetParent().(*parser.FunctionDeclarationContext); ok {
-		if parentFuncDecl.PSEUDO() != nil {
-			// If the parent function is a pseudo function, we check its contents
-			fmt.Println(r2d2Styles.InfoMessage.Render("📄 Encontrado bloco dentro de uma função pseudo: " + ctx.GetText()))
 
-			// Iterate over children to check statements
+	// Function
+	if parentFuncDecl, ok := ctx.GetParent().(*parser.FunctionDeclarationContext); ok {
+
+		// Pseudo function
+		if parentFuncDecl.PSEUDO() != nil {
+			// fmt.Println(r2d2Styles.InfoMessage("Encontrado bloco dentro de uma função pseudo: " + ctx.GetText()))
+
+			// For each statement inside the block
 			for _, child := range ctx.GetChildren() {
 				if stmtCtx, ok := child.(*parser.StatementContext); ok {
+
+					// If it is a function call
 					if functionCallStmt, ok := stmtCtx.GetChild(0).(*parser.FunctionCallStatementContext); ok {
-						// Function calls are valid inside pseudo functions
-						fmt.Println(r2d2Styles.InfoMessage.Render("✅ Encontrado FunctionCallStatement: " + functionCallStmt.GetText()))
+						// fmt.Println(r2d2Styles.InfoMessage("Encontrado FunctionCallStatement: " + functionCallStmt.GetText()))
 					} else {
 						// Invalid statement inside pseudo function
-						fmt.Println(r2d2Styles.ErrorMessage.Render("❌ Encontrado statement não permitido: " + stmtCtx.GetText()))
-						return fmt.Errorf("função pseudo só pode conter chamadas de função")
+						fmt.Println(r2d2Styles.ErrorMessage("Encontrado statement não permitido: " + stmtCtx.GetText()))
+						// return fmt.Errorf("função pseudo só pode conter chamadas de função")
 					}
 				}
 			}
