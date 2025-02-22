@@ -63,6 +63,18 @@ func (s *BaseR2D2Listener) EnterFunctionDeclaration(ctx *FunctionDeclarationCont
 // ExitFunctionDeclaration is called when production functionDeclaration is exited.
 func (s *BaseR2D2Listener) ExitFunctionDeclaration(ctx *FunctionDeclarationContext) {}
 
+// EnterFunctionCallStatement is called when production functionCallStatement is entered.
+func (s *BaseR2D2Listener) EnterFunctionCallStatement(ctx *FunctionCallStatementContext) {}
+
+// ExitFunctionCallStatement is called when production functionCallStatement is exited.
+func (s *BaseR2D2Listener) ExitFunctionCallStatement(ctx *FunctionCallStatementContext) {}
+
+// EnterFunctionCall is called when production functionCall is entered.
+func (s *BaseR2D2Listener) EnterFunctionCall(ctx *FunctionCallContext) {}
+
+// ExitFunctionCall is called when production functionCall is exited.
+func (s *BaseR2D2Listener) ExitFunctionCall(ctx *FunctionCallContext) {}
+
 // EnterParameterList is called when production parameterList is entered.
 func (s *BaseR2D2Listener) EnterParameterList(ctx *ParameterListContext) {}
 

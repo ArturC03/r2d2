@@ -34,6 +34,14 @@ functionDeclaration
   : (EXPORT)? (PSEUDO)? FN IDENTIFIER LPAREN parameterList? RPAREN (COLON typeExpression)? (block | SEMI)
   ;
 
+functionCallStatement
+  : functionCall SEMI
+  ;
+
+functionCall
+  : IDENTIFIER LPAREN argumentList? RPAREN
+  ;
+
 parameterList
   : parameter (COMMA parameter)*
   ;
@@ -70,6 +78,7 @@ variableDeclaration
 
 statement
   : variableDeclaration
+  | functionCallStatement
   | expressionStatement
   | ifStatement
   | forStatement
@@ -78,7 +87,6 @@ statement
   | loopControl
   | returnStatement
   | switchStatement
-  | block
   | assignmentDeclaration
   ;
 
@@ -178,6 +186,7 @@ primaryExpression
   | literal
   | LPAREN expression RPAREN
   | arrayLiteral
+  | functionCall
   ;
 
 arrayLiteral

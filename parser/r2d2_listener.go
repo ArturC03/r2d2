@@ -29,6 +29,12 @@ type R2D2Listener interface {
 	// EnterFunctionDeclaration is called when entering the functionDeclaration production.
 	EnterFunctionDeclaration(c *FunctionDeclarationContext)
 
+	// EnterFunctionCallStatement is called when entering the functionCallStatement production.
+	EnterFunctionCallStatement(c *FunctionCallStatementContext)
+
+	// EnterFunctionCall is called when entering the functionCall production.
+	EnterFunctionCall(c *FunctionCallContext)
+
 	// EnterParameterList is called when entering the parameterList production.
 	EnterParameterList(c *ParameterListContext)
 
@@ -157,6 +163,12 @@ type R2D2Listener interface {
 
 	// ExitFunctionDeclaration is called when exiting the functionDeclaration production.
 	ExitFunctionDeclaration(c *FunctionDeclarationContext)
+
+	// ExitFunctionCallStatement is called when exiting the functionCallStatement production.
+	ExitFunctionCallStatement(c *FunctionCallStatementContext)
+
+	// ExitFunctionCall is called when exiting the functionCall production.
+	ExitFunctionCall(c *FunctionCallContext)
 
 	// ExitParameterList is called when exiting the parameterList production.
 	ExitParameterList(c *ParameterListContext)

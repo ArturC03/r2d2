@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/ArturC03/r2d2/parser"
+	"github.com/ArturC03/r2d2/visitor"
 	"github.com/antlr4-go/antlr/v4"
-	"r2d2/parser"
-	"r2d2/visitor"
 )
 
 func main() {
 	// Criar um stream de entrada
-	input := antlr.NewInputStream(`module cookie{fn main(){}}`) // Ajuste conforme a gramática
+	input := antlr.NewInputStream(`module cookie{const csc:i32 = 2;pseudo fn main(){var i: i32 = 2; cookie(); while { ds();}}}`) // Ajuste conforme a gramática
 	log.Println("✅ Input stream criado.")
 
 	// Criar Lexer

@@ -8,174 +8,182 @@ type BaseR2D2Visitor struct {
 	*antlr.BaseParseTreeVisitor
 }
 
-func (v *BaseR2D2Visitor) VisitProgram(ctx *ProgramContext) any {
+func (v *BaseR2D2Visitor) VisitProgram(ctx *ProgramContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitDeclaration(ctx *DeclarationContext) any {
+func (v *BaseR2D2Visitor) VisitDeclaration(ctx *DeclarationContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitGlobalDeclaration(ctx *GlobalDeclarationContext) any {
+func (v *BaseR2D2Visitor) VisitGlobalDeclaration(ctx *GlobalDeclarationContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitImportDeclaration(ctx *ImportDeclarationContext) any {
+func (v *BaseR2D2Visitor) VisitImportDeclaration(ctx *ImportDeclarationContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitInterfaceDeclaration(ctx *InterfaceDeclarationContext) any {
+func (v *BaseR2D2Visitor) VisitInterfaceDeclaration(ctx *InterfaceDeclarationContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitModuleDeclaration(ctx *ModuleDeclarationContext) any {
+func (v *BaseR2D2Visitor) VisitModuleDeclaration(ctx *ModuleDeclarationContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitFunctionDeclaration(ctx *FunctionDeclarationContext) any {
+func (v *BaseR2D2Visitor) VisitFunctionDeclaration(ctx *FunctionDeclarationContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitParameterList(ctx *ParameterListContext) any {
+func (v *BaseR2D2Visitor) VisitFunctionCallStatement(ctx *FunctionCallStatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitParameter(ctx *ParameterContext) any {
+func (v *BaseR2D2Visitor) VisitFunctionCall(ctx *FunctionCallContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitTypeExpression(ctx *TypeExpressionContext) any {
+func (v *BaseR2D2Visitor) VisitParameterList(ctx *ParameterListContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitArrayDimensions(ctx *ArrayDimensionsContext) any {
+func (v *BaseR2D2Visitor) VisitParameter(ctx *ParameterContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitBaseType(ctx *BaseTypeContext) any {
+func (v *BaseR2D2Visitor) VisitTypeExpression(ctx *TypeExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitGenericType(ctx *GenericTypeContext) any {
+func (v *BaseR2D2Visitor) VisitArrayDimensions(ctx *ArrayDimensionsContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitTypeDeclaration(ctx *TypeDeclarationContext) any {
+func (v *BaseR2D2Visitor) VisitBaseType(ctx *BaseTypeContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitVariableDeclaration(ctx *VariableDeclarationContext) any {
+func (v *BaseR2D2Visitor) VisitGenericType(ctx *GenericTypeContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitStatement(ctx *StatementContext) any {
+func (v *BaseR2D2Visitor) VisitTypeDeclaration(ctx *TypeDeclarationContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitExpressionStatement(ctx *ExpressionStatementContext) any {
+func (v *BaseR2D2Visitor) VisitVariableDeclaration(ctx *VariableDeclarationContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitIfStatement(ctx *IfStatementContext) any {
+func (v *BaseR2D2Visitor) VisitStatement(ctx *StatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitForStatement(ctx *ForStatementContext) any {
+func (v *BaseR2D2Visitor) VisitExpressionStatement(ctx *ExpressionStatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitAssignmentDeclaration(ctx *AssignmentDeclarationContext) any {
+func (v *BaseR2D2Visitor) VisitIfStatement(ctx *IfStatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitAssignment(ctx *AssignmentContext) any {
+func (v *BaseR2D2Visitor) VisitForStatement(ctx *ForStatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitAssignmentOperator(ctx *AssignmentOperatorContext) any {
+func (v *BaseR2D2Visitor) VisitAssignmentDeclaration(ctx *AssignmentDeclarationContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitSimpleFor(ctx *SimpleForContext) any {
+func (v *BaseR2D2Visitor) VisitAssignment(ctx *AssignmentContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitWhileStatement(ctx *WhileStatementContext) any {
+func (v *BaseR2D2Visitor) VisitAssignmentOperator(ctx *AssignmentOperatorContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitLoopStatement(ctx *LoopStatementContext) any {
+func (v *BaseR2D2Visitor) VisitSimpleFor(ctx *SimpleForContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitLoopControl(ctx *LoopControlContext) any {
+func (v *BaseR2D2Visitor) VisitWhileStatement(ctx *WhileStatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitReturnStatement(ctx *ReturnStatementContext) any {
+func (v *BaseR2D2Visitor) VisitLoopStatement(ctx *LoopStatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitExpression(ctx *ExpressionContext) any {
+func (v *BaseR2D2Visitor) VisitLoopControl(ctx *LoopControlContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitLogicalExpression(ctx *LogicalExpressionContext) any {
+func (v *BaseR2D2Visitor) VisitReturnStatement(ctx *ReturnStatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitComparisonExpression(ctx *ComparisonExpressionContext) any {
+func (v *BaseR2D2Visitor) VisitExpression(ctx *ExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitAdditiveExpression(ctx *AdditiveExpressionContext) any {
+func (v *BaseR2D2Visitor) VisitLogicalExpression(ctx *LogicalExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitMultiplicativeExpression(ctx *MultiplicativeExpressionContext) any {
+func (v *BaseR2D2Visitor) VisitComparisonExpression(ctx *ComparisonExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitUnaryExpression(ctx *UnaryExpressionContext) any {
+func (v *BaseR2D2Visitor) VisitAdditiveExpression(ctx *AdditiveExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitMemberExpression(ctx *MemberExpressionContext) any {
+func (v *BaseR2D2Visitor) VisitMultiplicativeExpression(ctx *MultiplicativeExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitMemberPart(ctx *MemberPartContext) any {
+func (v *BaseR2D2Visitor) VisitUnaryExpression(ctx *UnaryExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitArgumentList(ctx *ArgumentListContext) any {
+func (v *BaseR2D2Visitor) VisitMemberExpression(ctx *MemberExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitPrimaryExpression(ctx *PrimaryExpressionContext) any {
+func (v *BaseR2D2Visitor) VisitMemberPart(ctx *MemberPartContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitArrayLiteral(ctx *ArrayLiteralContext) any {
+func (v *BaseR2D2Visitor) VisitArgumentList(ctx *ArgumentListContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitLiteral(ctx *LiteralContext) any {
+func (v *BaseR2D2Visitor) VisitPrimaryExpression(ctx *PrimaryExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitBlock(ctx *BlockContext) any {
+func (v *BaseR2D2Visitor) VisitArrayLiteral(ctx *ArrayLiteralContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitSwitchStatement(ctx *SwitchStatementContext) any {
+func (v *BaseR2D2Visitor) VisitLiteral(ctx *LiteralContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitSwitchCase(ctx *SwitchCaseContext) any {
+func (v *BaseR2D2Visitor) VisitBlock(ctx *BlockContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitDefaultCase(ctx *DefaultCaseContext) any {
+func (v *BaseR2D2Visitor) VisitSwitchStatement(ctx *SwitchStatementContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseR2D2Visitor) VisitSwitchCase(ctx *SwitchCaseContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseR2D2Visitor) VisitDefaultCase(ctx *DefaultCaseContext) interface{} {
 	return v.VisitChildren(ctx)
 }

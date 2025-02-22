@@ -9,131 +9,137 @@ type R2D2Visitor interface {
 	antlr.ParseTreeVisitor
 
 	// Visit a parse tree produced by R2D2Parser#program.
-	VisitProgram(ctx *ProgramContext) any
+	VisitProgram(ctx *ProgramContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#declaration.
-	VisitDeclaration(ctx *DeclarationContext) any
+	VisitDeclaration(ctx *DeclarationContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#globalDeclaration.
-	VisitGlobalDeclaration(ctx *GlobalDeclarationContext) any
+	VisitGlobalDeclaration(ctx *GlobalDeclarationContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#importDeclaration.
-	VisitImportDeclaration(ctx *ImportDeclarationContext) any
+	VisitImportDeclaration(ctx *ImportDeclarationContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#interfaceDeclaration.
-	VisitInterfaceDeclaration(ctx *InterfaceDeclarationContext) any
+	VisitInterfaceDeclaration(ctx *InterfaceDeclarationContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#moduleDeclaration.
-	VisitModuleDeclaration(ctx *ModuleDeclarationContext) any
+	VisitModuleDeclaration(ctx *ModuleDeclarationContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#functionDeclaration.
-	VisitFunctionDeclaration(ctx *FunctionDeclarationContext) any
+	VisitFunctionDeclaration(ctx *FunctionDeclarationContext) interface{}
+
+	// Visit a parse tree produced by R2D2Parser#functionCallStatement.
+	VisitFunctionCallStatement(ctx *FunctionCallStatementContext) interface{}
+
+	// Visit a parse tree produced by R2D2Parser#functionCall.
+	VisitFunctionCall(ctx *FunctionCallContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#parameterList.
-	VisitParameterList(ctx *ParameterListContext) any
+	VisitParameterList(ctx *ParameterListContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#parameter.
-	VisitParameter(ctx *ParameterContext) any
+	VisitParameter(ctx *ParameterContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#typeExpression.
-	VisitTypeExpression(ctx *TypeExpressionContext) any
+	VisitTypeExpression(ctx *TypeExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#arrayDimensions.
-	VisitArrayDimensions(ctx *ArrayDimensionsContext) any
+	VisitArrayDimensions(ctx *ArrayDimensionsContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#baseType.
-	VisitBaseType(ctx *BaseTypeContext) any
+	VisitBaseType(ctx *BaseTypeContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#genericType.
-	VisitGenericType(ctx *GenericTypeContext) any
+	VisitGenericType(ctx *GenericTypeContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#typeDeclaration.
-	VisitTypeDeclaration(ctx *TypeDeclarationContext) any
+	VisitTypeDeclaration(ctx *TypeDeclarationContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#variableDeclaration.
-	VisitVariableDeclaration(ctx *VariableDeclarationContext) any
+	VisitVariableDeclaration(ctx *VariableDeclarationContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#statement.
-	VisitStatement(ctx *StatementContext) any
+	VisitStatement(ctx *StatementContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#expressionStatement.
-	VisitExpressionStatement(ctx *ExpressionStatementContext) any
+	VisitExpressionStatement(ctx *ExpressionStatementContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#ifStatement.
-	VisitIfStatement(ctx *IfStatementContext) any
+	VisitIfStatement(ctx *IfStatementContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#forStatement.
-	VisitForStatement(ctx *ForStatementContext) any
+	VisitForStatement(ctx *ForStatementContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#assignmentDeclaration.
-	VisitAssignmentDeclaration(ctx *AssignmentDeclarationContext) any
+	VisitAssignmentDeclaration(ctx *AssignmentDeclarationContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#assignment.
-	VisitAssignment(ctx *AssignmentContext) any
+	VisitAssignment(ctx *AssignmentContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#assignmentOperator.
-	VisitAssignmentOperator(ctx *AssignmentOperatorContext) any
+	VisitAssignmentOperator(ctx *AssignmentOperatorContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#simpleFor.
-	VisitSimpleFor(ctx *SimpleForContext) any
+	VisitSimpleFor(ctx *SimpleForContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#whileStatement.
-	VisitWhileStatement(ctx *WhileStatementContext) any
+	VisitWhileStatement(ctx *WhileStatementContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#loopStatement.
-	VisitLoopStatement(ctx *LoopStatementContext) any
+	VisitLoopStatement(ctx *LoopStatementContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#loopControl.
-	VisitLoopControl(ctx *LoopControlContext) any
+	VisitLoopControl(ctx *LoopControlContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#returnStatement.
-	VisitReturnStatement(ctx *ReturnStatementContext) any
+	VisitReturnStatement(ctx *ReturnStatementContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#expression.
-	VisitExpression(ctx *ExpressionContext) any
+	VisitExpression(ctx *ExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#logicalExpression.
-	VisitLogicalExpression(ctx *LogicalExpressionContext) any
+	VisitLogicalExpression(ctx *LogicalExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#comparisonExpression.
-	VisitComparisonExpression(ctx *ComparisonExpressionContext) any
+	VisitComparisonExpression(ctx *ComparisonExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#additiveExpression.
-	VisitAdditiveExpression(ctx *AdditiveExpressionContext) any
+	VisitAdditiveExpression(ctx *AdditiveExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#multiplicativeExpression.
-	VisitMultiplicativeExpression(ctx *MultiplicativeExpressionContext) any
+	VisitMultiplicativeExpression(ctx *MultiplicativeExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#unaryExpression.
-	VisitUnaryExpression(ctx *UnaryExpressionContext) any
+	VisitUnaryExpression(ctx *UnaryExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#memberExpression.
-	VisitMemberExpression(ctx *MemberExpressionContext) any
+	VisitMemberExpression(ctx *MemberExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#memberPart.
-	VisitMemberPart(ctx *MemberPartContext) any
+	VisitMemberPart(ctx *MemberPartContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#argumentList.
-	VisitArgumentList(ctx *ArgumentListContext) any
+	VisitArgumentList(ctx *ArgumentListContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#primaryExpression.
-	VisitPrimaryExpression(ctx *PrimaryExpressionContext) any
+	VisitPrimaryExpression(ctx *PrimaryExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#arrayLiteral.
-	VisitArrayLiteral(ctx *ArrayLiteralContext) any
+	VisitArrayLiteral(ctx *ArrayLiteralContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#literal.
-	VisitLiteral(ctx *LiteralContext) any
+	VisitLiteral(ctx *LiteralContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#block.
-	VisitBlock(ctx *BlockContext) any
+	VisitBlock(ctx *BlockContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#switchStatement.
-	VisitSwitchStatement(ctx *SwitchStatementContext) any
+	VisitSwitchStatement(ctx *SwitchStatementContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#switchCase.
-	VisitSwitchCase(ctx *SwitchCaseContext) any
+	VisitSwitchCase(ctx *SwitchCaseContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#defaultCase.
-	VisitDefaultCase(ctx *DefaultCaseContext) any
+	VisitDefaultCase(ctx *DefaultCaseContext) interface{}
 }
