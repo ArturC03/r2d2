@@ -2,10 +2,12 @@ module github.com/ArturC03/r2d2
 
 go 1.24.0
 
-require github.com/antlr4-go/antlr/v4 v4.13.1
+require (
+	github.com/ArturC03/r2d2Styles v0.0.1
+	github.com/antlr4-go/antlr/v4 v4.13.1
+)
 
 require (
-	github.com/ArturC03/r2d2Styles v0.0.1 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/lipgloss v1.0.0 // indirect
 	github.com/charmbracelet/x/ansi v0.4.2 // indirect
