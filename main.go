@@ -15,6 +15,7 @@ func main() {
 		fn main(){
 		loop {
 		}
+		cookie();
 		}
 		}`) // Ajuste conforme a gramática
 
@@ -41,6 +42,9 @@ func main() {
 	// Construir a árvore de parse
 	p.BuildParseTrees = true
 	tree := p.Program() // Ajuste conforme sua regra principal
+	// Imprimir a árvore sintática
+	// fmt.Println(tree.ToStringTree(p.GetRuleNames(), nil))
+	// return
 	if tree == nil {
 		fmt.Println(r2d2Styles.ErrorMessage("Árvore sintática não foi criada corretamente!"))
 	}

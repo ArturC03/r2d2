@@ -17,16 +17,13 @@ func NewR2D2Visitor() *R2D2Visitor {
 
 func (v *R2D2Visitor) VisitChildren(node antlr.RuleNode) any {
 	var result any
-
 	for i := 0; i < node.GetChildCount(); i++ {
 		child := node.GetChild(i)
 		if parseTree, ok := child.(antlr.ParseTree); ok {
 			childResult := parseTree.Accept(v)
-			// Update result if necessary
 			result = childResult
 		}
 	}
-
 	return result
 }
 
@@ -51,10 +48,8 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 }
 
 func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationContext) any {
-	// Pseudo function
 	if ctx.PSEUDO() != nil {
 		fmt.Println(r2d2Styles.WarningMessage("Pseudo function declaration detected: " + ctx.GetText()))
-
 	} else {
 		fmt.Println(r2d2Styles.InfoMessage("Function declaration: " + ctx.GetText()))
 	}
@@ -62,72 +57,72 @@ func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationCo
 }
 
 func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
+	fmt.Println(r2d2Styles.InfoMessage("Visiting block: " + ctx.GetText()))
 
-	// Function
+	// Verifica se o bloco está dentro de uma função pseudo
 	if parentFuncDecl, ok := ctx.GetParent().(*parser.FunctionDeclarationContext); ok {
 
-		// Pseudo function
 		if parentFuncDecl.PSEUDO() != nil {
-			fmt.Println(r2d2Styles.InfoMessage("Encontrado bloco dentro de uma função pseudo: " + ctx.GetText()))
+			fmt.Println(r2d2Styles.InfoMessage("Found block inside a pseudo function: " + ctx.GetText()))
 
-			// For each statement in block
+			// Iterar sobre os filhos do bloco e verificar declarações inválidas
 			for _, child := range ctx.GetChildren() {
 				if stmtCtx, ok := child.(*parser.StatementContext); ok {
-
-					// FunctionCall
-					if _, ok := stmtCtx.GetChild(0).(*parser.FunctionCallStatementContext); ok {
-						// fmt.Println(r2d2Styles.InfoMessage("Encontrado FunctionCallStatement: " + functionCallStmt.GetText()))
-
-						// Se não for uma functionCall
-					} else {
-
-						// Obtém a linha do erro
+					// Verifica se o primeiro filho não é uma chamada de função
+					if _, ok := stmtCtx.GetChild(0).(*parser.FunctionCallStatementContext); !ok {
 						line := stmtCtx.GetStart().GetLine()
-
-						// Mensagem de erro com linha
 						fmt.Println(r2d2Styles.ErrorMessage(
 							fmt.Sprintf("Line %d: statement %s not allowed in a pseudo function", line, stmtCtx.GetText()),
 						))
-
-						// return fmt.Errorf("Erro na linha %d: função pseudo só pode conter chamadas de função", line)
+					} else {
+						// Se for uma chamada de função válida, continue visitando
+						v.VisitChildren(stmtCtx)
 					}
+				}
+			}
+		} else {
+			for _, child := range ctx.GetChildren() {
+				if stmtCtx, ok := child.(*parser.StatementContext); ok {
+					v.VisitChildren(stmtCtx)
 				}
 			}
 		}
 	}
 
-	// Loop "loop {}"
+	// Verifica se o bloco está dentro de um loop
 	if parentLoop, ok := ctx.GetParent().(*parser.LoopStatementContext); ok {
-		fmt.Println(r2d2Styles.InfoMessage("Bloco do Loop detectado: " + ctx.GetText()))
-		canExcape := false
+		fmt.Println(r2d2Styles.InfoMessage("Loop block detected: " + ctx.GetText()))
+
+		canEscape := false
 		for _, child := range ctx.GetChildren() {
 			if stmtCtx, ok := child.(*parser.StatementContext); ok {
-
-				// LoopControl
-				if loopCtrl, ok := stmtCtx.GetChild(0).(*parser.LoopControlContext); ok {
-					if loopCtrl.BREAK() != nil {
-						canExcape = true
-						break
-					}
+				// Verifica controle de loop (BREAK)
+				if loopCtrl, ok := stmtCtx.GetChild(0).(*parser.LoopControlContext); ok && loopCtrl.BREAK() != nil {
+					canEscape = true
+					break
 				}
-
-				// return
+				// Verifica se há uma declaração de retorno
 				if _, ok := stmtCtx.GetChild(0).(*parser.ReturnStatementContext); ok {
-					canExcape = true
+					canEscape = true
 					break
 				}
 			}
 		}
-		if !canExcape {
+		if !canEscape {
 			line := parentLoop.GetStart().GetLine()
-			fmt.Println(r2d2Styles.WarningMessage(fmt.Sprintf("Loop at line %d has no excape!", line)))
+			fmt.Println(r2d2Styles.WarningMessage(fmt.Sprintf("Loop on line %d has no escape!", line)))
 		}
 	}
 
+	// **Aqui chamamos VisitChildren após todas as verificações, sem mudar sua estrutura**
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitLoopStatement(ctx *parser.LoopStatementContext) any {
 	fmt.Println(r2d2Styles.InfoMessage("Loop detectado: " + ctx.GetText()))
+	return v.VisitChildren(ctx)
+}
+func (v *R2D2Visitor) VisitFunctionCallStatement(ctx *parser.FunctionCallStatementContext) any {
+	fmt.Println(r2d2Styles.InfoMessage("FunctionCall detectado: " + ctx.GetText()))
 	return v.VisitChildren(ctx)
 }
