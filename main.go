@@ -12,12 +12,8 @@ import (
 func main() {
 	// Criar um stream de entrada
 	input := antlr.NewInputStream(`module cookie{
-		const csc:i32 = 2;
-		pseudo fn main(){
-		var i: i32 = 2;
-		cookie(); 
-		while (true) {
-		ds();
+		fn main(){
+		loop {
 		}
 		}
 		}`) // Ajuste conforme a gramática
