@@ -5,6 +5,8 @@ import (
 	"github.com/ArturC03/r2d2/parser"
 	r2d2Styles "github.com/ArturC03/r2d2Styles"
 	"github.com/antlr4-go/antlr/v4"
+	"os"
+	"strings"
 )
 
 type R2D2Visitor struct {
@@ -39,6 +41,16 @@ func (v *R2D2Visitor) VisitDeclaration(ctx *parser.DeclarationContext) any {
 
 func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContext) any {
 	fmt.Println(r2d2Styles.InfoMessage("Import detectado: " + ctx.GetText()))
+	// filePath := ""
+	path := ctx.STRING_LITERAL().GetText()
+
+	if ctx.STRING_LITERAL() == nil || path == "\"\"" {
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("File path not found on line %d", ctx.GetStart().GetLine())))
+	} else if _, err := os.Stat(ctx.STRING_LITERAL().GetText()); err != nil {
+		justPath := strings.Trim(path, "\"")
+		fmt.Println(r2d2Styles.ErrorMessage("File not found on path " + justPath))
+	}
+
 	return v.VisitChildren(ctx)
 }
 
@@ -71,9 +83,7 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 					// Verifica se o primeiro filho não é uma chamada de função
 					if _, ok := stmtCtx.GetChild(0).(*parser.FunctionCallStatementContext); !ok {
 						line := stmtCtx.GetStart().GetLine()
-						fmt.Println(r2d2Styles.ErrorMessage(
-							fmt.Sprintf("Line %d: statement %s not allowed in a pseudo function", line, stmtCtx.GetText()),
-						))
+						fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Line %d: statement %s not allowed in a pseudo function", line, stmtCtx.GetStart().GetText())))
 					} else {
 						// Se for uma chamada de função válida, continue visitando
 						v.VisitChildren(stmtCtx)

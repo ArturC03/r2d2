@@ -11,8 +11,8 @@ import (
 
 func main() {
 	// Criar um stream de entrada
-	input := antlr.NewInputStream(`module cookie{
-		fn main(){
+	input := antlr.NewInputStream(`import a from ""; module cookie{
+		pseudo fn main(){
 		loop {
 		}
 		cookie();

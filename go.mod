@@ -3,7 +3,7 @@ module github.com/ArturC03/r2d2
 go 1.24.0
 
 require (
-	github.com/ArturC03/r2d2Styles v0.0.2
+	github.com/ArturC03/r2d2Styles v0.0.3
 	github.com/antlr4-go/antlr/v4 v4.13.1
 )
 
