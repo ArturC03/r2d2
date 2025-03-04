@@ -11,13 +11,13 @@ import (
 
 func main() {
 	// Criar um stream de entrada
-	input := antlr.NewInputStream(`import a from ""; module cookie{
+	input := antlr.NewInputStream(`import a from "/home/rutra/Documentos/CODE/PAP/r2d2/main.go"; module cookie{
 		pseudo fn main(){
 		loop {
 		}
 		cookie();
 		}
-		}`) // Ajuste conforme a gramática
+		`) // Ajuste conforme a gramática
 
 	fmt.Println(r2d2Styles.InfoMessage("Input stream criado."))
 
@@ -34,6 +34,14 @@ func main() {
 
 	// Criar Parser
 	p := parser.NewR2D2Parser(stream)
+
+	// Criar Error Listener
+	el := parser.NewR2D2ErrorListener()
+
+	// Adicionar error listener ao parser
+	p.RemoveErrorListeners()
+	p.AddErrorListener(el)
+
 	if p == nil {
 		fmt.Println(r2d2Styles.ErrorMessage("Parser não foi inicializado corretamente!"))
 	}

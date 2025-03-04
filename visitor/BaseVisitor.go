@@ -17,6 +17,14 @@ func NewR2D2Visitor() *R2D2Visitor {
 	return &R2D2Visitor{}
 }
 
+func (v *R2D2Visitor) VisitErrorNode(node antlr.ErrorNode) interface{} {
+	// Print error message using your custom r2d2Styles formatting
+	fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("File path not found on line %d", node.GetSymbol().GetLine())))
+
+	// Stop further traversal by returning immediately
+	return nil
+}
+
 func (v *R2D2Visitor) VisitChildren(node antlr.RuleNode) any {
 	var result any
 	for i := 0; i < node.GetChildCount(); i++ {
@@ -41,14 +49,21 @@ func (v *R2D2Visitor) VisitDeclaration(ctx *parser.DeclarationContext) any {
 
 func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContext) any {
 	fmt.Println(r2d2Styles.InfoMessage("Import detectado: " + ctx.GetText()))
-	// filePath := ""
-	path := ctx.STRING_LITERAL().GetText()
 
-	if ctx.STRING_LITERAL() == nil || path == "\"\"" {
+	if ctx.STRING_LITERAL() == nil {
 		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("File path not found on line %d", ctx.GetStart().GetLine())))
-	} else if _, err := os.Stat(ctx.STRING_LITERAL().GetText()); err != nil {
+		return v.VisitChildren(ctx)
+	}
+
+	path := ctx.STRING_LITERAL().GetText()
+	if path == "\"\"" {
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Empty file path on line %d", ctx.GetStart().GetLine())))
+	} else {
 		justPath := strings.Trim(path, "\"")
-		fmt.Println(r2d2Styles.ErrorMessage("File not found on path " + justPath))
+		_, err := os.Stat(justPath)
+		if err != nil {
+			fmt.Println(r2d2Styles.ErrorMessage("File not found on path " + justPath))
+		}
 	}
 
 	return v.VisitChildren(ctx)
