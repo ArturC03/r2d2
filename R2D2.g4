@@ -39,7 +39,7 @@ functionCallStatement
   ;
 
 functionCall
-  : IDENTIFIER LPAREN argumentList? RPAREN
+  : (IDENTIFIER DOT)? IDENTIFIER LPAREN argumentList? RPAREN
   ;
 
 parameterList
@@ -69,11 +69,11 @@ genericType
   ;
 
 typeDeclaration
-  : TYPE IDENTIFIER LBRACE (variableDeclaration)* RBRACE
+  : 'type' IDENTIFIER LBRACE (variableDeclaration)* RBRACE
   ;
 
 variableDeclaration
-  : (VAR | LET | CONST) IDENTIFIER (COLON typeExpression)? ASSIGN expression SEMI
+  : (EXPORT)? (VAR | LET | CONST) IDENTIFIER (COLON typeExpression)? (ASSIGN expression)? SEMI
   ;
 
 statement
