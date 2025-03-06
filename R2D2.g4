@@ -39,7 +39,7 @@ functionCallStatement
   ;
 
 functionCall
-  : (IDENTIFIER DOT)? IDENTIFIER LPAREN argumentList? RPAREN
+  : (IDENTIFIER DOT)* IDENTIFIER LPAREN argumentList? RPAREN
   ;
 
 parameterList
@@ -95,7 +95,7 @@ expressionStatement
   ;
 
 ifStatement
-  : IF LPAREN expression RPAREN block (ELSE IF LPAREN expression RPAREN block)* (ELSE block)?
+  : IF ( LPAREN )? expression ( RPAREN )? block (ELSE IF ( LPAREN )? expression (RPAREN)? block)* (ELSE block)?
   ;
 
 forStatement

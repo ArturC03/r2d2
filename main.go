@@ -7,34 +7,45 @@ import (
 	"github.com/ArturC03/r2d2/visitor"
 	r2d2Styles "github.com/ArturC03/r2d2Styles"
 	"github.com/antlr4-go/antlr/v4"
+	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
 	"regexp"
+	"runtime"
+	strings "strings"
 )
 
 func main() {
 	// Criar um stream de entrada
-	input := antlr.NewInputStream(`import a from "/home/rutra/Documentos/CODE/PAP/r2d2/main.go";
+	input := antlr.NewInputStream(`
+import a from "/home/rutra/Documentos/CODE/PAP/r2d2/main.go";
 
-		const as: i32 = 1;
+const as: i32 = 1;
 
-		module cookie{
+module cookie {
+    type a {
+        var a: i32 = 1;
+    }
 
-		type a{
-			var a: i32 = 1;
-		}
+    export var a: i32 = 1;
 
-		export var a: i32 = 1;
+    export fn main() {
+        loop {
+            var i: i32 = 3;
+            cookie();
+            
+            if (2 == 3) {
+                return 1;
+            } else {
+                return 2;
+            }
 
-		export fn main(){
-		loop {
-		var i: i32 = 3;
-		cookie();
-		return 1 ;
-		}
-		}
-		}
-		`) // Ajuste conforme a gramática
+            continue;
+        }
+    }
+}
+`) // Ajuste conforme a gramática
 
 	// fmt.Println(r2d2Styles.InfoMessage("Input stream criado."))
 
@@ -92,7 +103,7 @@ func main() {
 	fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
 
 	fmt.Println(r2d2Styles.InfoMessage("Running the code generated"))
-	RunCode(v.JsCode)
+	BuildCode(v.JsCode)
 }
 
 func RunCode(code string) {
@@ -116,22 +127,52 @@ func RunCode(code string) {
 	}
 }
 
-// BuildCode executa o comando Deno build com o código fornecido.
+// BuildCode executa o comando Deno bundle com o código fornecido.
 func BuildCode(code string) {
-	cmd := exec.Command("deno", "bundle", code)
+	// Create a temporary file to store the code
+	tmpFile, err := ioutil.TempFile(os.TempDir(), "deno_code_*.js")
+	if err != nil {
+		log.Fatalf("Error creating temporary file: %v", err)
+		return
+	}
+	defer os.Remove(tmpFile.Name()) // Remove the temporary file after use
 
-	// Cria buffers para capturar a saída padrão e os erros.
+	// Write the code (JsCode string) to the temporary file
+	_, err = tmpFile.WriteString(code)
+	if err != nil {
+		log.Fatalf("Error writing to temporary file: %v", err)
+		return
+	}
+	tmpFile.Close()
+
+	// Output executable name
+	outputName := "program"
+	if runtime.GOOS == "windows" {
+		outputName += ".exe"
+	}
+
+	// Create the Deno compile command
+	cmd := exec.Command("deno", "compile", "--allow-all", "--output", outputName, tmpFile.Name())
+
+	// Print the command before executing it
+	fmt.Println("Deno compile command:")
+	fmt.Println(strings.Join(cmd.Args, " "))
+
+	// Create buffers to capture standard output and errors
 	var stdoutBuf, stderrBuf bytes.Buffer
 	cmd.Stdout = &stdoutBuf
 	cmd.Stderr = &stderrBuf
 
-	// Executa o comando e verifica se ocorreu algum erro.
+	// Execute the command and check if any errors occurred
 	if err := cmd.Run(); err != nil {
-		log.Printf("Erro ao executar o Deno build: %v", err)
-		fmt.Println("Saída de erro:", stderrBuf.String())
+		log.Printf("Error executing Deno compile: %v", err)
+		fmt.Println("Error output:", stderrBuf.String())
 		return
 	}
 
-	// Exibe a saída padrão do comando.
-	fmt.Println("Saída do Deno build:", stdoutBuf.String())
+	// Display the command's standard output
+	fmt.Println("Deno compile command output:")
+	fmt.Println(stdoutBuf.String())
+
+	fmt.Printf("Created executable: %s\n", outputName)
 }

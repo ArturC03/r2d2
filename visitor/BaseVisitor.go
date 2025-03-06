@@ -211,6 +211,9 @@ func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationCo
 func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 	// fmt.Println(r2d2Styles.InfoMessage("Visiting block: " + ctx.GetText()))
 
+	if parentIf, ok := ctx.GetParent().(*parser.IfStatementContext); ok {
+		fmt.Println("Parent if:", parentIf.GetText())
+	}
 	// Function Declaration
 	if parentFuncDecl, ok := ctx.GetParent().(*parser.FunctionDeclarationContext); ok {
 
@@ -358,13 +361,42 @@ func (v *R2D2Visitor) VisitReturnStatement(ctx *parser.ReturnStatementContext) a
 	return v.VisitChildren(ctx)
 }
 
-// TODO: Apenas se o pai for um loop o cicle Control é válido
-// func (v *R2D2Visitor) VisitCicleControl(ctx *parser.CicleControlContext) any {
-//
-// 	// if parentCicle, ok := ctx.GetParent().(*parser.LoopStatementContext); ok {
-// 	// if parentCicle, ok := ctx.GetParent().(*parser.WhileStatementContext); ok {
-// 	// if parentCicle, ok := ctx.GetParent().(*parser.ForStatementContext); ok {
-// 	//
-//
-// 	return v.VisitChildren(ctx)
-// }
+func (v *R2D2Visitor) VisitCicleControl(ctx *parser.CicleControlContext) any {
+	parent := ctx.GetParent()
+
+	switch parent.(type) {
+	case *parser.LoopStatementContext, *parser.WhileStatementContext, *parser.ForStatementContext:
+
+	default:
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Invalid %s statement on line %d", ctx.GetStart().GetText(), ctx.GetStart().GetLine())))
+	}
+
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
+	// Open the initial 'if' block
+	v.JsCode += fmt.Sprintf("if (%s) {", ctx.Expression(0).GetText())
+
+	// Visit the main if block (instead of directly visiting, let the block visitor handle it)
+	blockCtx := ctx.Block(0)
+	blockCtx.Accept(v)
+
+	// Process any 'else if' statements
+	for i := 1; i < len(ctx.AllExpression()); i++ {
+		v.JsCode += fmt.Sprintf("} else if (%s) {", ctx.Expression(i).GetText())
+		ctx.Block(i).Accept(v)
+	}
+
+	// Process the 'else' statement if present (checking ELSE token count matches block count)
+	elseBlockIndex := len(ctx.AllExpression())
+	if len(ctx.AllELSE()) > len(ctx.AllExpression())-1 && elseBlockIndex < len(ctx.AllBlock()) {
+		v.JsCode += "} else {"
+		ctx.Block(elseBlockIndex).Accept(v)
+	}
+
+	// Close the final if-else block
+	v.JsCode += "}"
+
+	return nil // Return value is not used for statement visitors
+}
