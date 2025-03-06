@@ -84,7 +84,7 @@ statement
   | forStatement
   | whileStatement
   | loopStatement
-  | loopControl
+  | cicleControl
   | returnStatement
   | switchStatement
   | assignmentDeclaration
@@ -132,7 +132,7 @@ loopStatement
   : LOOP block
   ;
 
-loopControl
+cicleControl
   : (BREAK | CONTINUE) SEMI
   ;
 

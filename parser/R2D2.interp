@@ -162,7 +162,7 @@ assignmentOperator
 simpleFor
 whileStatement
 loopStatement
-loopControl
+cicleControl
 returnStatement
 expression
 logicalExpression

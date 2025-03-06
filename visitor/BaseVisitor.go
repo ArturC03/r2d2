@@ -79,17 +79,14 @@ func (v *R2D2Visitor) VisitChildren(node antlr.RuleNode) any {
 }
 
 func (v *R2D2Visitor) VisitProgram(ctx *parser.ProgramContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("Visitando Program!"))
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitDeclaration(ctx *parser.DeclarationContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("Visitando Declaration: " + ctx.GetText()))
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("Import detectado: " + ctx.GetText()))
 
 	// Has String Literal
 	if ctx.STRING_LITERAL() == nil {
@@ -115,7 +112,6 @@ func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContex
 }
 
 func (v *R2D2Visitor) VisitGlobalDeclaration(ctx *parser.GlobalDeclarationContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("Global declaration detected: " + ctx.GetText()))
 
 	v.symbolTable.Globals[ctx.IDENTIFIER().GetText()] = Global{
 		Value: ctx.Expression().GetText(),
@@ -124,8 +120,6 @@ func (v *R2D2Visitor) VisitGlobalDeclaration(ctx *parser.GlobalDeclarationContex
 
 	jsCode := fmt.Sprintf("const %s = %s;", ctx.IDENTIFIER().GetText(), ctx.Expression().GetText())
 
-	fmt.Println(r2d2Styles.InfoMessage("Global " + ctx.IDENTIFIER().GetText() + " criada com valor " + ctx.Expression().GetText()))
-
 	v.JsCode += jsCode
 
 	return v.VisitChildren(ctx)
@@ -133,7 +127,6 @@ func (v *R2D2Visitor) VisitGlobalDeclaration(ctx *parser.GlobalDeclarationContex
 
 func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContext) any {
 	moduleName := ctx.IDENTIFIER(0).GetText()
-	fmt.Println(r2d2Styles.InfoMessage("Módulo detectado: " + ctx.GetText()))
 
 	// Create Module
 	if _, exists := v.symbolTable.Modules[moduleName]; !exists {
@@ -142,7 +135,7 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 			Variables: make(map[string]Variable),
 			Types:     make(map[string]any),
 		}
-		fmt.Println(r2d2Styles.InfoMessage("Módulo " + moduleName + " criado"))
+		// fmt.Println(r2d2Styles.InfoMessage("Módulo " + moduleName + " criado"))
 	}
 
 	// Function Declaration
@@ -162,7 +155,6 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 
 			// Add Function to Module
 			v.symbolTable.Modules[moduleName].Functions[funcName] = function
-			fmt.Println(r2d2Styles.InfoMessage("Função " + funcName + " criada no módulo " + moduleName))
 		}
 
 		// Variable Declaration
@@ -179,9 +171,7 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 			// Variable Declaration with Assignment
 			if varDecl.ASSIGN() != nil {
 				variable.Value = varDecl.Expression().GetText()
-				fmt.Println(r2d2Styles.InfoMessage("Variável " + variable.Name + " criada no módulo " + moduleName + " com valor " + fmt.Sprintf("%v", variable.Value)))
 			} else {
-				fmt.Println(r2d2Styles.InfoMessage("Variável " + varName + " criada no módulo " + moduleName))
 			}
 			v.symbolTable.Modules[moduleName].Variables[varName] = variable
 		}
@@ -190,7 +180,7 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 		if typeDecl, ok := child.(*parser.TypeDeclarationContext); ok {
 			typeName := typeDecl.IDENTIFIER().GetText()
 			v.symbolTable.Modules[moduleName].Types[typeName] = typeDecl
-			fmt.Println(r2d2Styles.InfoMessage("Tipo " + typeName + " criado no módulo " + moduleName))
+			// fmt.Println(r2d2Styles.InfoMessage("Tipo " + typeName + " criado no módulo " + moduleName))
 		}
 	}
 
@@ -211,16 +201,15 @@ func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationCo
 
 	// Pseudo
 	if ctx.PSEUDO() != nil {
-		fmt.Println(r2d2Styles.WarningMessage("Pseudo function declaration detected: " + ctx.GetText()))
 	} else {
-		fmt.Println(r2d2Styles.InfoMessage("Function declaration: " + ctx.GetText()))
+		// fmt.Println(r2d2Styles.InfoMessage("Function declaration: " + ctx.GetText()))
 	}
 
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("Visiting block: " + ctx.GetText()))
+	// fmt.Println(r2d2Styles.InfoMessage("Visiting block: " + ctx.GetText()))
 
 	// Function Declaration
 	if parentFuncDecl, ok := ctx.GetParent().(*parser.FunctionDeclarationContext); ok {
@@ -257,7 +246,6 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 
 	// Loop
 	if parentLoop, ok := ctx.GetParent().(*parser.LoopStatementContext); ok {
-		fmt.Println(r2d2Styles.InfoMessage("Loop block detected: " + ctx.GetText()))
 
 		canEscape := false
 		for _, child := range ctx.GetChildren() {
@@ -266,7 +254,7 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 			if stmtCtx, ok := child.(*parser.StatementContext); ok {
 
 				// Break
-				if loopCtrl, ok := stmtCtx.GetChild(0).(*parser.LoopControlContext); ok && loopCtrl.BREAK() != nil {
+				if loopCtrl, ok := stmtCtx.GetChild(0).(*parser.CicleControlContext); ok && loopCtrl.BREAK() != nil {
 					canEscape = true
 					break
 				}
@@ -289,7 +277,6 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 }
 
 func (v *R2D2Visitor) VisitLoopStatement(ctx *parser.LoopStatementContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("Loop detectado: " + ctx.GetText()))
 	v.JsCode += fmt.Sprintf("while (true){")
 
 	result := v.VisitChildren(ctx)
@@ -312,7 +299,6 @@ func (v *R2D2Visitor) VisitLoopStatement(ctx *parser.LoopStatementContext) any {
 
 // TODO: Check if the function exists and if it is accessible
 func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
-	fmt.Println(r2d2Styles.InfoMessage("FunctionCall detectado: " + ctx.GetText()))
 
 	// if ctx.DOT() != nil {
 	// 	if v.symbolTable.Modules[ctx.IDENTIFIER(0).GetText()].Functions[ctx.IDENTIFIER(1).GetText()] != nil {
@@ -362,3 +348,23 @@ func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationCo
 func (v *R2D2Visitor) VisitStatement(ctx *parser.StatementContext) any {
 	return v.VisitChildren(ctx)
 }
+
+func (v *R2D2Visitor) VisitReturnStatement(ctx *parser.ReturnStatementContext) any {
+	v.JsCode += "return"
+	if ctx.Expression() != nil {
+		v.JsCode += " " + ctx.Expression().GetText()
+	}
+	v.JsCode += ";"
+	return v.VisitChildren(ctx)
+}
+
+// TODO: Apenas se o pai for um loop o cicle Control é válido
+// func (v *R2D2Visitor) VisitCicleControl(ctx *parser.CicleControlContext) any {
+//
+// 	// if parentCicle, ok := ctx.GetParent().(*parser.LoopStatementContext); ok {
+// 	// if parentCicle, ok := ctx.GetParent().(*parser.WhileStatementContext); ok {
+// 	// if parentCicle, ok := ctx.GetParent().(*parser.ForStatementContext); ok {
+// 	//
+//
+// 	return v.VisitChildren(ctx)
+// }

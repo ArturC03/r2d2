@@ -183,11 +183,11 @@ func (s *BaseR2D2Listener) EnterLoopStatement(ctx *LoopStatementContext) {}
 // ExitLoopStatement is called when production loopStatement is exited.
 func (s *BaseR2D2Listener) ExitLoopStatement(ctx *LoopStatementContext) {}
 
-// EnterLoopControl is called when production loopControl is entered.
-func (s *BaseR2D2Listener) EnterLoopControl(ctx *LoopControlContext) {}
+// EnterCicleControl is called when production cicleControl is entered.
+func (s *BaseR2D2Listener) EnterCicleControl(ctx *CicleControlContext) {}
 
-// ExitLoopControl is called when production loopControl is exited.
-func (s *BaseR2D2Listener) ExitLoopControl(ctx *LoopControlContext) {}
+// ExitCicleControl is called when production cicleControl is exited.
+func (s *BaseR2D2Listener) ExitCicleControl(ctx *CicleControlContext) {}
 
 // EnterReturnStatement is called when production returnStatement is entered.
 func (s *BaseR2D2Listener) EnterReturnStatement(ctx *ReturnStatementContext) {}

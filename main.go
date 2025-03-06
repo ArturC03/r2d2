@@ -30,23 +30,24 @@ func main() {
 		loop {
 		var i: i32 = 3;
 		cookie();
+		return 1 ;
 		}
 		}
 		}
 		`) // Ajuste conforme a gramática
 
-	fmt.Println(r2d2Styles.InfoMessage("Input stream criado."))
+	// fmt.Println(r2d2Styles.InfoMessage("Input stream criado."))
 
 	// Criar Lexer
 	lexer := parser.NewR2D2Lexer(input)
 	if lexer == nil {
 		fmt.Println(r2d2Styles.ErrorMessage("Lexer não foi inicializado corretamente!"))
 	}
-	fmt.Println(r2d2Styles.InfoMessage("Lexer criado."))
+	// fmt.Println(r2d2Styles.InfoMessage("Lexer criado."))
 
 	// Criar Token Stream
 	stream := antlr.NewCommonTokenStream(lexer, 0)
-	fmt.Println(r2d2Styles.InfoMessage("Token stream criado."))
+	// fmt.Println(r2d2Styles.InfoMessage("Token stream criado."))
 
 	// Criar Parser
 	p := parser.NewR2D2Parser(stream)
@@ -61,7 +62,7 @@ func main() {
 	if p == nil {
 		fmt.Println(r2d2Styles.ErrorMessage("Parser não foi inicializado corretamente!"))
 	}
-	fmt.Println(r2d2Styles.InfoMessage("Parser criado."))
+	// fmt.Println(r2d2Styles.InfoMessage("Parser criado."))
 
 	// Construir a árvore de parse
 	p.BuildParseTrees = true
@@ -72,24 +73,25 @@ func main() {
 	if tree == nil {
 		fmt.Println(r2d2Styles.ErrorMessage("Árvore sintática não foi criada corretamente!"))
 	}
-	fmt.Println(r2d2Styles.InfoMessage("Árvore sintática criada."))
+	// fmt.Println(r2d2Styles.InfoMessage("Árvore sintática criada."))
 
 	// Criar e aplicar o Visitor
 	v := visitor.NewR2D2Visitor()
 	if v == nil {
 		fmt.Println(r2d2Styles.ErrorMessage("Visitor não foi inicializado corretamente!"))
 	}
-	fmt.Println(r2d2Styles.InfoMessage("Visitor criado."))
+	// fmt.Println(r2d2Styles.InfoMessage("Visitor criado."))
 
 	// Aplicar o visitor na árvore - esta é a forma correta para ANTLR em Go
 	result := tree.Accept(v)
 
-	fmt.Println(r2d2Styles.InfoMessage("Visitor aplicado com sucesso."))
+	// fmt.Println(r2d2Styles.InfoMessage("Visitor aplicado com sucesso."))
 
 	// Exibir o resultado
 	fmt.Println(r2d2Styles.InfoMessage(fmt.Sprintf("Resultado do Visitor: %v", result)))
 	fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
 
+	fmt.Println(r2d2Styles.InfoMessage("Running the code generated"))
 	RunCode(v.JsCode)
 }
 
@@ -116,7 +118,7 @@ func RunCode(code string) {
 
 // BuildCode executa o comando Deno build com o código fornecido.
 func BuildCode(code string) {
-	cmd := exec.Command("deno", "build", code)
+	cmd := exec.Command("deno", "bundle", code)
 
 	// Cria buffers para capturar a saída padrão e os erros.
 	var stdoutBuf, stderrBuf bytes.Buffer

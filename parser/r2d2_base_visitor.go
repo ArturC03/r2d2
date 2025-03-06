@@ -116,7 +116,7 @@ func (v *BaseR2D2Visitor) VisitLoopStatement(ctx *LoopStatementContext) interfac
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitLoopControl(ctx *LoopControlContext) interface{} {
+func (v *BaseR2D2Visitor) VisitCicleControl(ctx *CicleControlContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

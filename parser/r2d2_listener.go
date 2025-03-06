@@ -89,8 +89,8 @@ type R2D2Listener interface {
 	// EnterLoopStatement is called when entering the loopStatement production.
 	EnterLoopStatement(c *LoopStatementContext)
 
-	// EnterLoopControl is called when entering the loopControl production.
-	EnterLoopControl(c *LoopControlContext)
+	// EnterCicleControl is called when entering the cicleControl production.
+	EnterCicleControl(c *CicleControlContext)
 
 	// EnterReturnStatement is called when entering the returnStatement production.
 	EnterReturnStatement(c *ReturnStatementContext)
@@ -224,8 +224,8 @@ type R2D2Listener interface {
 	// ExitLoopStatement is called when exiting the loopStatement production.
 	ExitLoopStatement(c *LoopStatementContext)
 
-	// ExitLoopControl is called when exiting the loopControl production.
-	ExitLoopControl(c *LoopControlContext)
+	// ExitCicleControl is called when exiting the cicleControl production.
+	ExitCicleControl(c *CicleControlContext)
 
 	// ExitReturnStatement is called when exiting the returnStatement production.
 	ExitReturnStatement(c *ReturnStatementContext)

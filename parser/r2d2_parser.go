@@ -60,7 +60,7 @@ func r2d2ParserInit() {
 		"typeExpression", "arrayDimensions", "baseType", "genericType", "typeDeclaration",
 		"variableDeclaration", "statement", "expressionStatement", "ifStatement",
 		"forStatement", "assignmentDeclaration", "assignment", "assignmentOperator",
-		"simpleFor", "whileStatement", "loopStatement", "loopControl", "returnStatement",
+		"simpleFor", "whileStatement", "loopStatement", "cicleControl", "returnStatement",
 		"expression", "logicalExpression", "comparisonExpression", "additiveExpression",
 		"multiplicativeExpression", "unaryExpression", "memberExpression", "memberPart",
 		"argumentList", "primaryExpression", "arrayLiteral", "literal", "block",
@@ -410,7 +410,7 @@ const (
 	R2D2ParserRULE_simpleFor                = 24
 	R2D2ParserRULE_whileStatement           = 25
 	R2D2ParserRULE_loopStatement            = 26
-	R2D2ParserRULE_loopControl              = 27
+	R2D2ParserRULE_cicleControl             = 27
 	R2D2ParserRULE_returnStatement          = 28
 	R2D2ParserRULE_expression               = 29
 	R2D2ParserRULE_logicalExpression        = 30
@@ -3903,7 +3903,7 @@ type IStatementContext interface {
 	ForStatement() IForStatementContext
 	WhileStatement() IWhileStatementContext
 	LoopStatement() ILoopStatementContext
-	LoopControl() ILoopControlContext
+	CicleControl() ICicleControlContext
 	ReturnStatement() IReturnStatementContext
 	SwitchStatement() ISwitchStatementContext
 	AssignmentDeclaration() IAssignmentDeclarationContext
@@ -4056,10 +4056,10 @@ func (s *StatementContext) LoopStatement() ILoopStatementContext {
 	return t.(ILoopStatementContext)
 }
 
-func (s *StatementContext) LoopControl() ILoopControlContext {
+func (s *StatementContext) CicleControl() ICicleControlContext {
 	var t antlr.RuleContext
 	for _, ctx := range s.GetChildren() {
-		if _, ok := ctx.(ILoopControlContext); ok {
+		if _, ok := ctx.(ICicleControlContext); ok {
 			t = ctx.(antlr.RuleContext)
 			break
 		}
@@ -4069,7 +4069,7 @@ func (s *StatementContext) LoopControl() ILoopControlContext {
 		return nil
 	}
 
-	return t.(ILoopControlContext)
+	return t.(ICicleControlContext)
 }
 
 func (s *StatementContext) ReturnStatement() IReturnStatementContext {
@@ -4213,7 +4213,7 @@ func (p *R2D2Parser) Statement() (localctx IStatementContext) {
 		p.EnterOuterAlt(localctx, 8)
 		{
 			p.SetState(261)
-			p.LoopControl()
+			p.CicleControl()
 		}
 
 	case 9:
@@ -5901,8 +5901,8 @@ errorExit:
 	goto errorExit // Trick to prevent compiler error if the label is not used
 }
 
-// ILoopControlContext is an interface to support dynamic dispatch.
-type ILoopControlContext interface {
+// ICicleControlContext is an interface to support dynamic dispatch.
+type ICicleControlContext interface {
 	antlr.ParserRuleContext
 
 	// GetParser returns the parser.
@@ -5913,87 +5913,87 @@ type ILoopControlContext interface {
 	BREAK() antlr.TerminalNode
 	CONTINUE() antlr.TerminalNode
 
-	// IsLoopControlContext differentiates from other interfaces.
-	IsLoopControlContext()
+	// IsCicleControlContext differentiates from other interfaces.
+	IsCicleControlContext()
 }
 
-type LoopControlContext struct {
+type CicleControlContext struct {
 	antlr.BaseParserRuleContext
 	parser antlr.Parser
 }
 
-func NewEmptyLoopControlContext() *LoopControlContext {
-	var p = new(LoopControlContext)
+func NewEmptyCicleControlContext() *CicleControlContext {
+	var p = new(CicleControlContext)
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = R2D2ParserRULE_loopControl
+	p.RuleIndex = R2D2ParserRULE_cicleControl
 	return p
 }
 
-func InitEmptyLoopControlContext(p *LoopControlContext) {
+func InitEmptyCicleControlContext(p *CicleControlContext) {
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, nil, -1)
-	p.RuleIndex = R2D2ParserRULE_loopControl
+	p.RuleIndex = R2D2ParserRULE_cicleControl
 }
 
-func (*LoopControlContext) IsLoopControlContext() {}
+func (*CicleControlContext) IsCicleControlContext() {}
 
-func NewLoopControlContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *LoopControlContext {
-	var p = new(LoopControlContext)
+func NewCicleControlContext(parser antlr.Parser, parent antlr.ParserRuleContext, invokingState int) *CicleControlContext {
+	var p = new(CicleControlContext)
 
 	antlr.InitBaseParserRuleContext(&p.BaseParserRuleContext, parent, invokingState)
 
 	p.parser = parser
-	p.RuleIndex = R2D2ParserRULE_loopControl
+	p.RuleIndex = R2D2ParserRULE_cicleControl
 
 	return p
 }
 
-func (s *LoopControlContext) GetParser() antlr.Parser { return s.parser }
+func (s *CicleControlContext) GetParser() antlr.Parser { return s.parser }
 
-func (s *LoopControlContext) SEMI() antlr.TerminalNode {
+func (s *CicleControlContext) SEMI() antlr.TerminalNode {
 	return s.GetToken(R2D2ParserSEMI, 0)
 }
 
-func (s *LoopControlContext) BREAK() antlr.TerminalNode {
+func (s *CicleControlContext) BREAK() antlr.TerminalNode {
 	return s.GetToken(R2D2ParserBREAK, 0)
 }
 
-func (s *LoopControlContext) CONTINUE() antlr.TerminalNode {
+func (s *CicleControlContext) CONTINUE() antlr.TerminalNode {
 	return s.GetToken(R2D2ParserCONTINUE, 0)
 }
 
-func (s *LoopControlContext) GetRuleContext() antlr.RuleContext {
+func (s *CicleControlContext) GetRuleContext() antlr.RuleContext {
 	return s
 }
 
-func (s *LoopControlContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
+func (s *CicleControlContext) ToStringTree(ruleNames []string, recog antlr.Recognizer) string {
 	return antlr.TreesStringTree(s, ruleNames, recog)
 }
 
-func (s *LoopControlContext) EnterRule(listener antlr.ParseTreeListener) {
+func (s *CicleControlContext) EnterRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(R2D2Listener); ok {
-		listenerT.EnterLoopControl(s)
+		listenerT.EnterCicleControl(s)
 	}
 }
 
-func (s *LoopControlContext) ExitRule(listener antlr.ParseTreeListener) {
+func (s *CicleControlContext) ExitRule(listener antlr.ParseTreeListener) {
 	if listenerT, ok := listener.(R2D2Listener); ok {
-		listenerT.ExitLoopControl(s)
+		listenerT.ExitCicleControl(s)
 	}
 }
 
-func (s *LoopControlContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
+func (s *CicleControlContext) Accept(visitor antlr.ParseTreeVisitor) interface{} {
 	switch t := visitor.(type) {
 	case R2D2Visitor:
-		return t.VisitLoopControl(s)
+		return t.VisitCicleControl(s)
 
 	default:
 		return t.VisitChildren(s)
 	}
 }
 
-func (p *R2D2Parser) LoopControl() (localctx ILoopControlContext) {
-	localctx = NewLoopControlContext(p, p.GetParserRuleContext(), p.GetState())
-	p.EnterRule(localctx, 54, R2D2ParserRULE_loopControl)
+func (p *R2D2Parser) CicleControl() (localctx ICicleControlContext) {
+	localctx = NewCicleControlContext(p, p.GetParserRuleContext(), p.GetState())
+	p.EnterRule(localctx, 54, R2D2ParserRULE_cicleControl)
 	var _la int
 
 	p.EnterOuterAlt(localctx, 1)
