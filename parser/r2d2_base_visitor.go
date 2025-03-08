@@ -120,6 +120,14 @@ func (v *BaseR2D2Visitor) VisitCicleControl(ctx *CicleControlContext) interface{
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseR2D2Visitor) VisitBreakStatement(ctx *BreakStatementContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseR2D2Visitor) VisitContinueStatement(ctx *ContinueStatementContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseR2D2Visitor) VisitReturnStatement(ctx *ReturnStatementContext) interface{} {
 	return v.VisitChildren(ctx)
 }

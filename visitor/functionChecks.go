@@ -2,6 +2,8 @@ package visitor
 
 import (
 	parser "github.com/ArturC03/r2d2/parser"
+	"github.com/antlr4-go/antlr/v4"
+	"reflect"
 )
 
 func isExported(ctx any) bool {
@@ -43,4 +45,37 @@ func (module Module) Exports() []string {
 		}
 	}
 	return exports
+}
+
+func findParent(ctx antlr.Tree, targetTypes ...any) bool {
+	parent := ctx.GetParent()
+	for parent != nil {
+		parentType := reflect.TypeOf(parent)
+		for _, targetType := range targetTypes {
+			if reflect.TypeOf(targetType) == parentType {
+				return true
+			}
+		}
+		parent = parent.GetParent()
+	}
+	return false
+}
+
+func findChild(ctx antlr.Tree, targets ...any) bool {
+	for i := 0; i < ctx.GetChildCount(); i++ {
+		child := ctx.GetChild(i)
+
+		// Verifica se o filho é do tipo desejado
+		for _, target := range targets {
+			if reflect.TypeOf(child) == reflect.TypeOf(target) {
+				return true
+			}
+		}
+
+		// Chama recursivamente para procurar nos filhos
+		if findChild(child, targets...) {
+			return true
+		}
+	}
+	return false
 }

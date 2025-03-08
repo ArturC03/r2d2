@@ -245,27 +245,9 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 
 	// Loop
 	if parentLoop, ok := ctx.GetParent().(*parser.LoopStatementContext); ok {
+		canEscape := findChild(ctx, (*parser.BreakStatementContext)(nil), (*parser.ReturnStatementContext)(nil))
 
-		canEscape := false
-		for _, child := range ctx.GetChildren() {
-
-			// Statement
-			if stmtCtx, ok := child.(*parser.StatementContext); ok {
-
-				// Break
-				if loopCtrl, ok := stmtCtx.GetChild(0).(*parser.CicleControlContext); ok && loopCtrl.BREAK() != nil {
-					canEscape = true
-					break
-				}
-
-				// Return
-				if _, ok := stmtCtx.GetChild(0).(*parser.ReturnStatementContext); ok {
-					canEscape = true
-					break
-				}
-			}
-		}
-		// No Excape
+		// No Escape
 		if !canEscape {
 			line := parentLoop.GetStart().GetLine()
 			fmt.Println(r2d2Styles.WarningMessage(fmt.Sprintf("Loop on line %d has no escape!", line)))
@@ -349,6 +331,11 @@ func (v *R2D2Visitor) VisitStatement(ctx *parser.StatementContext) any {
 }
 
 func (v *R2D2Visitor) VisitReturnStatement(ctx *parser.ReturnStatementContext) any {
+
+	if !findParent(ctx, (*parser.FunctionDeclarationContext)(nil)) {
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Invalid return statement on line %d", ctx.GetStart().GetLine())))
+	}
+
 	v.JsCode += "return"
 	if ctx.Expression() != nil {
 		v.JsCode += " " + ctx.Expression().GetText()
@@ -358,13 +345,14 @@ func (v *R2D2Visitor) VisitReturnStatement(ctx *parser.ReturnStatementContext) a
 }
 
 func (v *R2D2Visitor) VisitCicleControl(ctx *parser.CicleControlContext) any {
-	parent := ctx.GetParent()
+	// Verifica se o ciclo de controle (break/continue) está dentro de um loop válido
+	if !findParent(ctx,
+		(*parser.LoopStatementContext)(nil),
+		(*parser.WhileStatementContext)(nil),
+		(*parser.ForStatementContext)(nil)) {
 
-	switch parent.(type) {
-	case *parser.LoopStatementContext, *parser.WhileStatementContext, *parser.ForStatementContext:
-
-	default:
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Invalid %s statement on line %d", ctx.GetStart().GetText(), ctx.GetStart().GetLine())))
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Invalid %s statement on line %d",
+			ctx.GetStart().GetText(), ctx.GetStart().GetLine())))
 	}
 
 	return v.VisitChildren(ctx)

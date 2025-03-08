@@ -92,6 +92,12 @@ type R2D2Visitor interface {
 	// Visit a parse tree produced by R2D2Parser#cicleControl.
 	VisitCicleControl(ctx *CicleControlContext) interface{}
 
+	// Visit a parse tree produced by R2D2Parser#breakStatement.
+	VisitBreakStatement(ctx *BreakStatementContext) interface{}
+
+	// Visit a parse tree produced by R2D2Parser#continueStatement.
+	VisitContinueStatement(ctx *ContinueStatementContext) interface{}
+
 	// Visit a parse tree produced by R2D2Parser#returnStatement.
 	VisitReturnStatement(ctx *ReturnStatementContext) interface{}
 

@@ -189,6 +189,18 @@ func (s *BaseR2D2Listener) EnterCicleControl(ctx *CicleControlContext) {}
 // ExitCicleControl is called when production cicleControl is exited.
 func (s *BaseR2D2Listener) ExitCicleControl(ctx *CicleControlContext) {}
 
+// EnterBreakStatement is called when production breakStatement is entered.
+func (s *BaseR2D2Listener) EnterBreakStatement(ctx *BreakStatementContext) {}
+
+// ExitBreakStatement is called when production breakStatement is exited.
+func (s *BaseR2D2Listener) ExitBreakStatement(ctx *BreakStatementContext) {}
+
+// EnterContinueStatement is called when production continueStatement is entered.
+func (s *BaseR2D2Listener) EnterContinueStatement(ctx *ContinueStatementContext) {}
+
+// ExitContinueStatement is called when production continueStatement is exited.
+func (s *BaseR2D2Listener) ExitContinueStatement(ctx *ContinueStatementContext) {}
+
 // EnterReturnStatement is called when production returnStatement is entered.
 func (s *BaseR2D2Listener) EnterReturnStatement(ctx *ReturnStatementContext) {}
 

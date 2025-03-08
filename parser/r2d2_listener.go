@@ -92,6 +92,12 @@ type R2D2Listener interface {
 	// EnterCicleControl is called when entering the cicleControl production.
 	EnterCicleControl(c *CicleControlContext)
 
+	// EnterBreakStatement is called when entering the breakStatement production.
+	EnterBreakStatement(c *BreakStatementContext)
+
+	// EnterContinueStatement is called when entering the continueStatement production.
+	EnterContinueStatement(c *ContinueStatementContext)
+
 	// EnterReturnStatement is called when entering the returnStatement production.
 	EnterReturnStatement(c *ReturnStatementContext)
 
@@ -226,6 +232,12 @@ type R2D2Listener interface {
 
 	// ExitCicleControl is called when exiting the cicleControl production.
 	ExitCicleControl(c *CicleControlContext)
+
+	// ExitBreakStatement is called when exiting the breakStatement production.
+	ExitBreakStatement(c *BreakStatementContext)
+
+	// ExitContinueStatement is called when exiting the continueStatement production.
+	ExitContinueStatement(c *ContinueStatementContext)
 
 	// ExitReturnStatement is called when exiting the returnStatement production.
 	ExitReturnStatement(c *ReturnStatementContext)

@@ -6,8 +6,9 @@ import (
 	"github.com/ArturC03/r2d2/parser"
 	"github.com/ArturC03/r2d2/visitor"
 	r2d2Styles "github.com/ArturC03/r2d2Styles"
+	"github.com/ArturC03/r2d2Styles/spinner"
+	"github.com/ArturC03/r2d2Styles/stopwatch"
 	"github.com/antlr4-go/antlr/v4"
-	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"log"
 	"os"
@@ -15,36 +16,6 @@ import (
 	"runtime"
 	"time"
 )
-
-type model struct {
-	spinner spinner.Model
-	done    bool
-}
-
-func (m model) Init() tea.Cmd {
-	return tea.Batch(m.spinner.Tick)
-}
-
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		if msg.String() == "q" {
-			return m, tea.Quit
-		}
-	case spinner.TickMsg:
-		var cmd tea.Cmd
-		m.spinner, cmd = m.spinner.Update(msg)
-		return m, cmd
-	}
-	return m, nil
-}
-
-func (m model) View() string {
-	if m.done {
-		return "Compilation complete!"
-	}
-	return m.spinner.View() + " Compiling..."
-}
 
 func main() {
 	input := antlr.NewInputStream(`
@@ -69,8 +40,7 @@ module cookie {
             } else {
                 return 2;
             }
-
-            continue;
+		break;
         }
     }
 }
@@ -113,11 +83,10 @@ func BuildCode(code string) {
 	var stderrBuf bytes.Buffer
 	cmd.Stderr = &stderrBuf
 
-	// Inicializa o spinner
-	m := model{
-		spinner: spinner.New(),
-	}
-	m.spinner.Spinner = spinner.Dot
+	// Inicializa o spinner usando o pacote r2d2Styles/spinner
+	spinnerModel := spinner.New()
+
+	m := spinner.Model{Spinner: spinnerModel.Spinner}
 
 	// Inicia o programa BubbleTea
 	p := tea.NewProgram(&m)
@@ -140,16 +109,10 @@ func BuildCode(code string) {
 	}
 
 	// Exibe o nome do executável gerado e o tempo com precisão de milissegundos
-	m.done = true
+	m.SetDone(true)
 	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Created executable: %s\n", outputName)))
 
 	// Calcula e exibe o tempo de execução
-	duration := time.Since(startTime)                                                 // Tempo decorrido desde o início
-	fmt.Println(fmt.Sprintf("Compilation completed in %s", formatDuration(duration))) // Exibe a mensagem atualizada
-}
-
-// Função para formatar a duração com precisão de milissegundos
-func formatDuration(d time.Duration) string {
-	// Formata a duração para incluir milissegundos
-	return fmt.Sprintf("%.3f seconds", d.Seconds())
+	formattedTime := stopwatch.MeasureExecutionTime(startTime)
+	fmt.Println(fmt.Sprintf("Compilation completed in %s", formattedTime)) // Exibe a mensagem atualizada
 }

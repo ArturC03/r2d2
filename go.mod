@@ -3,7 +3,7 @@ module github.com/ArturC03/r2d2
 go 1.24.0
 
 require (
-	github.com/ArturC03/r2d2Styles v0.0.8
+	github.com/ArturC03/r2d2Styles v0.0.15
 	github.com/antlr4-go/antlr/v4 v4.13.1
 	github.com/charmbracelet/bubbles v0.20.0
 	github.com/charmbracelet/bubbletea v1.3.4
@@ -11,7 +11,6 @@ require (
 
 require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
-	github.com/charmbracelet/harmonica v0.2.0 // indirect
 	github.com/charmbracelet/lipgloss v1.0.0 // indirect
 	github.com/charmbracelet/x/ansi v0.8.0 // indirect
 	github.com/charmbracelet/x/term v0.2.1 // indirect

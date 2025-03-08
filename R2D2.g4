@@ -133,7 +133,15 @@ loopStatement
   ;
 
 cicleControl
-  : (BREAK | CONTINUE) SEMI
+  : (breakStatement | continueStatement)
+  ;
+
+breakStatement
+  : BREAK SEMI
+  ;
+  
+continueStatement
+  : CONTINUE SEMI
   ;
 
 returnStatement
