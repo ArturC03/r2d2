@@ -7,17 +7,46 @@ import (
 	"github.com/ArturC03/r2d2/visitor"
 	r2d2Styles "github.com/ArturC03/r2d2Styles"
 	"github.com/antlr4-go/antlr/v4"
-	"io/ioutil"
+	"github.com/charmbracelet/bubbles/spinner"
+	tea "github.com/charmbracelet/bubbletea"
 	"log"
 	"os"
 	"os/exec"
-	"regexp"
 	"runtime"
-	strings "strings"
+	"time"
 )
 
+type model struct {
+	spinner spinner.Model
+	done    bool
+}
+
+func (m model) Init() tea.Cmd {
+	return tea.Batch(m.spinner.Tick)
+}
+
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		if msg.String() == "q" {
+			return m, tea.Quit
+		}
+	case spinner.TickMsg:
+		var cmd tea.Cmd
+		m.spinner, cmd = m.spinner.Update(msg)
+		return m, cmd
+	}
+	return m, nil
+}
+
+func (m model) View() string {
+	if m.done {
+		return "Compilation complete!"
+	}
+	return m.spinner.View() + " Compiling..."
+}
+
 func main() {
-	// Criar um stream de entrada
 	input := antlr.NewInputStream(`
 import a from "/home/rutra/Documentos/CODE/PAP/r2d2/main.go";
 
@@ -45,134 +74,82 @@ module cookie {
         }
     }
 }
-`) // Ajuste conforme a gramática
+`)
 
-	// fmt.Println(r2d2Styles.InfoMessage("Input stream criado."))
-
-	// Criar Lexer
 	lexer := parser.NewR2D2Lexer(input)
-	if lexer == nil {
-		fmt.Println(r2d2Styles.ErrorMessage("Lexer não foi inicializado corretamente!"))
-	}
-	// fmt.Println(r2d2Styles.InfoMessage("Lexer criado."))
-
-	// Criar Token Stream
 	stream := antlr.NewCommonTokenStream(lexer, 0)
-	// fmt.Println(r2d2Styles.InfoMessage("Token stream criado."))
-
-	// Criar Parser
 	p := parser.NewR2D2Parser(stream)
-
-	// Criar Error Listener
 	el := parser.NewR2D2ErrorListener()
-
-	// Adicionar error listener ao parser
 	p.RemoveErrorListeners()
 	p.AddErrorListener(el)
-
-	if p == nil {
-		fmt.Println(r2d2Styles.ErrorMessage("Parser não foi inicializado corretamente!"))
-	}
-	// fmt.Println(r2d2Styles.InfoMessage("Parser criado."))
-
-	// Construir a árvore de parse
 	p.BuildParseTrees = true
-	tree := p.Program() // Ajuste conforme sua regra principal
-	// Imprimir a árvore sintática
-	// fmt.Println(tree.ToStringTree(p.GetRuleNames(), nil))
-	// return
-	if tree == nil {
-		fmt.Println(r2d2Styles.ErrorMessage("Árvore sintática não foi criada corretamente!"))
-	}
-	// fmt.Println(r2d2Styles.InfoMessage("Árvore sintática criada."))
-
-	// Criar e aplicar o Visitor
+	tree := p.Program()
 	v := visitor.NewR2D2Visitor()
-	if v == nil {
-		fmt.Println(r2d2Styles.ErrorMessage("Visitor não foi inicializado corretamente!"))
-	}
-	// fmt.Println(r2d2Styles.InfoMessage("Visitor criado."))
-
-	// Aplicar o visitor na árvore - esta é a forma correta para ANTLR em Go
-	result := tree.Accept(v)
-
-	// fmt.Println(r2d2Styles.InfoMessage("Visitor aplicado com sucesso."))
-
-	// Exibir o resultado
-	fmt.Println(r2d2Styles.InfoMessage(fmt.Sprintf("Resultado do Visitor: %v", result)))
+	tree.Accept(v)
 	fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
 
 	fmt.Println(r2d2Styles.InfoMessage("Running the code generated"))
 	BuildCode(v.JsCode)
 }
 
-func RunCode(code string) {
-	cmd := exec.Command("deno", "eval", "--quiet", code)
-
-	var stderrBuf bytes.Buffer
-	cmd.Stderr = &stderrBuf
-
-	if err := cmd.Run(); err != nil {
-		fmt.Printf("Erro ao executar o Deno eval: %v\n", err)
-		return
-	}
-
-	// Expressão regular para capturar a mensagem de erro relevante
-	re := regexp.MustCompile(`error: (Uncaught [^\n]+)`)
-	matches := re.FindStringSubmatch(stderrBuf.String())
-	if len(matches) > 1 {
-		fmt.Println(matches[1]) // Exibe a mensagem de erro simplificada
-	} else {
-		fmt.Println("Nenhuma mensagem de erro encontrada.")
-	}
-}
-
-// BuildCode executa o comando Deno bundle com o código fornecido.
+// BuildCode executa o comando Deno compile com spinner
 func BuildCode(code string) {
-	// Create a temporary file to store the code
-	tmpFile, err := ioutil.TempFile(os.TempDir(), "deno_code_*.js")
+	tmpFile, err := os.CreateTemp(os.TempDir(), "deno_code_*.js")
 	if err != nil {
-		log.Fatalf("Error creating temporary file: %v", err)
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error creating temporary file: %v", err)))
 		return
 	}
-	defer os.Remove(tmpFile.Name()) // Remove the temporary file after use
-
-	// Write the code (JsCode string) to the temporary file
-	_, err = tmpFile.WriteString(code)
-	if err != nil {
-		log.Fatalf("Error writing to temporary file: %v", err)
-		return
-	}
+	defer os.Remove(tmpFile.Name())
+	tmpFile.WriteString(code)
 	tmpFile.Close()
 
-	// Output executable name
 	outputName := "program"
 	if runtime.GOOS == "windows" {
 		outputName += ".exe"
 	}
 
-	// Create the Deno compile command
 	cmd := exec.Command("deno", "compile", "--allow-all", "--output", outputName, tmpFile.Name())
 
-	// Print the command before executing it
-	fmt.Println("Deno compile command:")
-	fmt.Println(strings.Join(cmd.Args, " "))
-
-	// Create buffers to capture standard output and errors
-	var stdoutBuf, stderrBuf bytes.Buffer
-	cmd.Stdout = &stdoutBuf
+	var stderrBuf bytes.Buffer
 	cmd.Stderr = &stderrBuf
 
-	// Execute the command and check if any errors occurred
-	if err := cmd.Run(); err != nil {
-		log.Printf("Error executing Deno compile: %v", err)
-		fmt.Println("Error output:", stderrBuf.String())
+	// Inicializa o spinner
+	m := model{
+		spinner: spinner.New(),
+	}
+	m.spinner.Spinner = spinner.Dot
+
+	// Inicia o programa BubbleTea
+	p := tea.NewProgram(&m)
+	done := make(chan struct{})
+	go func() {
+		p.Start()
+		close(done)
+	}()
+
+	// Começa a medir o tempo agora
+	startTime := time.Now() // Medir o tempo de início da compilação
+
+	err = cmd.Run()
+	p.Send(tea.Quit())
+	<-done // Aguarda o encerramento correto do spinner
+
+	if err != nil {
+		log.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Deno compile: %v", err)))
 		return
 	}
 
-	// Display the command's standard output
-	fmt.Println("Deno compile command output:")
-	fmt.Println(stdoutBuf.String())
+	// Exibe o nome do executável gerado e o tempo com precisão de milissegundos
+	m.done = true
+	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Created executable: %s\n", outputName)))
 
-	fmt.Printf("Created executable: %s\n", outputName)
+	// Calcula e exibe o tempo de execução
+	duration := time.Since(startTime)                                                 // Tempo decorrido desde o início
+	fmt.Println(fmt.Sprintf("Compilation completed in %s", formatDuration(duration))) // Exibe a mensagem atualizada
+}
+
+// Função para formatar a duração com precisão de milissegundos
+func formatDuration(d time.Duration) string {
+	// Formata a duração para incluir milissegundos
+	return fmt.Sprintf("%.3f seconds", d.Seconds())
 }

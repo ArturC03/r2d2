@@ -210,10 +210,6 @@ func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationCo
 
 func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 	// fmt.Println(r2d2Styles.InfoMessage("Visiting block: " + ctx.GetText()))
-
-	if parentIf, ok := ctx.GetParent().(*parser.IfStatementContext); ok {
-		fmt.Println("Parent if:", parentIf.GetText())
-	}
 	// Function Declaration
 	if parentFuncDecl, ok := ctx.GetParent().(*parser.FunctionDeclarationContext); ok {
 
