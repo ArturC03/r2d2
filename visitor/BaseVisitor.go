@@ -291,7 +291,7 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 	return v.VisitChildren(ctx)
 }
 
-func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationContext) any {
+func (v *R2D2Visitor) VisitVariableDeclarationStatement(ctx *parser.VariableDeclarationContext) any {
 	// Parent is Module
 	if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); !ok {
 
@@ -383,4 +383,148 @@ func (v *R2D2Visitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
 	v.JsCode += "}"
 
 	return nil // Return value is not used for statement visitors
+}
+
+func (v *R2D2Visitor) VisitWhileStatement(ctx *parser.WhileStatementContext) any {
+	// Obtém a condição do while
+	condition := v.Visit(ctx.Expression()).(string)
+
+	// Inicia o bloco while com a condição
+	v.JsCode += fmt.Sprintf("while (%s) {", condition)
+
+	// Visita os filhos (o corpo do loop)
+	result := v.VisitChildren(ctx)
+
+	// Fecha o bloco while
+	v.JsCode += "}"
+
+	return result
+}
+
+func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
+	fmt.Println("DEBUG: Visiting ForStatement")
+
+	v.JsCode += "for ("
+
+	// Debug: imprimir a estrutura do SimpleFor
+	simpleFor := ctx.SimpleFor()
+	if simpleFor != nil {
+		fmt.Printf("DEBUG: SimpleFor structure: %+v\n", simpleFor)
+		fmt.Printf("DEBUG: Has VariableDeclaration: %v\n", simpleFor.VariableDeclaration() != nil)
+		fmt.Printf("DEBUG: Assignment count: %d\n", len(simpleFor.AllAssignment()))
+		fmt.Printf("DEBUG: Has Expression: %v\n", simpleFor.Expression() != nil)
+
+		// Inicialização
+		if simpleFor.VariableDeclaration() != nil {
+			fmt.Println("DEBUG: Processing variable declaration")
+			varDecl := simpleFor.VariableDeclaration()
+
+			// Tipo de declaração
+			if varDecl.VAR() != nil {
+				v.JsCode += "var "
+			} else if varDecl.LET() != nil {
+				v.JsCode += "let "
+			} else if varDecl.CONST() != nil {
+				v.JsCode += "const "
+			}
+
+			// Identificador
+			v.JsCode += varDecl.IDENTIFIER().GetText()
+
+			// Ignorar o tipo em JS (i32)
+
+			// Atribuição
+			if varDecl.ASSIGN() != nil && varDecl.Expression() != nil {
+				v.JsCode += " = " + varDecl.Expression().GetText()
+			}
+		} else if len(simpleFor.AllAssignment()) > 0 {
+			fmt.Println("DEBUG: Processing first assignment")
+			// Primeira atribuição
+			assignment := simpleFor.Assignment(0)
+			v.JsCode += assignment.IDENTIFIER().GetText()
+
+			if assignment.AssignmentOperator() != nil {
+				v.JsCode += " " + assignment.AssignmentOperator().GetText() + " "
+				if assignment.Expression() != nil {
+					v.JsCode += assignment.Expression().GetText()
+				}
+			} else if assignment.INCREMENT() != nil {
+				v.JsCode += "++"
+			} else if assignment.DECREMENT() != nil {
+				v.JsCode += "--"
+			}
+		}
+
+		// Condição
+		v.JsCode += "; "
+		if simpleFor.Expression() != nil {
+			fmt.Println("DEBUG: Processing condition expression")
+			v.JsCode += simpleFor.Expression().GetText()
+		}
+
+		// Atualização
+		v.JsCode += "; "
+		if len(simpleFor.AllAssignment()) > 1 {
+			fmt.Println("DEBUG: Processing update assignment")
+			assignment := simpleFor.Assignment(1)
+			identifier := assignment.IDENTIFIER().GetText()
+
+			if assignment.AssignmentOperator() != nil {
+				v.JsCode += identifier + " " + assignment.AssignmentOperator().GetText() + " "
+				if assignment.Expression() != nil {
+					v.JsCode += assignment.Expression().GetText()
+				}
+			} else if assignment.INCREMENT() != nil {
+				v.JsCode += identifier + "++"
+			} else if assignment.DECREMENT() != nil {
+				v.JsCode += identifier + "--"
+			}
+		} else if len(simpleFor.AllAssignment()) > 0 {
+			// Se não houver uma segunda atribuição explícita, adicionar incremento simples
+			v.JsCode += simpleFor.Assignment(0).IDENTIFIER().GetText() + "++"
+		}
+	}
+
+	v.JsCode += ") {"
+
+	// Processar o bloco
+	if ctx.Block() != nil {
+		fmt.Println("DEBUG: Processing block inside the for loop")
+		ctx.Block().Accept(v)
+	}
+
+	v.JsCode += "}"
+
+	fmt.Println("DEBUG: Generated JS for loop:", v.JsCode)
+
+	return nil
+}
+
+// Função auxiliar para processar atribuições
+func (v *R2D2Visitor) VisitAssignment(ctx *parser.AssignmentContext) any {
+	// Se tivermos um operador de incremento/decremento pós-fixado
+	if ctx.INCREMENT() != nil {
+		v.JsCode += ctx.IDENTIFIER().GetText() + "++"
+		return nil
+	} else if ctx.DECREMENT() != nil {
+		v.JsCode += ctx.IDENTIFIER().GetText() + "--"
+		return nil
+	}
+
+	// Para atribuições regulares
+	identifier := ctx.IDENTIFIER().GetText()
+	v.JsCode += identifier
+
+	// Mapear os operadores de atribuição
+	if ctx.AssignmentOperator() != nil {
+		op := ctx.AssignmentOperator().GetText()
+		v.JsCode += " " + op + " "
+	}
+
+	// Processar a expressão do lado direito
+	if ctx.Expression() != nil {
+		v.JsCode += ctx.Expression().GetText()
+	}
+
+	return nil
 }

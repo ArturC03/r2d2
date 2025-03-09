@@ -34,6 +34,10 @@ module cookie {
         loop {
             var i: i32 = 3;
             cookie();
+						for (var i: i32 = 0; i < 10; i++) {
+		return 1;
+							cookie();
+						}
             
             if (2 == 3) {
                 return 1;
