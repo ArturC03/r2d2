@@ -228,6 +228,7 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 						fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Line %d: statement %s not allowed in a pseudo function", line, stmtCtx.GetStart().GetText())))
 					} else {
 						// FunctionCall
+
 						// v.VisitChildren(stmtCtx)
 					}
 				}
@@ -278,17 +279,133 @@ func (v *R2D2Visitor) VisitLoopStatement(ctx *parser.LoopStatementContext) any {
 	// return result
 }
 
+func (v *R2D2Visitor) VisitFunctionCallStatement(ctx *parser.FunctionCallStatementContext) any {
+	return v.VisitChildren(ctx)
+
+}
+
 // TODO: Check if the function exists and if it is accessible
 func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
+	loadGlobalFunctions() // Carregar funções globais (caso necessário)
+	fmt.Println(ctx.GetText())
 
-	// if ctx.DOT() != nil {
-	// 	if v.symbolTable.Modules[ctx.IDENTIFIER(0).GetText()].Functions[ctx.IDENTIFIER(1).GetText()] != nil {
-	//
-	// 	}
+	// Criar uma string para armazenar a chamada de função
+	var funcCall string
 
-	// }
+	// Processar os identificadores encadeados (caso existam)
+	identifiers := ctx.AllIDENTIFIER()
 
-	return v.VisitChildren(ctx)
+	// Verificar se temos um namespace (objetos encadeados)
+	var namespace string
+	var funcName string
+
+	if len(identifiers) > 1 {
+		// Temos um namespace e uma função
+		for i, id := range identifiers[:len(identifiers)-1] {
+			if i > 0 {
+				namespace += "."
+			}
+			namespace += id.GetText()
+		}
+		funcName = identifiers[len(identifiers)-1].GetText()
+		funcCall = namespace + "." + funcName
+	} else {
+		// Apenas uma função direta
+		funcName = identifiers[0].GetText()
+		funcCall = funcName
+	}
+
+	// Processar os argumentos da função
+	var args []string
+	argumentList := ctx.ArgumentList()
+
+	if argumentList != nil {
+		// Visitar cada argumento
+		for _, arg := range argumentList.GetChildren() {
+			if expr, ok := arg.(*parser.ExpressionContext); ok {
+				// Visitar a expressão para obter seu valor convertido
+				argValue := v.Visit(expr)
+
+				// Se o resultado for uma string, adicione-a diretamente
+				if argStr, ok := argValue.(string); ok {
+					args = append(args, argStr)
+				} else {
+					// Caso contrário, use o texto da expressão
+					args = append(args, expr.GetText())
+				}
+			}
+		}
+	}
+
+	// Montagem final da chamada de função com parâmetros
+	if len(args) > 0 {
+		funcCall += "(" + strings.Join(args, ", ") + ")"
+	} else {
+		// Se não houver argumentos, apenas coloque os parênteses vazios
+		funcCall += "()"
+	}
+
+	// Verificar se a função está disponível nas funções globais do JavaScript
+	if len(namespace) > 0 {
+		// Verificar se o namespace existe no objeto global do JavaScript
+		if methods, exists := availableFunctions[namespace]; exists {
+			// Verificar se a função existe dentro do namespace
+			funcExists := false
+			for _, method := range methods {
+				if method == funcName {
+					funcExists = true
+					break
+				}
+			}
+
+			if funcExists {
+				// A função existe no namespace global do JavaScript
+				v.JsCode += funcCall
+				return nil
+			}
+		}
+	} else {
+		// Verificar se é uma função global direta
+		if _, exists := availableFunctions[funcName]; exists {
+			// É uma função/objeto global do JavaScript
+			v.JsCode += funcCall
+			return nil
+		}
+	}
+
+	// Se não for uma função global do JavaScript, verificar nas funções definidas localmente
+	if _, exists := availableFunctions[funcName]; exists {
+		// A função existe nas funções globais locais
+		v.JsCode += funcCall
+		return nil
+	}
+
+	// Se a função não for global, verifica se ela está dentro de algum módulo local
+	if len(namespace) > 0 {
+		// Verificar se o namespace corresponde a um módulo local
+		if module, exists := v.symbolTable.Modules[namespace]; exists {
+			// Verificar se a função existe no módulo
+			if _, exists := module.Functions[funcName]; exists {
+				// A função foi encontrada no módulo local
+				v.JsCode += funcCall
+				return nil
+			} else {
+				// Função não encontrada dentro do módulo
+				fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' not found in module '%s'", funcName, namespace)))
+			}
+		}
+	} else if _, exists := v.symbolTable.Modules[funcName]; exists {
+		// Verificar se estamos tentando chamar o módulo diretamente
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("'%s' is a module, not a function", funcName)))
+	} else {
+		// Se a função não foi encontrada em nenhum lugar, lance um erro
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' not found", funcName)))
+	}
+
+	// Mesmo com erro, adiciona a chamada ao código para permitir diagnóstico posterior
+	v.JsCode += "/* ERROR: " + funcCall + " */"
+
+	return nil
 }
 
 func (v *R2D2Visitor) VisitVariableDeclarationStatement(ctx *parser.VariableDeclarationContext) any {
@@ -402,21 +519,15 @@ func (v *R2D2Visitor) VisitWhileStatement(ctx *parser.WhileStatementContext) any
 }
 
 func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
-	fmt.Println("DEBUG: Visiting ForStatement")
 
 	v.JsCode += "for ("
 
 	// Debug: imprimir a estrutura do SimpleFor
 	simpleFor := ctx.SimpleFor()
 	if simpleFor != nil {
-		fmt.Printf("DEBUG: SimpleFor structure: %+v\n", simpleFor)
-		fmt.Printf("DEBUG: Has VariableDeclaration: %v\n", simpleFor.VariableDeclaration() != nil)
-		fmt.Printf("DEBUG: Assignment count: %d\n", len(simpleFor.AllAssignment()))
-		fmt.Printf("DEBUG: Has Expression: %v\n", simpleFor.Expression() != nil)
 
 		// Inicialização
 		if simpleFor.VariableDeclaration() != nil {
-			fmt.Println("DEBUG: Processing variable declaration")
 			varDecl := simpleFor.VariableDeclaration()
 
 			// Tipo de declaração
@@ -438,7 +549,6 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 				v.JsCode += " = " + varDecl.Expression().GetText()
 			}
 		} else if len(simpleFor.AllAssignment()) > 0 {
-			fmt.Println("DEBUG: Processing first assignment")
 			// Primeira atribuição
 			assignment := simpleFor.Assignment(0)
 			v.JsCode += assignment.IDENTIFIER().GetText()
@@ -458,14 +568,12 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 		// Condição
 		v.JsCode += "; "
 		if simpleFor.Expression() != nil {
-			fmt.Println("DEBUG: Processing condition expression")
 			v.JsCode += simpleFor.Expression().GetText()
 		}
 
 		// Atualização
 		v.JsCode += "; "
 		if len(simpleFor.AllAssignment()) > 1 {
-			fmt.Println("DEBUG: Processing update assignment")
 			assignment := simpleFor.Assignment(1)
 			identifier := assignment.IDENTIFIER().GetText()
 
@@ -489,13 +597,10 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 
 	// Processar o bloco
 	if ctx.Block() != nil {
-		fmt.Println("DEBUG: Processing block inside the for loop")
 		ctx.Block().Accept(v)
 	}
 
 	v.JsCode += "}"
-
-	fmt.Println("DEBUG: Generated JS for loop:", v.JsCode)
 
 	return nil
 }
@@ -527,4 +632,64 @@ func (v *R2D2Visitor) VisitAssignment(ctx *parser.AssignmentContext) any {
 	}
 
 	return nil
+}
+
+func (v *R2D2Visitor) VisitArgumentList(ctx *parser.ArgumentListContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitPrimaryExpression(ctx *parser.PrimaryExpressionContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitMemberExpression(ctx *parser.MemberExpressionContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitExpression(ctx *parser.ExpressionContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitLogicalExpression(ctx *parser.LogicalExpressionContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitComparisonExpression(ctx *parser.ComparisonExpressionContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitAdditiveExpression(ctx *parser.AdditiveExpressionContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitMultiplicativeExpression(ctx *parser.MultiplicativeExpressionContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitUnaryExpression(ctx *parser.UnaryExpressionContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitMemberPart(ctx *parser.MemberPartContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitArrayLiteral(ctx *parser.ArrayLiteralContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitLiteral(ctx *parser.LiteralContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitSwitchStatement(ctx *parser.SwitchStatementContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitSwitchCase(ctx *parser.SwitchCaseContext) any {
+	return v.VisitChildren(ctx)
+}
+
+func (v *R2D2Visitor) VisitDefaultCase(ctx *parser.DefaultCaseContext) any {
+	return v.VisitChildren(ctx)
 }

@@ -35,8 +35,8 @@ module cookie {
             var i: i32 = 3;
             cookie();
 						for (var i: i32 = 0; i < 10; i++) {
-		return 1;
-							cookie();
+							console.log(mathsadas.random());
+		
 						}
             
             if (2 == 3) {
