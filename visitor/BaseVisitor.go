@@ -2,11 +2,12 @@ package visitor
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
 	"github.com/ArturC03/r2d2/parser"
 	r2d2Styles "github.com/ArturC03/r2d2Styles"
 	"github.com/antlr4-go/antlr/v4"
-	"os"
-	"strings"
 )
 
 type Variable struct {
@@ -22,8 +23,14 @@ type Global struct {
 	Type  string
 }
 
+type Argument struct {
+	Name string
+	Type string
+}
+
 type Function struct {
 	Name       string
+	Arguments  []Argument // Adicionado para guardar informações dos argumentos
 	Variables  map[string]Variable
 	Functions  map[string]Function
 	isExported bool
@@ -68,7 +75,7 @@ func NewR2D2Visitor() *R2D2Visitor {
 func (v *R2D2Visitor) VisitChildren(node antlr.RuleNode) any {
 	var result any
 
-	for i := 0; i < node.GetChildCount(); i++ {
+	for i := range node.GetChildCount() {
 		child := node.GetChild(i)
 		if parseTree, ok := child.(antlr.ParseTree); ok {
 			childResult := parseTree.Accept(v)
@@ -286,126 +293,66 @@ func (v *R2D2Visitor) VisitFunctionCallStatement(ctx *parser.FunctionCallStateme
 
 // TODO: Check if the function exists and if it is accessible
 func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
-	loadGlobalFunctions() // Carregar funções globais (caso necessário)
-	fmt.Println(ctx.GetText())
+	loadGlobalFunctions()
 
-	// Criar uma string para armazenar a chamada de função
-	var funcCall string
+	// Nome da função
+	funcName := ctx.IDENTIFIER(0).GetText()
 
-	// Processar os identificadores encadeados (caso existam)
-	identifiers := ctx.AllIDENTIFIER()
-
-	// Verificar se temos um namespace (objetos encadeados)
-	var namespace string
-	var funcName string
-
-	if len(identifiers) > 1 {
-		// Temos um namespace e uma função
-		for i, id := range identifiers[:len(identifiers)-1] {
-			if i > 0 {
-				namespace += "."
-			}
-			namespace += id.GetText()
-		}
-		funcName = identifiers[len(identifiers)-1].GetText()
-		funcCall = namespace + "." + funcName
-	} else {
-		// Apenas uma função direta
-		funcName = identifiers[0].GetText()
-		funcCall = funcName
+	// Verifica se a função existe
+	function, exists := v.symbolTable.Modules["global"].Functions[funcName]
+	if !exists {
+		errorMessage := fmt.Sprintf("/* ERROR: Function '%s' not found */", funcName)
+		v.JsCode += errorMessage + "\n"
+		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+		return nil
 	}
 
-	// Processar os argumentos da função
-	var args []string
+	// Obtém os argumentos passados na chamada
+	var passedArgs []string
 	argumentList := ctx.ArgumentList()
-
 	if argumentList != nil {
-		// Visitar cada argumento
-		for _, arg := range argumentList.GetChildren() {
-			if expr, ok := arg.(*parser.ExpressionContext); ok {
-				// Visitar a expressão para obter seu valor convertido
-				argValue := v.Visit(expr)
-
-				// Se o resultado for uma string, adicione-a diretamente
-				if argStr, ok := argValue.(string); ok {
-					args = append(args, argStr)
-				} else {
-					// Caso contrário, use o texto da expressão
-					args = append(args, expr.GetText())
-				}
-			}
+		for _, arg := range argumentList.AllExpression() {
+			passedArgs = append(passedArgs, arg.GetText())
 		}
 	}
 
-	// Montagem final da chamada de função com parâmetros
-	if len(args) > 0 {
-		funcCall += "(" + strings.Join(args, ", ") + ")"
-	} else {
-		// Se não houver argumentos, apenas coloque os parênteses vazios
-		funcCall += "()"
+	// Verifica o número de argumentos
+	if len(passedArgs) != len(function.Arguments) {
+		errorMessage := fmt.Sprintf(
+			"/* ERROR: Function '%s' expects %d arguments, but %d were provided */",
+			funcName, len(function.Arguments), len(passedArgs),
+		)
+		v.JsCode += errorMessage + "\n"
+		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+		return nil
 	}
 
-	// Verificar se a função está disponível nas funções globais do JavaScript
-	if len(namespace) > 0 {
-		// Verificar se o namespace existe no objeto global do JavaScript
-		if methods, exists := availableFunctions[namespace]; exists {
-			// Verificar se a função existe dentro do namespace
-			funcExists := false
-			for _, method := range methods {
-				if method == funcName {
-					funcExists = true
-					break
-				}
-			}
+	// Verifica os tipos dos argumentos
+	for i, passedArg := range passedArgs {
+		expectedType := function.Arguments[i].Type
 
-			if funcExists {
-				// A função existe no namespace global do JavaScript
-				v.JsCode += funcCall
-				return nil
-			}
-		}
-	} else {
-		// Verificar se é uma função global direta
-		if _, exists := availableFunctions[funcName]; exists {
-			// É uma função/objeto global do JavaScript
-			v.JsCode += funcCall
+		// Aqui podes implementar lógica para verificar o tipo do argumento
+		if !isValidType(passedArg, expectedType) {
+			errorMessage := fmt.Sprintf(
+				"/* ERROR: Argument %d of function '%s' expects type '%s', but got '%s' */",
+				i+1, funcName, expectedType, passedArg,
+			)
+			v.JsCode += errorMessage + "\n"
+			fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
 			return nil
 		}
 	}
 
-	// Se não for uma função global do JavaScript, verificar nas funções definidas localmente
-	if _, exists := availableFunctions[funcName]; exists {
-		// A função existe nas funções globais locais
-		v.JsCode += funcCall
-		return nil
-	}
-
-	// Se a função não for global, verifica se ela está dentro de algum módulo local
-	if len(namespace) > 0 {
-		// Verificar se o namespace corresponde a um módulo local
-		if module, exists := v.symbolTable.Modules[namespace]; exists {
-			// Verificar se a função existe no módulo
-			if _, exists := module.Functions[funcName]; exists {
-				// A função foi encontrada no módulo local
-				v.JsCode += funcCall
-				return nil
-			} else {
-				// Função não encontrada dentro do módulo
-				fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' not found in module '%s'", funcName, namespace)))
-			}
-		}
-	} else if _, exists := v.symbolTable.Modules[funcName]; exists {
-		// Verificar se estamos tentando chamar o módulo diretamente
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("'%s' is a module, not a function", funcName)))
-	} else {
-		// Se a função não foi encontrada em nenhum lugar, lance um erro
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' not found", funcName)))
-	}
-
-	// Mesmo com erro, adiciona a chamada ao código para permitir diagnóstico posterior
-	v.JsCode += "/* ERROR: " + funcCall + " */"
+	// Monta a chamada correta no código compilado
+	v.JsCode += fmt.Sprintf("%s(%s);\n", funcName, strings.Join(passedArgs, ", "))
 
 	return nil
+}
+
+func isValidType(value string, expectedType string) bool {
+	// Implementa a lógica para verificar tipos (ex.: int, string, etc.)
+	// Por exemplo, verificar se "123" é int ou "texto" é string
+	return true // Ajusta conforme necessário
 }
 
 func (v *R2D2Visitor) VisitVariableDeclarationStatement(ctx *parser.VariableDeclarationContext) any {
@@ -427,7 +374,7 @@ func (v *R2D2Visitor) VisitVariableDeclarationStatement(ctx *parser.VariableDecl
 		if ctx.ASSIGN() == nil {
 			fmt.Println(r2d2Styles.ErrorMessage("Const variable must be assigned a value"))
 		} else {
-			v.JsCode += fmt.Sprintf("const %s", ctx.IDENTIFIER().GetText(), ctx.Expression().GetText())
+			v.JsCode += fmt.Sprintf("const %s = %s;", ctx.IDENTIFIER().GetText(), ctx.Expression().GetText())
 		}
 
 		// Variable

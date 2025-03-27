@@ -3,6 +3,12 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"log"
+	"os"
+	"os/exec"
+	"runtime"
+	"time"
+
 	"github.com/ArturC03/r2d2/parser"
 	"github.com/ArturC03/r2d2/visitor"
 	r2d2Styles "github.com/ArturC03/r2d2Styles"
@@ -10,45 +16,10 @@ import (
 	"github.com/ArturC03/r2d2Styles/stopwatch"
 	"github.com/antlr4-go/antlr/v4"
 	tea "github.com/charmbracelet/bubbletea"
-	"log"
-	"os"
-	"os/exec"
-	"runtime"
-	"time"
 )
 
-func main() {
-	input := antlr.NewInputStream(`
-import a from "/home/rutra/Documentos/CODE/PAP/r2d2/main.go";
-
-const as: i32 = 1;
-
-module cookie {
-    type a {
-        var a: i32 = 1;
-    }
-
-    export var a: i32 = 1;
-
-    export fn main() {
-        loop {
-            var i: i32 = 3;
-            cookie();
-						for (var i: i32 = 0; i < 10; i++) {
-							console.log(mathsadas.random());
-		
-						}
-            
-            if (2 == 3) {
-                return 1;
-            } else {
-                return 2;
-            }
-		break;
-        }
-    }
-}
-`)
+func buildJSCode(userInput string) string {
+	input := antlr.NewInputStream(userInput)
 
 	lexer := parser.NewR2D2Lexer(input)
 	stream := antlr.NewCommonTokenStream(lexer, 0)
@@ -63,11 +34,76 @@ module cookie {
 	fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
 
 	fmt.Println(r2d2Styles.InfoMessage("Running the code generated"))
-	BuildCode(v.JsCode)
+	return v.JsCode
+}
+
+func RunCode(input string) {
+	code := buildJSCode(input)
+	// Create a temporary file to store the generated code
+	tmpFile, err := os.CreateTemp(os.TempDir(), "deno_run_*.js")
+	if err != nil {
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error creating temporary file: %v", err)))
+		return
+	}
+	defer os.Remove(tmpFile.Name())
+
+	// Write the code to the temporary file
+	tmpFile.WriteString(code)
+	tmpFile.Close()
+
+	// Prepare the command to run the code using Deno
+	cmd := exec.Command("deno", "run", "--allow-all", tmpFile.Name())
+
+	// Capture both stdout and stderr
+	var outBuf, errBuf bytes.Buffer
+	cmd.Stdout = &outBuf
+	cmd.Stderr = &errBuf
+
+	// Initialize spinner using r2d2Styles/spinner
+	spinnerModel := spinner.New()
+	m := spinner.Model{Spinner: spinnerModel.Spinner}
+
+	// Start BubbleTea program for spinner
+	p := tea.NewProgram(&m)
+	done := make(chan struct{})
+	go func() {
+		// p.Start()
+		p.Run()
+		close(done)
+	}()
+
+	// Measure execution time
+	startTime := time.Now()
+
+	// Run the command
+	err = cmd.Run()
+	p.Send(tea.Quit())
+	<-done // Wait for spinner to close properly
+
+	// Calculate execution time
+	formattedTime := stopwatch.MeasureExecutionTime(startTime)
+
+	// Handle command execution results
+	if err != nil {
+		// If there's an error, print error message
+		log.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Deno run error: %v", err)))
+		fmt.Println(r2d2Styles.ErrorMessage("Standard Error Output:"))
+		fmt.Println(errBuf.String())
+		return
+	}
+
+	// If successful, print output and execution time
+	m.SetDone(true)
+	if outBuf.Len() > 0 {
+		fmt.Println(r2d2Styles.SuccessMessage("Program Output:"))
+		fmt.Println(outBuf.String())
+	}
+	fmt.Println(fmt.Sprintf("Execution completed in %s", formattedTime))
 }
 
 // BuildCode executa o comando Deno compile com spinner
-func BuildCode(code string) {
+func BuildCode(input string) {
+	code := buildJSCode(input)
 	tmpFile, err := os.CreateTemp(os.TempDir(), "deno_code_*.js")
 	if err != nil {
 		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error creating temporary file: %v", err)))
@@ -96,7 +132,8 @@ func BuildCode(code string) {
 	p := tea.NewProgram(&m)
 	done := make(chan struct{})
 	go func() {
-		p.Start()
+		// p.Start()
+		p.Run()
 		close(done)
 	}()
 

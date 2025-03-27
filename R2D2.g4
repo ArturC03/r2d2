@@ -15,7 +15,7 @@ declaration
   ;
 
 globalDeclaration
-  : CONST IDENTIFIER COLON typeExpression ASSIGN expression SEMI
+  : CONST IDENTIFIER typeExpression ASSIGN expression SEMI
   ;
 
 importDeclaration
@@ -47,7 +47,7 @@ parameterList
   ;
 
 parameter
-  : IDENTIFIER COLON typeExpression
+  : IDENTIFIER typeExpression
   ;
 
 typeExpression
@@ -73,7 +73,7 @@ typeDeclaration
   ;
 
 variableDeclaration
-  : (EXPORT)? (VAR | LET | CONST) IDENTIFIER (COLON typeExpression)? (ASSIGN expression)? SEMI
+  : (EXPORT)? (VAR | LET | CONST) IDENTIFIER (typeExpression)? (ASSIGN expression)? SEMI
   ;
 
 statement
@@ -99,7 +99,7 @@ ifStatement
   ;
 
 forStatement
-  : FOR LPAREN simpleFor RPAREN block
+  : FOR (LPAREN)? simpleFor (RPAREN)? block
   ;
 
 assignmentDeclaration
@@ -139,7 +139,7 @@ cicleControl
 breakStatement
   : BREAK SEMI
   ;
-  
+
 continueStatement
   : CONTINUE SEMI
   ;
