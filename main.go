@@ -19,6 +19,7 @@ import (
 )
 
 func buildJSCode(userInput string) string {
+	print(userInput)
 	input := antlr.NewInputStream(userInput)
 
 	lexer := parser.NewR2D2Lexer(input)
@@ -30,6 +31,7 @@ func buildJSCode(userInput string) string {
 	p.BuildParseTrees = true
 	tree := p.Program()
 	v := visitor.NewR2D2Visitor()
+	fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
 	tree.Accept(v)
 	fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
 

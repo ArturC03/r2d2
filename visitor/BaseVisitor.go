@@ -119,20 +119,46 @@ func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContex
 }
 
 func (v *R2D2Visitor) VisitGlobalDeclaration(ctx *parser.GlobalDeclarationContext) any {
+	// Check if any of the required context objects are nil
+	if ctx.IDENTIFIER() == nil {
+		fmt.Println("Error: IDENTIFIER is nil in GlobalDeclaration")
+		return nil
+	}
 
+	if ctx.Expression() == nil {
+		fmt.Println("Error: Expression is nil in GlobalDeclaration")
+		return nil
+	}
+
+	if ctx.TypeExpression() == nil {
+		fmt.Println("Error: TypeExpression is nil in GlobalDeclaration")
+		return nil
+	}
+
+	// Original code
 	v.symbolTable.Globals[ctx.IDENTIFIER().GetText()] = Global{
 		Value: ctx.Expression().GetText(),
 		Type:  ctx.TypeExpression().GetText(),
 	}
 
 	jsCode := fmt.Sprintf("const %s = %s;", ctx.IDENTIFIER().GetText(), ctx.Expression().GetText())
-
 	v.JsCode += jsCode
 
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContext) any {
+	// Make sure this is in your initialization code for R2D2Visitor
+	if v.symbolTable.Globals == nil {
+		v.symbolTable.Globals = make(map[string]Global)
+	}
+
+	// Add null check for IDENTIFIER
+	if ctx.IDENTIFIER(0) == nil || len(ctx.AllIDENTIFIER()) == 0 {
+		fmt.Println(r2d2Styles.ErrorMessage("Error: Module declaration without identifier"))
+		return nil
+	}
+
 	moduleName := ctx.IDENTIFIER(0).GetText()
 
 	// Create Module
@@ -293,21 +319,76 @@ func (v *R2D2Visitor) VisitFunctionCallStatement(ctx *parser.FunctionCallStateme
 
 // TODO: Check if the function exists and if it is accessible
 func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
-	loadGlobalFunctions()
+	// Carregar funções globais passando diretamente o visitante como parâmetro
+	// Isso elimina a necessidade de usar a variável global currentVisitor
+	err := loadGlobalFunctions(v)
+	if err != nil {
+		v.JsCode += fmt.Sprintf("/* ERROR: %s */", err.Error())
+		return nil
+	}
 
 	// Nome da função
 	funcName := ctx.IDENTIFIER(0).GetText()
 
-	// Verifica se a função existe
-	function, exists := v.symbolTable.Modules["global"].Functions[funcName]
+	// Verificar se há namespace/objeto (ex: console.log)
+	if ctx.AllIDENTIFIER() != nil && len(ctx.AllIDENTIFIER()) > 1 {
+		funcName = funcName + "." + ctx.IDENTIFIER(1).GetText()
+	}
+
+	// Verificar se a função existe no módulo global
+	globalModule, exists := v.symbolTable.Modules["global"]
 	if !exists {
-		errorMessage := fmt.Sprintf("/* ERROR: Function '%s' not found */", funcName)
+		errorMessage := "/* ERROR: Global module not initialized */"
 		v.JsCode += errorMessage + "\n"
 		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
 		return nil
 	}
 
-	// Obtém os argumentos passados na chamada
+	function, exists := globalModule.Functions[funcName]
+	if !exists {
+		// Tente encontrar o objeto primeiro (ex: para 'console.log', buscamos 'console')
+		objName := strings.Split(funcName, ".")[0]
+		if strings.Contains(funcName, ".") {
+			// Vamos ver se existem métodos para este objeto
+			var objectMethods []string
+			for fname := range globalModule.Functions {
+				if strings.HasPrefix(fname, objName+".") {
+					objectMethods = append(objectMethods, fname)
+				}
+			}
+
+			if len(objectMethods) > 0 {
+				// Se encontrarmos métodos para este objeto, sugerimos eles
+				suggestions := objectMethods
+				if len(suggestions) > 3 {
+					suggestions = suggestions[:3]
+				}
+
+				errorMessage := fmt.Sprintf(
+					"/* ERROR: Function '%s' not found. Você quis dizer: %s? */",
+					funcName, strings.Join(suggestions, ", "),
+				)
+				v.JsCode += errorMessage + "\n"
+				fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+				return nil
+			}
+		}
+
+		// Se não encontrarmos o objeto ou não for uma referência a objeto,
+		// buscamos funções com nomes similares
+		suggestions := findSimilarFunctions(globalModule.Functions, funcName)
+
+		errorMessage := fmt.Sprintf("/* ERROR: Function '%s' not found */", funcName)
+		if len(suggestions) > 0 {
+			errorMessage += fmt.Sprintf(" /* Você quis dizer: %s? */", strings.Join(suggestions, ", "))
+		}
+
+		v.JsCode += errorMessage + "\n"
+		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+		return nil
+	}
+
+	// Obter os argumentos passados na chamada
 	var passedArgs []string
 	argumentList := ctx.ArgumentList()
 	if argumentList != nil {
@@ -316,26 +397,32 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 		}
 	}
 
-	// Verifica o número de argumentos
+	// Verificar o número de argumentos (com exceção para algumas funções que aceitam um número variável)
 	if len(passedArgs) != len(function.Arguments) {
-		errorMessage := fmt.Sprintf(
-			"/* ERROR: Function '%s' expects %d arguments, but %d were provided */",
-			funcName, len(function.Arguments), len(passedArgs),
-		)
-		v.JsCode += errorMessage + "\n"
-		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
-		return nil
-	}
+		// Lista de funções que aceitam um número variável de argumentos
+		variableArgsAllowed := []string{
+			"console.log", "console.error", "console.warn", "console.info",
+			"Array.push", "Array.concat",
+			"Math.max", "Math.min",
+			"Object.assign",
+			"setTimeout", "setInterval",
+			"Function.apply", "Function.call",
+		}
 
-	// Verifica os tipos dos argumentos
-	for i, passedArg := range passedArgs {
-		expectedType := function.Arguments[i].Type
+		// Verificar se a função atual está na lista de exceções
+		isVariableArgsFunction := false
+		for _, varArgFunc := range variableArgsAllowed {
+			if funcName == varArgFunc || strings.HasSuffix(funcName, ".apply") || strings.HasSuffix(funcName, ".call") {
+				isVariableArgsFunction = true
+				break
+			}
+		}
 
-		// Aqui podes implementar lógica para verificar o tipo do argumento
-		if !isValidType(passedArg, expectedType) {
+		// Se a função não aceita um número variável de argumentos, exibir erro
+		if !isVariableArgsFunction {
 			errorMessage := fmt.Sprintf(
-				"/* ERROR: Argument %d of function '%s' expects type '%s', but got '%s' */",
-				i+1, funcName, expectedType, passedArg,
+				"/* ERROR: Function '%s' expects %d arguments, but %d were provided */",
+				funcName, len(function.Arguments), len(passedArgs),
 			)
 			v.JsCode += errorMessage + "\n"
 			fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
@@ -343,9 +430,24 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 		}
 	}
 
-	// Monta a chamada correta no código compilado
-	v.JsCode += fmt.Sprintf("%s(%s);\n", funcName, strings.Join(passedArgs, ", "))
+	// Verificar os tipos dos argumentos (quando aplicável)
+	for i, passedArg := range passedArgs {
+		if i < len(function.Arguments) {
+			expectedType := function.Arguments[i].Type
+			if !isValidJSType(passedArg, expectedType) {
+				errorMessage := fmt.Sprintf(
+					"/* ERROR: Argument %d of function '%s' expects type '%s', but got '%s' */",
+					i+1, funcName, expectedType, passedArg,
+				)
+				v.JsCode += errorMessage + "\n"
+				fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+				return nil
+			}
+		}
+	}
 
+	// Gerar o código JavaScript para a chamada de função
+	v.JsCode += fmt.Sprintf("%s(%s)", funcName, strings.Join(passedArgs, ", "))
 	return nil
 }
 
@@ -355,9 +457,12 @@ func isValidType(value string, expectedType string) bool {
 	return true // Ajusta conforme necessário
 }
 
-func (v *R2D2Visitor) VisitVariableDeclarationStatement(ctx *parser.VariableDeclarationContext) any {
+// func (v *R2D2Visitor) VisitVariableDeclarationStatement(ctx *parser.VariableDeclarationContext) any {
+// }
+
+func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationContext) any {
 	// Parent is Module
-	if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); !ok {
+	if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
 
 		// Export
 		if ctx.EXPORT() != nil {
@@ -374,7 +479,7 @@ func (v *R2D2Visitor) VisitVariableDeclarationStatement(ctx *parser.VariableDecl
 		if ctx.ASSIGN() == nil {
 			fmt.Println(r2d2Styles.ErrorMessage("Const variable must be assigned a value"))
 		} else {
-			v.JsCode += fmt.Sprintf("const %s = %s;", ctx.IDENTIFIER().GetText(), ctx.Expression().GetText())
+			v.JsCode += fmt.Sprintf("const %s", ctx.IDENTIFIER().GetText())
 		}
 
 		// Variable
@@ -383,15 +488,52 @@ func (v *R2D2Visitor) VisitVariableDeclarationStatement(ctx *parser.VariableDecl
 	}
 
 	if ctx.ASSIGN() != nil {
-		v.JsCode += fmt.Sprintf(" = %s;", ctx.Expression().GetText())
-	} else {
+		v.JsCode += fmt.Sprintf(" = %s", ctx.Expression().GetText())
+	}
+
+	if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
 		v.JsCode += ";"
 	}
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitStatement(ctx *parser.StatementContext) any {
-	return v.VisitChildren(ctx)
+	// Visita os filhos do statement
+	result := v.VisitChildren(ctx)
+
+	// Verificação do tipo de statement usando type switch
+	switch ctx.GetChild(0).(type) {
+	case *parser.ExpressionStatementContext:
+		// ExpressionStatements geralmente precisam de ponto e vírgula
+		v.JsCode += ";"
+	case *parser.AssignmentDeclarationContext:
+		// Declarações de atribuição precisam de ponto e vírgula
+		v.JsCode += ";"
+	case *parser.FunctionCallStatementContext:
+		// Chamadas de função precisam de ponto e vírgula
+		v.JsCode += ";"
+	case *parser.IfStatementContext:
+		// O "if" não precisa de ponto e vírgula após o bloco de código
+		// Aqui o ponto e vírgula não é necessário
+	case *parser.ForStatementContext:
+		// O "for" loop também não precisa de ponto e vírgula
+	case *parser.WhileStatementContext:
+		// O "while" loop também não precisa de ponto e vírgula
+	case *parser.LoopStatementContext:
+		// Loops geralmente não precisam de ponto e vírgula
+	case *parser.CicleControlContext:
+		// Controle de ciclo (break, continue) geralmente não precisam de ponto e vírgula
+	case *parser.ReturnStatementContext:
+		// "return" statements geralmente precisam de ponto e vírgula
+		v.JsCode += ";"
+	case *parser.SwitchStatementContext:
+		// "switch" geralmente não requer ponto e vírgula
+	case *parser.VariableDeclarationContext:
+		// Declaração de variáveis precisa de ponto e vírgula
+		v.JsCode += ";"
+	}
+
+	return result
 }
 
 func (v *R2D2Visitor) VisitReturnStatement(ctx *parser.ReturnStatementContext) any {
@@ -404,7 +546,7 @@ func (v *R2D2Visitor) VisitReturnStatement(ctx *parser.ReturnStatementContext) a
 	if ctx.Expression() != nil {
 		v.JsCode += " " + ctx.Expression().GetText()
 	}
-	v.JsCode += ";"
+	// v.JsCode += ";"
 	return v.VisitChildren(ctx)
 }
 
@@ -417,6 +559,13 @@ func (v *R2D2Visitor) VisitCicleControl(ctx *parser.CicleControlContext) any {
 
 		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Invalid %s statement on line %d",
 			ctx.GetStart().GetText(), ctx.GetStart().GetLine())))
+	} else {
+		switch {
+		case ctx.BreakStatement() != nil:
+			v.JsCode += "break"
+		case ctx.ContinueStatement() != nil:
+			v.JsCode += "continue"
+		}
 	}
 
 	return v.VisitChildren(ctx)
@@ -451,10 +600,13 @@ func (v *R2D2Visitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
 
 func (v *R2D2Visitor) VisitWhileStatement(ctx *parser.WhileStatementContext) any {
 	// Obtém a condição do while
-	condition := v.Visit(ctx.Expression()).(string)
+	conditionRaw := v.Visit(ctx.Expression())
+	if condition, ok := conditionRaw.(string); ok {
+		v.JsCode += fmt.Sprintf("while (%s) {", condition)
 
-	// Inicia o bloco while com a condição
-	v.JsCode += fmt.Sprintf("while (%s) {", condition)
+	} else {
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Invalid while statement on line %d", ctx.GetStart().GetLine())))
+	}
 
 	// Visita os filhos (o corpo do loop)
 	result := v.VisitChildren(ctx)
