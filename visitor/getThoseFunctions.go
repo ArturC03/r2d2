@@ -3,6 +3,7 @@ package visitor
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
 )
 
@@ -31,6 +32,8 @@ console.log(JSON.stringify(availableFunctions, null, 2));
 
 	// Capturar a saída do comando
 	output, err := cmd.CombinedOutput()
+	fmt.Print(output)
+	os.Exit(02)
 	if err != nil {
 		return fmt.Errorf("erro ao executar o comando Deno: %v", err)
 	}
