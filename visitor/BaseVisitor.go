@@ -30,7 +30,7 @@ type Argument struct {
 
 type Function struct {
 	Name       string
-	Arguments  []Argument // Adicionado para guardar informações dos argumentos
+	Arguments  []Argument
 	Variables  map[string]Variable
 	Functions  map[string]Function
 	isExported bool
@@ -42,6 +42,27 @@ type Module struct {
 	Functions map[string]Function
 	Variables map[string]Variable
 	Types     map[string]any
+}
+
+// Exports returns a list of exported function and variable names
+func (m Module) Exports() []string {
+	var exports []string
+
+	// Add exported functions
+	for name, function := range m.Functions {
+		if function.isExported {
+			exports = append(exports, name)
+		}
+	}
+
+	// Add exported variables
+	for name, variable := range m.Variables {
+		if variable.isExported {
+			exports = append(exports, name)
+		}
+	}
+
+	return exports
 }
 
 type Interface struct {
@@ -79,6 +100,221 @@ func NewR2D2Visitor() *R2D2Visitor {
 	}
 }
 
+// Helper functions
+func isExported(node interface{}) bool {
+	// Check if the node has an EXPORT token
+	switch n := node.(type) {
+	case *parser.FunctionDeclarationContext:
+		return n.EXPORT() != nil
+	case *parser.VariableDeclarationContext:
+		return n.EXPORT() != nil
+	case *parser.TypeDeclarationContext:
+		return n.EXPORT() != nil
+	}
+	return false
+}
+
+func isPseudo(node *parser.FunctionDeclarationContext) bool {
+	return node.PSEUDO() != nil
+}
+
+func findChild(parent antlr.RuleContext, types ...interface{}) bool {
+	for i := range parent.GetChildCount() {
+		child := parent.GetChild(i)
+
+		// Check if child matches any of the target types
+		for _, t := range types {
+			if ctx, ok := child.(antlr.RuleContext); ok {
+				switch t.(type) {
+				case *parser.BreakStatementContext:
+					if _, ok := ctx.(*parser.BreakStatementContext); ok {
+						return true
+					}
+				case *parser.ReturnStatementContext:
+					if _, ok := ctx.(*parser.ReturnStatementContext); ok {
+						return true
+					}
+					// Add other cases as needed
+				}
+			}
+		}
+
+		// Recursively check children
+		if ctx, ok := child.(antlr.RuleContext); ok {
+			if findChild(ctx, types...) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func findParent(node antlr.RuleContext, types ...interface{}) bool {
+	parent := node.GetParent()
+	if parent == nil {
+		return false
+	}
+
+	// Check if parent matches any of the target types
+	for _, t := range types {
+		switch t.(type) {
+		case *parser.LoopStatementContext:
+			if _, ok := parent.(*parser.LoopStatementContext); ok {
+				return true
+			}
+		case *parser.ForStatementContext:
+			if _, ok := parent.(*parser.ForStatementContext); ok {
+				return true
+			}
+		case *parser.WhileStatementContext:
+			if _, ok := parent.(*parser.WhileStatementContext); ok {
+				return true
+			}
+			// Add other cases as needed
+		}
+	}
+
+	// Recursively check parent's parent
+	return findParent(parent.(antlr.RuleContext), types...)
+}
+
+// func loadGlobalFunctions(v *R2D2Visitor) error {
+// 	// Add standard library functions to the symbol table if they don't exist
+// // 	standardFunctions := map[string][]Argument{
+// 		"console.log": {
+// 			{Name: "message", Type: "any"},
+// 		},
+// 		"console.error": {
+// 			{Name: "message", Type: "any"},
+// 		},
+// 		"console.warn": {
+// 			{Name: "message", Type: "any"},
+// 		},
+// 		"Math.random": {},
+// 		"Math.floor": {
+// 			{Name: "value", Type: "number"},
+// 		},
+// 		// Add more standard functions as needed
+// 	}
+
+// Create console module if it doesn't exist
+// 	if _, exists := v.symbolTable.Modules["console"]; !exists {
+// 		v.symbolTable.Modules["console"] = Module{
+// 			Name:      "console",
+// 			Functions: make(map[string]Function),
+// 			Variables: make(map[string]Variable),
+// 			Types:     make(map[string]any),
+// 		}
+// 	}
+
+// 	// Create Math module if it doesn't exist
+// 	if _, exists := v.symbolTable.Modules["Math"]; !exists {
+// 		v.symbolTable.Modules["Math"] = Module{
+// 			Name:      "Math",
+// 			Functions: make(map[string]Function),
+// 			Variables: make(map[string]Variable),
+// 			Types:     make(map[string]any),
+// 		}
+// 	}
+
+// 	// Add functions to their respective modules
+// 	for fullName, args := range standardFunctions {
+// 		parts := strings.Split(fullName, ".")
+// 		if len(parts) == 2 {
+// 			moduleName, funcName := parts[0], parts[1]
+
+// 			if module, exists := v.symbolTable.Modules[moduleName]; exists {
+// 				module.Functions[funcName] = Function{
+// 					Name:       funcName,
+// 					Arguments:  args,
+// 					Variables:  make(map[string]Variable),
+// 					Functions:  make(map[string]Function),
+// 					isExported: true,
+// 				}
+// 				v.symbolTable.Modules[moduleName] = module
+// 			}
+// 		}
+// 	}
+
+// 	return nil
+// }
+
+// func (v *R2D2Visitor) isAccessibleFunction(funcName string) (bool, Function, string) {
+// 	// Check if function is a method call (contains a dot)
+// 	parts := strings.Split(funcName, ".")
+
+// 	if len(parts) == 2 {
+// 		// Module.function format
+// 		moduleName, methodName := parts[0], parts[1]
+
+// 		// Check if module exists
+// 		module, moduleExists := v.symbolTable.Modules[moduleName]
+// 		if !moduleExists {
+// 			return false, Function{}, fmt.Sprintf("/* ERROR: Module '%s' not found */", moduleName)
+// 		}
+
+// 		// Check if function exists in module
+// 		function, functionExists := module.Functions[methodName]
+// 		if !functionExists {
+// 			return false, Function{}, fmt.Sprintf("/* ERROR: Function '%s' not found in module '%s' */", methodName, moduleName)
+// 		}
+
+// 		// Check if function is exported (if calling from another module)
+// 		if moduleName != v.currentModule.Name && !function.isExported {
+// 			return false, Function{}, fmt.Sprintf("/* ERROR: Function '%s' is not exported from module '%s' */", methodName, moduleName)
+// 		}
+
+// 		return true, function, ""
+// 	} else {
+// 		// Check current module functions
+// 		if function, exists := v.currentModule.Functions[funcName]; exists {
+// 			return true, function, ""
+// 		}
+
+// 		// Check global functions
+// 		if _, exists := v.symbolTable.Globals[funcName]; exists {
+// 			// Convert Global to Function for interface compatibility
+// 			return true, Function{
+// 				Name:       funcName,
+// 				Arguments:  []Argument{},
+// 				isExported: true,
+// 			}, ""
+// 		}
+
+// 		// Function not found
+// 		return false, Function{}, fmt.Sprintf("/* ERROR: Function '%s' not found */", funcName)
+// 	}
+// }
+
+// func isValidJSType(value string, expectedType string) bool {
+// 	// Basic type checking - this could be expanded with more sophisticated checks
+// 	if expectedType == "any" {
+// 		return true
+// 	}
+
+// 	// Check for string literals
+// 	if expectedType == "string" && (strings.HasPrefix(value, "\"") || strings.HasPrefix(value, "'")) {
+// 		return true
+// 	}
+
+// 	// Check for number literals
+// 	if expectedType == "number" {
+// 		// Simple check for numeric format
+// 		if _, err := fmt.Sscanf(value, "%f", new(float64)); err == nil {
+// 			return true
+// 		}
+// 	}
+
+// 	// Check for boolean literals
+// 	if expectedType == "boolean" && (value == "true" || value == "false") {
+// 		return true
+// 	}
+
+// 	// For objects, arrays, and other complex types, more sophisticated checks would be needed
+// 	// Assuming valid for now (can be enhanced later)
+// 	return true
+// }
+
 func (v *R2D2Visitor) VisitChildren(node antlr.RuleNode) any {
 	var result any
 
@@ -102,7 +338,6 @@ func (v *R2D2Visitor) VisitDeclaration(ctx *parser.DeclarationContext) any {
 
 // TODO: Add support for importing files
 func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContext) any {
-
 	// Has String Literal
 	if ctx.STRING_LITERAL() == nil {
 		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("File path not found on line %d", ctx.GetStart().GetLine())))
@@ -114,7 +349,6 @@ func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContex
 	// Empty String
 	if path == "\"\"" {
 		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Empty file path on line %d", ctx.GetStart().GetLine())))
-
 	} else {
 		justPath := strings.Trim(path, "\"")
 		_, err := os.Stat(justPath)
@@ -143,13 +377,15 @@ func (v *R2D2Visitor) VisitGlobalDeclaration(ctx *parser.GlobalDeclarationContex
 		return nil
 	}
 
-	// Original code
-	v.symbolTable.Globals[ctx.IDENTIFIER().GetText()] = Global{
+	// Store global in the symbol table with proper information
+	globalName := ctx.IDENTIFIER().GetText()
+	v.symbolTable.Globals[globalName] = Global{
+		Name:  globalName,
 		Value: ctx.Expression().GetText(),
 		Type:  ctx.TypeExpression().GetText(),
 	}
 
-	jsCode := fmt.Sprintf("const %s = %s;", ctx.IDENTIFIER().GetText(), ctx.Expression().GetText())
+	jsCode := fmt.Sprintf("const %s = %s;", globalName, ctx.Expression().GetText())
 	v.JsCode += jsCode
 
 	return v.VisitChildren(ctx)
@@ -171,119 +407,170 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 
 	// Create Module
 	if _, exists := v.symbolTable.Modules[moduleName]; !exists {
-		v.symbolTable.Modules[moduleName] = Module{
+		newModule := Module{
+			Name:      moduleName,
 			Functions: make(map[string]Function),
 			Variables: make(map[string]Variable),
 			Types:     make(map[string]any),
 		}
-		v.currentModule = v.symbolTable.Modules[moduleName]
-		// fmt.Println(r2d2Styles.InfoMessage("Módulo " + moduleName + " criado"))
+		v.symbolTable.Modules[moduleName] = newModule
+		v.currentModule = newModule
 	} else {
 		fmt.Println(r2d2Styles.ErrorMessage("Module " + moduleName + " already exists"))
 		return nil
 	}
 
-	// Function Declaration
+	// Process module contents to populate the symbol table
 	for _, child := range ctx.GetChildren() {
-
 		// Function Declaration
 		if funcDecl, ok := child.(*parser.FunctionDeclarationContext); ok {
+			if funcDecl.IDENTIFIER() == nil {
+				continue
+			}
+
 			funcName := funcDecl.IDENTIFIER().GetText()
+
+			// Parse function arguments
+			var arguments []Argument
+			if funcDecl.ParameterList() != nil {
+				for _, param := range funcDecl.ParameterList().AllParameter() {
+					if param.IDENTIFIER() != nil && param.TypeExpression() != nil {
+						arguments = append(arguments, Argument{
+							Name: param.IDENTIFIER().GetText(),
+							Type: param.TypeExpression().GetText(),
+						})
+					}
+				}
+			}
 
 			function := Function{
 				Name:       funcName,
+				Arguments:  arguments,
 				Variables:  make(map[string]Variable),
 				Functions:  make(map[string]Function),
 				isExported: isExported(funcDecl),
 				isPseudo:   isPseudo(funcDecl),
 			}
-			// Add Function to Module
-			v.symbolTable.Modules[moduleName].Functions[funcName] = function
+
+			// Store function in the module
+			module := v.symbolTable.Modules[moduleName]
+			module.Functions[funcName] = function
+			v.symbolTable.Modules[moduleName] = module
 		}
 
 		// Variable Declaration
 		if varDecl, ok := child.(*parser.VariableDeclarationContext); ok {
+			if varDecl.IDENTIFIER() == nil || varDecl.TypeExpression() == nil {
+				continue
+			}
+
 			varName := varDecl.IDENTIFIER().GetText()
 
 			variable := Variable{
 				Name:       varName,
-				Value:      nil,
 				Type:       varDecl.TypeExpression().GetText(),
 				isExported: isExported(varDecl),
 			}
 
 			// Variable Declaration with Assignment
-			if varDecl.ASSIGN() != nil {
+			if varDecl.ASSIGN() != nil && varDecl.Expression() != nil {
 				variable.Value = varDecl.Expression().GetText()
 			} else {
 				variable.Value = ""
 			}
-			v.symbolTable.Modules[moduleName].Variables[varName] = variable
+
+			// Store variable in the module
+			module := v.symbolTable.Modules[moduleName]
+			module.Variables[varName] = variable
+			v.symbolTable.Modules[moduleName] = module
 		}
 
 		// Type Declaration
 		if typeDecl, ok := child.(*parser.TypeDeclarationContext); ok {
+			if typeDecl.IDENTIFIER() == nil {
+				continue
+			}
+
 			typeName := typeDecl.IDENTIFIER().GetText()
-			v.symbolTable.Modules[moduleName].Types[typeName] = typeDecl
-			// fmt.Println(r2d2Styles.InfoMessage("Tipo " + typeName + " criado no módulo " + moduleName))
+
+			// Store type in the module
+			module := v.symbolTable.Modules[moduleName]
+			module.Types[typeName] = typeDecl
+			v.symbolTable.Modules[moduleName] = module
 		}
 	}
 
-	// Start Module
+	// Start Module in JS code
 	v.JsCode += fmt.Sprintf("const %s = (function () {\n", moduleName)
 
+	// Visit children to process the module contents
 	result := v.VisitChildren(ctx)
 
-	moduleExports := v.symbolTable.Modules[moduleName].Exports() // Exported Assets
+	// Get exported items for module return statement
+	moduleExports := v.symbolTable.Modules[moduleName].Exports()
 
-	// End Module
+	// End Module with return statement
 	v.JsCode += fmt.Sprintf("return {%s}; })();\n", strings.Join(moduleExports, ", "))
 
+	// Check if this module exports a main function and execute it
+	module := v.symbolTable.Modules[moduleName]
+	if mainFunc, exists := module.Functions["main"]; exists && mainFunc.isExported {
+		v.JsCode += fmt.Sprintf("// Auto-execute exported main function\n%s.main();\n", moduleName)
+	}
 	return result
 }
 
 func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationContext) any {
-
-	// Pseudo
-	if ctx.PSEUDO() != nil {
-	} else {
-		// fmt.Println(r2d2Styles.InfoMessage("Function declaration: " + ctx.GetText()))
+	// Skip if no identifier
+	if ctx.IDENTIFIER() == nil {
+		return v.VisitChildren(ctx)
 	}
 
-	return v.VisitChildren(ctx)
+	funcName := ctx.IDENTIFIER().GetText()
+	// moduleName := v.currentModule.Name
+
+	// Generate function signature for JS
+	v.JsCode += fmt.Sprintf("function %s(", funcName)
+
+	// Add parameters
+	if ctx.ParameterList() != nil {
+		paramNames := []string{}
+
+		for _, param := range ctx.ParameterList().AllParameter() {
+			if param.IDENTIFIER() != nil {
+				paramNames = append(paramNames, param.IDENTIFIER().GetText())
+			}
+		}
+
+		v.JsCode += strings.Join(paramNames, ", ")
+	}
+
+	v.JsCode += ") {\n"
+
+	// Store any local variables defined in the function's block
+	if ctx.Block() != nil {
+		// Visit the function body
+		ctx.Block().Accept(v)
+	}
+
+	v.JsCode += "}\n"
+
+	return nil
 }
 
 func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
-	// fmt.Println(r2d2Styles.InfoMessage("Visiting block: " + ctx.GetText()))
 	// Function Declaration
 	if parentFuncDecl, ok := ctx.GetParent().(*parser.FunctionDeclarationContext); ok {
-
 		// Pseudo
 		if parentFuncDecl.PSEUDO() != nil {
-			fmt.Println(r2d2Styles.InfoMessage("Found block inside a pseudo function: " + ctx.GetText()))
-
 			for _, child := range ctx.GetChildren() {
-
 				// Statement
 				if stmtCtx, ok := child.(*parser.StatementContext); ok {
-
 					// Not FunctionCall
 					if _, ok := stmtCtx.GetChild(0).(*parser.FunctionCallStatementContext); !ok {
 						line := stmtCtx.GetStart().GetLine()
-						fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Line %d: statement %s not allowed in a pseudo function", line, stmtCtx.GetStart().GetText())))
-					} else {
-						// FunctionCall
-
-						// v.VisitChildren(stmtCtx)
+						fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Line %s: statement %s not allowed in a pseudo function", r2d2Styles.Bold(fmt.Sprintf("%d", line)), r2d2Styles.Bold(stmtCtx.GetStart().GetText()))))
 					}
-				}
-			}
-		} else {
-			for _, child := range ctx.GetChildren() {
-
-				// Statement
-				if _, ok := child.(*parser.StatementContext); ok {
-					// v.VisitChildren(stmtCtx)
 				}
 			}
 		}
@@ -311,43 +598,35 @@ func (v *R2D2Visitor) VisitLoopStatement(ctx *parser.LoopStatementContext) any {
 	v.JsCode += "}"
 
 	return result
-
-	// v.JsCode += fmt.Sprintf("const %s = (function () {\n", moduleName)
-	//
-	// result := v.VisitChildren(ctx)
-	//
-	// moduleExports := v.symbolTable.Modules[moduleName].Exports() // Exported Assets
-	//
-	// // End Module
-	// v.JsCode += fmt.Sprintf("return {%s}; })();\n", strings.Join(moduleExports, ", "))
-	//
-	// return result
 }
 
 func (v *R2D2Visitor) VisitFunctionCallStatement(ctx *parser.FunctionCallStatementContext) any {
 	return v.VisitChildren(ctx)
-
 }
 
-// TODO: Check if the function exists and if it is accessible
 func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
-	// Carregar funções globais passando diretamente o visitante como parâmetro
-	// Isso elimina a necessidade de usar a variável global currentVisitor
+	// Load global functions if needed
 	err := loadGlobalFunctions(v)
 	if err != nil {
 		v.JsCode += fmt.Sprintf("/* ERROR: %s */", err.Error())
 		return nil
 	}
 
-	// Nome da função
-	funcName := ctx.IDENTIFIER(0).GetText()
+	// Get function name (handle both simple and qualified names)
+	var funcName string
+	if ctx.IDENTIFIER(0) == nil {
+		v.JsCode += "/* ERROR: Missing function identifier */"
+		return nil
+	}
 
-	// Verificar se há namespace/objeto (ex: console.log)
-	if ctx.AllIDENTIFIER() != nil && len(ctx.AllIDENTIFIER()) > 1 {
+	funcName = ctx.IDENTIFIER(0).GetText()
+
+	// Check for qualified name (e.g., console.log)
+	if len(ctx.AllIDENTIFIER()) > 1 && ctx.IDENTIFIER(1) != nil {
 		funcName = funcName + "." + ctx.IDENTIFIER(1).GetText()
 	}
 
-	// Verificar se a função está acessível
+	// Verify function accessibility
 	isAccessible, function, errorMessage := v.isAccessibleFunction(funcName)
 	if !isAccessible {
 		v.JsCode += errorMessage + "\n"
@@ -355,7 +634,7 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 		return nil
 	}
 
-	// Obter os argumentos passados na chamada
+	// Get arguments
 	var passedArgs []string
 	argumentList := ctx.ArgumentList()
 	if argumentList != nil {
@@ -364,9 +643,9 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 		}
 	}
 
-	// Verificar o número de argumentos (com exceção para algumas funções que aceitam um número variável)
+	// Verify argument count for non-variadic functions
 	if len(passedArgs) != len(function.Arguments) {
-		// Lista de funções que aceitam um número variável de argumentos
+		// List of functions that accept variable number of arguments
 		variableArgsAllowed := []string{
 			"console.log", "console.error", "console.warn", "console.info",
 			"Array.push", "Array.concat",
@@ -376,7 +655,7 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 			"Function.apply", "Function.call",
 		}
 
-		// Verificar se a função atual está na lista de exceções
+		// Check if this function allows variable args
 		isVariableArgsFunction := false
 		for _, varArgFunc := range variableArgsAllowed {
 			if funcName == varArgFunc || strings.HasSuffix(funcName, ".apply") || strings.HasSuffix(funcName, ".call") {
@@ -385,7 +664,7 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 			}
 		}
 
-		// Se a função não aceita um número variável de argumentos, exibir erro
+		// Show error if argument count mismatch for non-variadic functions
 		if !isVariableArgsFunction {
 			errorMessage := fmt.Sprintf(
 				"/* ERROR: Function '%s' expects %d arguments, but %d were provided */",
@@ -397,7 +676,7 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 		}
 	}
 
-	// Verificar os tipos dos argumentos (quando aplicável)
+	// Type checking for arguments
 	for i, passedArg := range passedArgs {
 		if i < len(function.Arguments) {
 			expectedType := function.Arguments[i].Type
@@ -413,90 +692,75 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 		}
 	}
 
-	// Gerar o código JavaScript para a chamada de função
-	v.JsCode += fmt.Sprintf("%s.%s(%s)", v.currentModule.Name, funcName, strings.Join(passedArgs, ", "))
+	// Generate JS code for function call
+	// Handle qualified vs unqualified names differently
+	if strings.Contains(funcName, ".") {
+		v.JsCode += fmt.Sprintf("%s(%s)", funcName, strings.Join(passedArgs, ", "))
+	} else if v.currentModule.Name != strings.Split(funcName, ".")[0] {
+		v.JsCode += fmt.Sprintf("%s.%s(%s)", v.currentModule.Name, funcName, strings.Join(passedArgs, ", "))
+	} else {
+		v.JsCode += fmt.Sprintf("%s(%s)", funcName, strings.Join(passedArgs, ", "))
+	}
+
 	return nil
 }
 
-func isValidType(value string, expectedType string) bool {
-	// Implementa a lógica para verificar tipos (ex.: int, string, etc.)
-	// Por exemplo, verificar se "123" é int ou "texto" é string
-	return true // Ajusta conforme necessário
-}
-
-// func (v *R2D2Visitor) VisitVariableDeclarationStatement(ctx *parser.VariableDeclarationContext) any {
-// }
-
 func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationContext) any {
-	// Parent is Module
-	if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
+	// Skip if no identifier
+	if ctx.IDENTIFIER() == nil {
+		return v.VisitChildren(ctx)
+	}
 
-		// Export
+	varName := ctx.IDENTIFIER().GetText()
+
+	// If this is a module-level variable
+	if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
+		// Check for invalid export
 		if ctx.EXPORT() != nil {
 			fmt.Println(r2d2Styles.ErrorMessage("Cannot export non-global variables"))
 		}
+	} else {
+		// This is a local variable - store it in the current function scope
+		// For this we'd need to track the current function - not implemented here
 	}
 
-	// Temporary Variable
+	// Generate JS declaration based on type
 	if ctx.LET() != nil {
-		v.JsCode += fmt.Sprintf("let %s", ctx.IDENTIFIER().GetText())
-
-		// Constant
+		v.JsCode += fmt.Sprintf("let %s", varName)
 	} else if ctx.CONST() != nil {
 		if ctx.ASSIGN() == nil {
 			fmt.Println(r2d2Styles.ErrorMessage("Const variable must be assigned a value"))
 		} else {
-			v.JsCode += fmt.Sprintf("const %s", ctx.IDENTIFIER().GetText())
+			v.JsCode += fmt.Sprintf("const %s", varName)
 		}
-
-		// Variable
 	} else if ctx.VAR() != nil {
-		v.JsCode += fmt.Sprintf("var %s", ctx.IDENTIFIER().GetText())
+		v.JsCode += fmt.Sprintf("var %s", varName)
 	}
 
-	if ctx.ASSIGN() != nil {
+	// Handle assignment if present
+	if ctx.ASSIGN() != nil && ctx.Expression() != nil {
 		v.JsCode += fmt.Sprintf(" = %s", ctx.Expression().GetText())
 	}
 
-	if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
-		v.JsCode += ";"
-	}
+	// Add semicolon for module-level statements
+	// if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
+	// v.JsCode += ";"
+	// }
+
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitStatement(ctx *parser.StatementContext) any {
-	// Visita os filhos do statement
+	// Visit statement children first
 	result := v.VisitChildren(ctx)
 
-	// Verificação do tipo de statement usando type switch
+	// Add appropriate semicolons based on statement type
 	switch ctx.GetChild(0).(type) {
-	case *parser.ExpressionStatementContext:
-		// ExpressionStatements geralmente precisam de ponto e vírgula
-		v.JsCode += ";"
-	case *parser.AssignmentDeclarationContext:
-		// Declarações de atribuição precisam de ponto e vírgula
-		v.JsCode += ";"
-	case *parser.FunctionCallStatementContext:
-		// Chamadas de função precisam de ponto e vírgula
-		v.JsCode += ";"
-	case *parser.IfStatementContext:
-		// O "if" não precisa de ponto e vírgula após o bloco de código
-		// Aqui o ponto e vírgula não é necessário
-	case *parser.ForStatementContext:
-		// O "for" loop também não precisa de ponto e vírgula
-	case *parser.WhileStatementContext:
-		// O "while" loop também não precisa de ponto e vírgula
-	case *parser.LoopStatementContext:
-		// Loops geralmente não precisam de ponto e vírgula
-	case *parser.CicleControlContext:
-		// Controle de ciclo (break, continue) geralmente não precisam de ponto e vírgula
-	case *parser.ReturnStatementContext:
-		// "return" statements geralmente precisam de ponto e vírgula
-		v.JsCode += ";"
-	case *parser.SwitchStatementContext:
-		// "switch" geralmente não requer ponto e vírgula
-	case *parser.VariableDeclarationContext:
-		// Declaração de variáveis precisa de ponto e vírgula
+	case *parser.ExpressionStatementContext,
+		*parser.AssignmentDeclarationContext,
+		*parser.FunctionCallStatementContext,
+		*parser.ReturnStatementContext,
+		*parser.VariableDeclarationContext:
 		v.JsCode += ";"
 	}
 
@@ -504,99 +768,145 @@ func (v *R2D2Visitor) VisitStatement(ctx *parser.StatementContext) any {
 }
 
 func (v *R2D2Visitor) VisitReturnStatement(ctx *parser.ReturnStatementContext) any {
-
-	if !findParent(ctx, (*parser.FunctionDeclarationContext)(nil)) {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Invalid return statement on line %d", ctx.GetStart().GetLine())))
-	}
-
 	v.JsCode += "return"
+
+	// Add the return expression if present
 	if ctx.Expression() != nil {
 		v.JsCode += " " + ctx.Expression().GetText()
-	}
-	// v.JsCode += ";"
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitCicleControl(ctx *parser.CicleControlContext) any {
-	// Verifica se o ciclo de controle (break/continue) está dentro de um loop válido
-	if !findParent(ctx,
-		(*parser.LoopStatementContext)(nil),
-		(*parser.WhileStatementContext)(nil),
-		(*parser.ForStatementContext)(nil)) {
-
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Invalid %s statement on line %d",
-			ctx.GetStart().GetText(), ctx.GetStart().GetLine())))
-	} else {
-		switch {
-		case ctx.BreakStatement() != nil:
-			v.JsCode += "break"
-		case ctx.ContinueStatement() != nil:
-			v.JsCode += "continue"
-		}
 	}
 
 	return v.VisitChildren(ctx)
 }
 
 func (v *R2D2Visitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
-	// Open the initial 'if' block
-	v.JsCode += fmt.Sprintf("if (%s) {", ctx.Expression(0).GetText())
+	v.JsCode += "if ("
 
-	// Visit the main if block (instead of directly visiting, let the block visitor handle it)
-	blockCtx := ctx.Block(0)
-	blockCtx.Accept(v)
-
-	// Process any 'else if' statements
-	for i := 1; i < len(ctx.AllExpression()); i++ {
-		v.JsCode += fmt.Sprintf("} else if (%s) {", ctx.Expression(i).GetText())
-		ctx.Block(i).Accept(v)
+	// Expression for the condition
+	if ctx.Expression(0) != nil {
+		v.JsCode += ctx.Expression(0).GetText()
 	}
 
-	// Process the 'else' statement if present (checking ELSE token count matches block count)
-	elseBlockIndex := len(ctx.AllExpression())
-	if len(ctx.AllELSE()) > len(ctx.AllExpression())-1 && elseBlockIndex < len(ctx.AllBlock()) {
-		v.JsCode += "} else {"
-		ctx.Block(elseBlockIndex).Accept(v)
+	v.JsCode += ") {\n"
+
+	// If block
+	if ctx.Block(0) != nil {
+		ctx.Block(0).Accept(v)
 	}
 
-	// Close the final if-else block
 	v.JsCode += "}"
 
-	return nil // Return value is not used for statement visitors
+	// Else block if present
+	if len(ctx.AllBlock()) > 1 && ctx.ELSE(0) != nil {
+		v.JsCode += " else {\n"
+		ctx.Block(1).Accept(v)
+		v.JsCode += "}"
+	}
+
+	return nil
 }
 
-func (v *R2D2Visitor) VisitWhileStatement(ctx *parser.WhileStatementContext) any {
-	// Obtém a condição do while
-	conditionRaw := v.Visit(ctx.Expression())
-	if condition, ok := conditionRaw.(string); ok {
-		v.JsCode += fmt.Sprintf("while (%s) {", condition)
+func (v *R2D2Visitor) VisitExpression(ctx *parser.ExpressionContext) any {
+	// For expressions, we'll just use the raw text for now
+	// In a real compiler, you would build an expression tree
+	return v.VisitChildren(ctx)
+}
 
-	} else {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Invalid while statement on line %d", ctx.GetStart().GetLine())))
+func (v *R2D2Visitor) VisitAssignmentDeclaration(ctx *parser.AssignmentDeclarationContext) any {
+	if ctx.Assignment() != nil {
+		// Process the assignment
+		assignment := ctx.Assignment()
+		if assignment.IDENTIFIER() == nil {
+			return v.VisitChildren(ctx)
+		}
+
+		varName := assignment.IDENTIFIER().GetText()
+
+		// Verify the variable exists in current scope
+		varExists := false
+
+		// Check in current module variables
+		if _, exists := v.currentModule.Variables[varName]; exists {
+			varExists = true
+		}
+
+		// Check global variables
+		if _, exists := v.symbolTable.Globals[varName]; exists {
+			varExists = true
+		}
+
+		if !varExists {
+			errorMessage := fmt.Sprintf("Variable '%s' not declared", varName)
+			fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+			v.JsCode += fmt.Sprintf("/* ERROR: %s */", errorMessage)
+			return nil
+		}
+
+		// Handle different assignment operators
+		if assignment.AssignmentOperator().ASSIGN() != nil {
+			v.JsCode += fmt.Sprintf("%s = ", varName)
+		} else if assignment.AssignmentOperator().PLUS_ASSIGN() != nil {
+			v.JsCode += fmt.Sprintf("%s += ", varName)
+		} else if assignment.AssignmentOperator().MINUS_ASSIGN() != nil {
+			v.JsCode += fmt.Sprintf("%s -= ", varName)
+		} else if assignment.AssignmentOperator().MULT_ASSIGN() != nil {
+			v.JsCode += fmt.Sprintf("%s *= ", varName)
+		} else if assignment.AssignmentOperator().DIV_ASSIGN() != nil {
+			v.JsCode += fmt.Sprintf("%s /= ", varName)
+		} else if assignment.AssignmentOperator().MOD_ASSIGN() != nil {
+			v.JsCode += fmt.Sprintf("%s %%= ", varName)
+		} else if assignment.INCREMENT() != nil {
+			v.JsCode += fmt.Sprintf("%s++", varName)
+			return nil
+		} else if assignment.DECREMENT() != nil {
+			v.JsCode += fmt.Sprintf("%s--", varName)
+			return nil
+		}
+
+		// Add the expression value
+		if assignment.Expression() != nil {
+			v.JsCode += assignment.Expression().GetText()
+		}
 	}
 
-	// Visita os filhos (o corpo do loop)
-	result := v.VisitChildren(ctx)
+	return v.VisitChildren(ctx)
+}
 
-	// Fecha o bloco while
-	v.JsCode += "}"
+func (v *R2D2Visitor) VisitBreakStatement(ctx *parser.BreakStatementContext) any {
+	// Verify we're in a loop context
+	inLoop := findParent(ctx, (*parser.LoopStatementContext)(nil), (*parser.ForStatementContext)(nil), (*parser.WhileStatementContext)(nil))
 
-	return result
+	if !inLoop {
+		errorMessage := fmt.Sprintf("Break statement on line %d must be within a loop", ctx.GetStart().GetLine())
+		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+	}
+
+	v.JsCode += "break"
+	return nil
+}
+
+func (v *R2D2Visitor) VisitContinueStatement(ctx *parser.ContinueStatementContext) any {
+	// Verify we're in a loop context
+	inLoop := findParent(ctx, (*parser.LoopStatementContext)(nil), (*parser.ForStatementContext)(nil), (*parser.WhileStatementContext)(nil))
+
+	if !inLoop {
+		errorMessage := fmt.Sprintf("Continue statement on line %d must be within a loop", ctx.GetStart().GetLine())
+		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+	}
+
+	v.JsCode += "continue"
+	return nil
 }
 
 func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
-
 	v.JsCode += "for ("
 
-	// Debug: imprimir a estrutura do SimpleFor
 	simpleFor := ctx.SimpleFor()
 	if simpleFor != nil {
-
-		// Inicialização
+		// Initialization
 		if simpleFor.VariableDeclaration() != nil {
 			varDecl := simpleFor.VariableDeclaration()
 
-			// Tipo de declaração
+			// Variable declaration type
 			if varDecl.VAR() != nil {
 				v.JsCode += "var "
 			} else if varDecl.LET() != nil {
@@ -605,17 +915,15 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 				v.JsCode += "const "
 			}
 
-			// Identificador
+			// Identifier
 			v.JsCode += varDecl.IDENTIFIER().GetText()
 
-			// Ignorar o tipo em JS (i32)
-
-			// Atribuição
+			// Assignment
 			if varDecl.ASSIGN() != nil && varDecl.Expression() != nil {
 				v.JsCode += " = " + varDecl.Expression().GetText()
 			}
-		} else if len(simpleFor.AllAssignment()) > 0 {
-			// Primeira atribuição
+		} else if simpleFor.Assignment(0) != nil {
+			// Initial assignment
 			assignment := simpleFor.Assignment(0)
 			v.JsCode += assignment.IDENTIFIER().GetText()
 
@@ -631,16 +939,16 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 			}
 		}
 
-		// Condição
+		// Condition
 		v.JsCode += "; "
 		if simpleFor.Expression() != nil {
 			v.JsCode += simpleFor.Expression().GetText()
 		}
 
-		// Atualização
+		// Update
 		v.JsCode += "; "
-		if len(simpleFor.AllAssignment()) > 1 {
-			assignment := simpleFor.Assignment(1)
+		if simpleFor.AllAssignment() != nil && len(simpleFor.AllAssignment()) > 0 {
+			assignment := simpleFor.Assignment(len(simpleFor.AllAssignment()) - 1)
 			identifier := assignment.IDENTIFIER().GetText()
 
 			if assignment.AssignmentOperator() != nil {
@@ -653,15 +961,12 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 			} else if assignment.DECREMENT() != nil {
 				v.JsCode += identifier + "--"
 			}
-		} else if len(simpleFor.AllAssignment()) > 0 {
-			// Se não houver uma segunda atribuição explícita, adicionar incremento simples
-			v.JsCode += simpleFor.Assignment(0).IDENTIFIER().GetText() + "++"
 		}
 	}
 
 	v.JsCode += ") {"
 
-	// Processar o bloco
+	// Process block
 	if ctx.Block() != nil {
 		ctx.Block().Accept(v)
 	}
@@ -671,91 +976,133 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 	return nil
 }
 
-// Função auxiliar para processar atribuições
-func (v *R2D2Visitor) VisitAssignment(ctx *parser.AssignmentContext) any {
-	// Se tivermos um operador de incremento/decremento pós-fixado
-	if ctx.INCREMENT() != nil {
-		v.JsCode += ctx.IDENTIFIER().GetText() + "++"
-		return nil
-	} else if ctx.DECREMENT() != nil {
-		v.JsCode += ctx.IDENTIFIER().GetText() + "--"
-		return nil
-	}
+func (v *R2D2Visitor) VisitWhileStatement(ctx *parser.WhileStatementContext) any {
+	v.JsCode += "while ("
 
-	// Para atribuições regulares
-	identifier := ctx.IDENTIFIER().GetText()
-	v.JsCode += identifier
-
-	// Mapear os operadores de atribuição
-	if ctx.AssignmentOperator() != nil {
-		op := ctx.AssignmentOperator().GetText()
-		v.JsCode += " " + op + " "
-	}
-
-	// Processar a expressão do lado direito
+	// Condition
 	if ctx.Expression() != nil {
 		v.JsCode += ctx.Expression().GetText()
 	}
 
+	v.JsCode += ") {\n"
+
+	// Body
+	if ctx.Block() != nil {
+		ctx.Block().Accept(v)
+	}
+
+	v.JsCode += "}\n"
+
 	return nil
 }
 
-func (v *R2D2Visitor) VisitArgumentList(ctx *parser.ArgumentListContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitPrimaryExpression(ctx *parser.PrimaryExpressionContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitMemberExpression(ctx *parser.MemberExpressionContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitExpression(ctx *parser.ExpressionContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitLogicalExpression(ctx *parser.LogicalExpressionContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitComparisonExpression(ctx *parser.ComparisonExpressionContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitAdditiveExpression(ctx *parser.AdditiveExpressionContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitMultiplicativeExpression(ctx *parser.MultiplicativeExpressionContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitUnaryExpression(ctx *parser.UnaryExpressionContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitMemberPart(ctx *parser.MemberPartContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitArrayLiteral(ctx *parser.ArrayLiteralContext) any {
-	return v.VisitChildren(ctx)
-}
-
-func (v *R2D2Visitor) VisitLiteral(ctx *parser.LiteralContext) any {
-	return v.VisitChildren(ctx)
-}
-
 func (v *R2D2Visitor) VisitSwitchStatement(ctx *parser.SwitchStatementContext) any {
+	v.JsCode += "switch ("
+
+	// Expression
+	if ctx.Expression() != nil {
+		v.JsCode += ctx.Expression().GetText()
+	}
+
+	v.JsCode += ") {\n"
+
+	// Cases
+	for _, switchCase := range ctx.AllSwitchCase() {
+		v.JsCode += "case "
+		if switchCase.Expression() != nil {
+			v.JsCode += switchCase.Expression().GetText()
+		}
+		v.JsCode += ":\n"
+		if switchCase.Block() != nil {
+			switchCase.Block().Accept(v)
+		}
+		v.JsCode += "break;\n"
+	}
+
+	// Default case
+	if ctx.DefaultCase() != nil {
+		v.JsCode += "default:\n"
+		if ctx.DefaultCase().Block() != nil {
+			ctx.DefaultCase().Block().Accept(v)
+		}
+	}
+
+	v.JsCode += "}\n"
+
+	return nil
+}
+
+func (v *R2D2Visitor) VisitTypeDeclaration(ctx *parser.TypeDeclarationContext) any {
+	if ctx.IDENTIFIER() == nil {
+		return v.VisitChildren(ctx)
+	}
+
+	typeName := ctx.IDENTIFIER().GetText()
+
+	// Store the type declaration in the module's Types map
+	v.currentModule.Types[typeName] = ctx
+
+	// JavaScript doesn't have direct type declarations, so we'll just add a comment
+	v.JsCode += fmt.Sprintf("/* Type declaration: %s */\n", typeName)
+
 	return v.VisitChildren(ctx)
 }
 
-func (v *R2D2Visitor) VisitSwitchCase(ctx *parser.SwitchCaseContext) any {
+func (v *R2D2Visitor) VisitInterfaceDeclaration(ctx *parser.InterfaceDeclarationContext) any {
+	if ctx.IDENTIFIER() == nil {
+		return v.VisitChildren(ctx)
+	}
+
+	interfaceName := ctx.IDENTIFIER().GetText()
+
+	// Create a new interface
+	newInterface := Interface{
+		Name:      interfaceName,
+		Functions: make(map[string]Function),
+	}
+
+	// Process function declarations in the interface
+	for _, funcDecl := range ctx.AllFunctionDeclaration() {
+		if funcDecl.IDENTIFIER() == nil {
+			continue
+		}
+
+		funcName := funcDecl.IDENTIFIER().GetText()
+
+		// Parse function arguments
+		var arguments []Argument
+		if funcDecl.ParameterList() != nil {
+			for _, param := range funcDecl.ParameterList().AllParameter() {
+				if param.IDENTIFIER() != nil && param.TypeExpression() != nil {
+					arguments = append(arguments, Argument{
+						Name: param.IDENTIFIER().GetText(),
+						Type: param.TypeExpression().GetText(),
+					})
+				}
+			}
+		}
+
+		// Store the function in the interface
+		newInterface.Functions[funcName] = Function{
+			Name:      funcName,
+			Arguments: arguments,
+			Variables: make(map[string]Variable),
+			Functions: make(map[string]Function),
+		}
+	}
+
+	// Add the interface to the symbol table
+	v.symbolTable.Interfaces[interfaceName] = newInterface
+
+	// JavaScript doesn't have interfaces, so add a comment
+	v.JsCode += fmt.Sprintf("/* Interface declaration: %s */\n", interfaceName)
+
 	return v.VisitChildren(ctx)
 }
 
-func (v *R2D2Visitor) VisitDefaultCase(ctx *parser.DefaultCaseContext) any {
-	return v.VisitChildren(ctx)
+func (v *R2D2Visitor) VisitExpressionStatement(ctx *parser.ExpressionStatementContext) any {
+	if ctx.Expression() != nil {
+		v.JsCode += ctx.Expression().GetText()
+	}
+	return nil
 }

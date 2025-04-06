@@ -6,19 +6,55 @@ import (
 	"os/exec"
 	"strings"
 
-	// "github.com/ArturC03/r2d2/parser"
 	r2d2Styles "github.com/ArturC03/r2d2Styles"
 )
 
-// Função para carregar as funções globais do JavaScript
-// Esta função recebe diretamente o visitante como parâmetro em vez de usar uma variável global
-func loadGlobalFunctions(v *R2D2Visitor) error {
-	// Verificar se o módulo global já existe e já tem funções carregadas
-	if module, exists := v.symbolTable.Modules["global"]; exists && len(module.Functions) > 0 {
-		return nil // Funções já carregadas
+// Helper function to check if the passed argument matches the expected type
+func isValidJSType(passedArg string, expectedType string) bool {
+	// Accept anything for "any" type
+	if expectedType == "any" {
+		return true
 	}
 
-	// Inicializar o módulo global se não existir
+	// Check for number type
+	if expectedType == "number" {
+		// Exclude strings and booleans
+		if strings.Contains(passedArg, "\"") || strings.Contains(passedArg, "'") {
+			return false // Is a string
+		}
+		if passedArg == "true" || passedArg == "false" {
+			return false // Is a boolean
+		}
+		// Try to parse as number
+		if _, err := fmt.Sscanf(passedArg, "%f", new(float64)); err == nil {
+			return true
+		}
+		return false
+	}
+
+	// Check for string type
+	if expectedType == "string" {
+		return strings.HasPrefix(passedArg, "\"") || strings.HasPrefix(passedArg, "'")
+	}
+
+	// Check for boolean type
+	if expectedType == "boolean" {
+		return passedArg == "true" || passedArg == "false"
+	}
+
+	// For objects, arrays, and other complex types
+	// Accept by default as JavaScript is flexible with types
+	return true
+}
+
+// Function to load all global JavaScript functions from Deno
+func loadGlobalFunctions(v *R2D2Visitor) error {
+	// Check if global functions are already loaded
+	if module, exists := v.symbolTable.Modules["global"]; exists && len(module.Functions) > 0 {
+		return nil
+	}
+
+	// Initialize global module if it doesn't exist
 	if _, exists := v.symbolTable.Modules["global"]; !exists {
 		v.symbolTable.Modules["global"] = Module{
 			Name:      "global",
@@ -28,95 +64,151 @@ func loadGlobalFunctions(v *R2D2Visitor) error {
 		}
 	}
 
-	// Comando Deno para obter as funções globais com suas assinaturas
+	// Also make sure standard modules like console and Math exist
+	standardModules := []string{"console", "Math", "Array", "String", "Object", "Date"}
+	for _, modName := range standardModules {
+		if _, exists := v.symbolTable.Modules[modName]; !exists {
+			v.symbolTable.Modules[modName] = Module{
+				Name:      modName,
+				Functions: make(map[string]Function),
+				Variables: make(map[string]Variable),
+				Types:     make(map[string]any),
+			}
+		}
+	}
+
+	// Deno command to discover global functions and their signatures
 	cmd := exec.Command("deno", "eval", `
-const availableFunctions = {};
+	const availableFunctions = {};
 
-// Função para extrair os nomes dos parâmetros
-function getParameterNames(func) {
-  try {
-    const funcStr = func.toString();
-    const match = funcStr.match(/\\(([^)]+)\\)/);
-    if (match && match[1].trim()) {
-      return match[1].split(',').map(param => param.trim());
-    }
-  } catch (e) {}
-  return [];
-}
+    // Helper to extract parameter names and types from function
+    function getParameterInfo(func) {
+        try {
+            const funcStr = func.toString();
+            const params = [];
 
-// Analisar objetos globais
-// Primeiro coletamos objetos de alto nível
-const highLevelObjects = new Set(Object.getOwnPropertyNames(globalThis));
+            // Get parameters from function string
+            const match = funcStr.match(/\\((.*?)\\)/);
+            if (match && match[1].trim()) {
+                const paramNames = match[1].split(',').map(p => p.trim());
 
-// Processamos cada objeto de alto nível
-highLevelObjects.forEach(name => {
-  try {
-    const obj = globalThis[name];
-    
-    // Para objetos que são funções
-    if (typeof obj === 'function') {
-      try {
-        availableFunctions[name] = {
-          type: 'function',
-          parameterNames: getParameterNames(obj),
-          returnType: 'any'
-        };
-      } catch (e) {
-        availableFunctions[name] = {
-          type: 'function',
-          parameterNames: [],
-          returnType: 'any'
-        };
-      }
-    } 
-    // Para objetos regulares (como console, Math, etc.)
-    else if (typeof obj === 'object' && obj !== null) {
-      availableFunctions[name] = {
-        type: 'object',
-        methods: {}
-      };
-      
-      // Tentar obter os métodos do objeto
-      try {
-        const props = Object.getOwnPropertyNames(obj);
-        props.forEach(prop => {
-          try {
-            const method = obj[prop];
-            if (typeof method === 'function') {
-              availableFunctions[name].methods[prop] = {
-                type: 'function',
-                parameterNames: getParameterNames(method),
-                returnType: 'any'
-              };
+                paramNames.forEach((param, index) => {
+                    // Remove any default values
+                    const cleanParam = param.split('=')[0].trim();
+                    // Remove any type annotations
+                    const finalParam = cleanParam.split(':')[0].trim();
+
+                    params.push({
+                        name: finalParam || 'arg' + (index + 1),
+                        type: inferParameterType(func, index)
+                    });
+                });
             }
-          } catch (e) {
-            // Ignorar propriedades que não podem ser acessadas
-          }
-        });
-      } catch (e) {
-        // Ignorar objetos que não permitem enumeração de propriedades
-      }
+            return params;
+        } catch (e) {
+            return [];
+        }
     }
-  } catch (e) {
-    // Ignorar objetos inacessíveis
-  }
-});
 
-console.log(JSON.stringify(availableFunctions, null, 2));
-`)
+    // Helper to infer parameter type by testing the function
+    function inferParameterType(func, paramIndex) {
+        try {
+            // Create test values of different types
+            const testValues = {
+                'number': 42,
+                'string': 'test',
+                'boolean': true,
+                'object': {},
+                'array': [],
+                'function': () => {}
+            };
 
-	// Capturar a saída do comando
+            // Try to call the function with different types
+            for (const [type, value] of Object.entries(testValues)) {
+                const args = Array(paramIndex).fill(undefined);
+                args.push(value);
+
+                try {
+                    func.apply(null, args);
+                    return type;
+                } catch (e) {
+                    // If error contains type information, use it
+                    if (e instanceof TypeError) {
+                        const errorMsg = e.toString().toLowerCase();
+                        if (errorMsg.includes('number')) return 'number';
+                        if (errorMsg.includes('string')) return 'string';
+                        if (errorMsg.includes('boolean')) return 'boolean';
+                        if (errorMsg.includes('function')) return 'function';
+                        if (errorMsg.includes('object')) return 'object';
+                    }
+                }
+            }
+        } catch (e) {}
+
+        return 'any'; // Default to 'any' if type cannot be determined
+    }
+
+    // Process global objects and their methods
+    function processObject(obj, name, isPrototype = false) {
+        if (obj === null || obj === undefined) return;
+
+        try {
+            const props = Object.getOwnPropertyNames(obj);
+            props.forEach(prop => {
+                try {
+                    const fullName = isPrototype ? name + '.prototype.' + prop : name + '.' + prop;
+                    const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+
+                    if (descriptor && typeof descriptor.value === 'function') {
+                        availableFunctions[fullName] = {
+                            type: 'function',
+                            parameters: getParameterInfo(descriptor.value),
+                            returnType: 'any'
+                        };
+                    }
+                } catch (e) {}
+            });
+        } catch (e) {}
+    }
+
+    // Get all global objects
+    const globals = Object.getOwnPropertyNames(globalThis);
+    globals.forEach(name => {
+        try {
+            const obj = globalThis[name];
+
+            if (typeof obj === 'function') {
+                // Store function itself
+                availableFunctions[name] = {
+                    type: 'function',
+                    parameters: getParameterInfo(obj),
+                    returnType: 'any'
+                };
+
+                // Process prototype methods
+                processObject(obj.prototype, name, true);
+            } else if (typeof obj === 'object' && obj !== null) {
+                // Process object methods
+                processObject(obj, name);
+            }
+        } catch (e) {}
+    });
+
+    console.log(JSON.stringify(availableFunctions, null, 2));
+    `)
+
+	// Execute command and get output
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		errMsg := fmt.Sprintf("/* ERROR: Erro ao executar o comando Deno: %v */", err)
+		errMsg := fmt.Sprintf("Error executing Deno command: %v", err)
 		fmt.Println(r2d2Styles.ErrorMessage(errMsg))
 		return fmt.Errorf(errMsg)
 	}
 
-	// Fazer o parse da saída JSON
+	// Parse JSON output
 	var result map[string]interface{}
 	if err := json.Unmarshal(output, &result); err != nil {
-		errMsg := fmt.Sprintf("/* ERROR: Erro ao parsear o JSON: %v */", err)
+		errMsg := fmt.Sprintf("Error parsing JSON: %v", err)
 		fmt.Println(r2d2Styles.ErrorMessage(errMsg))
 		return fmt.Errorf(errMsg)
 	}
@@ -124,102 +216,139 @@ console.log(JSON.stringify(availableFunctions, null, 2));
 	globalModule := v.symbolTable.Modules["global"]
 	count := 0
 
-	// Processar funções e objetos globais
-	for objName, value := range result {
-		valueMap, ok := value.(map[string]interface{})
+	// Process discovered functions
+	for funcName, info := range result {
+		infoMap, ok := info.(map[string]interface{})
 		if !ok {
 			continue
 		}
 
-		objType, _ := valueMap["type"].(string)
+		// Skip if not a function
+		funcType, ok := infoMap["type"].(string)
+		if !ok || funcType != "function" {
+			continue
+		}
 
-		if objType == "function" {
-			// Processar função global
-			paramNamesInterface, _ := valueMap["parameterNames"].([]interface{})
-			var args []Argument
-
-			for i, paramNameInterface := range paramNamesInterface {
-				paramStr, ok := paramNameInterface.(string)
-				if !ok {
-					paramStr = fmt.Sprintf("arg%d", i+1)
-				}
-
-				args = append(args, Argument{
-					Name: paramStr,
-					Type: "any",
-				})
-			}
-
-			globalModule.Functions[objName] = Function{
-				Name:       objName,
-				Arguments:  args,
-				Variables:  make(map[string]Variable),
-				Functions:  make(map[string]Function),
-				isExported: true,
-				isPseudo:   false,
-			}
-
-			count++
-		} else if objType == "object" {
-			// Processar objeto com métodos
-			methods, ok := valueMap["methods"].(map[string]interface{})
-			if !ok {
-				continue
-			}
-
-			for methodName, methodInfo := range methods {
-				methodMap, ok := methodInfo.(map[string]interface{})
+		// Get parameters
+		var args []Argument
+		params, ok := infoMap["parameters"].([]interface{})
+		if ok {
+			for _, param := range params {
+				paramMap, ok := param.(map[string]interface{})
 				if !ok {
 					continue
 				}
 
-				paramNamesInterface, _ := methodMap["parameterNames"].([]interface{})
-				var args []Argument
+				name, _ := paramMap["name"].(string)
+				paramType, _ := paramMap["type"].(string)
 
-				for i, paramNameInterface := range paramNamesInterface {
-					paramStr, ok := paramNameInterface.(string)
-					if !ok {
-						paramStr = fmt.Sprintf("arg%d", i+1)
-					}
+				args = append(args, Argument{
+					Name: name,
+					Type: paramType,
+				})
+			}
+		}
 
-					args = append(args, Argument{
-						Name: paramStr,
-						Type: "any",
-					})
-				}
+		// Determine if this is a module method
+		parts := strings.Split(funcName, ".")
+		if len(parts) >= 2 {
+			moduleName := parts[0]
+			methodName := parts[1]
 
-				fullName := objName + "." + methodName
-				globalModule.Functions[fullName] = Function{
-					Name:       fullName,
+			// Skip prototype methods for simplicity
+			if methodName == "prototype" {
+				continue
+			}
+
+			// Use proper module if it's a known standard module
+			if module, exists := v.symbolTable.Modules[moduleName]; exists {
+				module.Functions[methodName] = Function{
+					Name:       methodName,
 					Arguments:  args,
 					Variables:  make(map[string]Variable),
 					Functions:  make(map[string]Function),
 					isExported: true,
-					isPseudo:   false,
 				}
+				v.symbolTable.Modules[moduleName] = module
+			} else {
+				// Store in global module with full name
+				globalModule.Functions[funcName] = Function{
+					Name:       funcName,
+					Arguments:  args,
+					Variables:  make(map[string]Variable),
+					Functions:  make(map[string]Function),
+					isExported: true,
+				}
+			}
+		} else {
+			// Store global function
+			globalModule.Functions[funcName] = Function{
+				Name:       funcName,
+				Arguments:  args,
+				Variables:  make(map[string]Variable),
+				Functions:  make(map[string]Function),
+				isExported: true,
+			}
+		}
+		count++
+	}
 
-				count++
+	// Add standard library functions explicitly if they weren't discovered
+	standardFunctions := map[string][]Argument{
+		"console.log": {
+			{Name: "message", Type: "any"},
+		},
+		"console.error": {
+			{Name: "message", Type: "any"},
+		},
+		"console.warn": {
+			{Name: "message", Type: "any"},
+		},
+		"Math.random": {},
+		"Math.floor": {
+			{Name: "value", Type: "number"},
+		},
+	}
+
+	// Add standard functions to appropriate modules
+	for fullName, args := range standardFunctions {
+		parts := strings.Split(fullName, ".")
+		if len(parts) == 2 {
+			moduleName, funcName := parts[0], parts[1]
+
+			if module, exists := v.symbolTable.Modules[moduleName]; exists {
+				if _, funcExists := module.Functions[funcName]; !funcExists {
+					module.Functions[funcName] = Function{
+						Name:       funcName,
+						Arguments:  args,
+						Variables:  make(map[string]Variable),
+						Functions:  make(map[string]Function),
+						isExported: true,
+					}
+					v.symbolTable.Modules[moduleName] = module
+					count++
+				}
 			}
 		}
 	}
 
-	// Atualizar o módulo na tabela de símbolos
+	// Update global module
 	v.symbolTable.Modules["global"] = globalModule
 
-	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("/* SUCCESS: Carregadas %d funções globais */", count)))
+	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Loaded %d global functions", count)))
 	return nil
 }
 
-// Função para encontrar funções com nomes similares
+// Function to find similar functions by name
 func findSimilarFunctions(functions map[string]Function, name string) []string {
 	var suggestions []string
 
-	// Se o nome contém um ponto (objeto.método)
+	// If the name contains a dot (object.method)
 	if strings.Contains(name, ".") {
 		parts := strings.Split(name, ".")
 		objName, _ := parts[0], parts[1] // objName, methodName
 
-		// Buscar métodos do mesmo objeto
+		// Search for methods of the same object
 		for funcName := range functions {
 			if strings.HasPrefix(funcName, objName+".") {
 				suggestions = append(suggestions, funcName)
@@ -229,9 +358,9 @@ func findSimilarFunctions(functions map[string]Function, name string) []string {
 			}
 		}
 	} else {
-		// Buscar funções de nível superior ou objetos com nomes similares
+		// Search for top-level functions or objects with similar names
 		for funcName := range functions {
-			// Se for uma função de nível superior (sem ponto)
+			// If it's a top-level function (no dot)
 			if !strings.Contains(funcName, ".") {
 				if len(name) > 0 && len(funcName) > 0 &&
 					(strings.HasPrefix(funcName, name[:1]) ||
@@ -239,7 +368,7 @@ func findSimilarFunctions(functions map[string]Function, name string) []string {
 					suggestions = append(suggestions, funcName)
 				}
 			} else if !strings.Contains(name, ".") {
-				// Se estamos procurando por um nome que pode ser um objeto
+				// If we're looking for a name that could be an object
 				objName := strings.Split(funcName, ".")[0]
 				if objName == name {
 					suggestions = append(suggestions, funcName)
@@ -255,39 +384,89 @@ func findSimilarFunctions(functions map[string]Function, name string) []string {
 	return suggestions
 }
 
-// Função auxiliar para verificar se o tipo passado é válido para o tipo esperado
-func isValidJSType(passedArg string, expectedType string) bool {
-	// Como JavaScript é tipado dinamicamente, podemos ser flexíveis
-	if expectedType == "any" {
-		return true
-	}
+// Function to check if a function is accessible and valid
+func (v *R2D2Visitor) isAccessibleFunction(funcName string) (bool, Function, string) {
+	parts := strings.Split(funcName, ".")
 
-	// Para números
-	if expectedType == "number" {
-		// Verificar se é um número (não contém aspas e não é boolean)
-		if strings.Contains(passedArg, "\"") || strings.Contains(passedArg, "'") {
-			return false // É uma string
+	if len(parts) == 2 {
+		// Module.function format
+		moduleName, methodName := parts[0], parts[1]
+
+		// Check if module exists
+		module, moduleExists := v.symbolTable.Modules[moduleName]
+		if !moduleExists {
+			// Try to find similar modules/functions
+			globalModule, globalExists := v.symbolTable.Modules["global"]
+			if !globalExists {
+				return false, Function{}, "/* ERROR: Global module not initialized */"
+			}
+
+			suggestions := findSimilarFunctions(globalModule.Functions, funcName)
+			errorMsg := fmt.Sprintf("/* ERROR: Module '%s' not found */", moduleName)
+			if len(suggestions) > 0 {
+				errorMsg += fmt.Sprintf(" /* Você quis dizer: %s? */", strings.Join(suggestions, ", "))
+			}
+			return false, Function{}, errorMsg
 		}
-		if passedArg == "true" || passedArg == "false" {
-			return false // É um boolean
+
+		// Check if function exists in module
+		function, functionExists := module.Functions[methodName]
+		if !functionExists {
+			suggestions := findSimilarFunctions(module.Functions, methodName)
+			errorMsg := fmt.Sprintf("/* ERROR: Function '%s' not found in module '%s' */", methodName, moduleName)
+			if len(suggestions) > 0 {
+				errorMsg += fmt.Sprintf(" /* Você quis dizer: %s? */", strings.Join(suggestions, ", "))
+			}
+			return false, Function{}, errorMsg
 		}
-	}
 
-	// Para strings
-	if expectedType == "string" {
-		return strings.HasPrefix(passedArg, "\"") || strings.HasPrefix(passedArg, "'")
-	}
+		// Check if function is exported (if calling from another module)
+		if moduleName != v.currentModule.Name && !function.isExported {
+			return false, Function{}, fmt.Sprintf("/* ERROR: Function '%s' is not exported from module '%s' */", methodName, moduleName)
+		}
 
-	// Para boolean
-	if expectedType == "boolean" {
-		return passedArg == "true" || passedArg == "false"
-	}
+		return true, function, ""
+	} else {
+		// Check current module functions
+		if v.currentModule.Name != "" {
+			if function, exists := v.currentModule.Functions[funcName]; exists {
+				return true, function, ""
+			}
+		}
 
-	// Aceitar por padrão (JavaScript é flexível)
-	return true
+		// Check global module
+		if globalModule, exists := v.symbolTable.Modules["global"]; exists {
+			if function, exists := globalModule.Functions[funcName]; exists {
+				return true, function, ""
+			}
+		}
+
+		// Check global variables that could be functions
+		if _, exists := v.symbolTable.Globals[funcName]; exists {
+			// Convert Global to Function for interface compatibility
+			return true, Function{
+				Name:       funcName,
+				Arguments:  []Argument{},
+				isExported: true,
+			}, ""
+		}
+
+		// Function not found - suggest similar functions
+		globalModule, exists := v.symbolTable.Modules["global"]
+		if !exists {
+			return false, Function{}, fmt.Sprintf("/* ERROR: Function '%s' not found */", funcName)
+		}
+
+		suggestions := findSimilarFunctions(globalModule.Functions, funcName)
+		errorMsg := fmt.Sprintf("/* ERROR: Function '%s' not found */", funcName)
+		if len(suggestions) > 0 {
+			errorMsg += fmt.Sprintf(" /* Você quis dizer: %s? */", strings.Join(suggestions, ", "))
+		}
+		return false, Function{}, errorMsg
+	}
 }
 
-// Implementação de Levenshtein distance para encontrar nomes similares
+// Levenshtein distance implementation for finding similar names
 func levenshteinDistance(a, b string) int {
 	if len(a) == 0 {
 		return len(b)
@@ -296,7 +475,7 @@ func levenshteinDistance(a, b string) int {
 		return len(a)
 	}
 
-	// Inicializar matriz de distâncias
+	// Initialize distance matrix
 	matrix := make([][]int, len(a)+1)
 	for i := range matrix {
 		matrix[i] = make([]int, len(b)+1)
@@ -306,7 +485,7 @@ func levenshteinDistance(a, b string) int {
 		matrix[0][j] = j
 	}
 
-	// Calcular distâncias
+	// Calculate distances
 	for i := 1; i <= len(a); i++ {
 		for j := 1; j <= len(b); j++ {
 			cost := 1
@@ -315,9 +494,9 @@ func levenshteinDistance(a, b string) int {
 			}
 
 			matrix[i][j] = min(
-				matrix[i-1][j]+1,      // deleção
-				matrix[i][j-1]+1,      // inserção
-				matrix[i-1][j-1]+cost, // substituição
+				matrix[i-1][j]+1,      // deletion
+				matrix[i][j-1]+1,      // insertion
+				matrix[i-1][j-1]+cost, // substitution
 			)
 		}
 	}
@@ -325,7 +504,7 @@ func levenshteinDistance(a, b string) int {
 	return matrix[len(a)][len(b)]
 }
 
-// Função auxiliar para encontrar o valor mínimo entre três inteiros
+// Helper function to find the minimum value among three integers
 func min(a, b, c int) int {
 	if a < b && a < c {
 		return a
@@ -333,66 +512,4 @@ func min(a, b, c int) int {
 		return b
 	}
 	return c
-}
-
-func (v *R2D2Visitor) isAccessibleFunction(funcName string) (bool, Function, string) {
-	// Verificar se a função existe no módulo global
-	globalModule, exists := v.symbolTable.Modules["global"]
-	if !exists {
-		return false, Function{}, "/* ERROR: Global module not initialized */"
-	}
-
-	// Verificar se a função existe no módulo atual (se estiver definido)
-	// Precisamos verificar se o currentModule existe de outra forma, já que não é um ponteiro
-	// Uma maneira de verificar é verificando se o campo Name não está vazio
-	if v.currentModule.Name != "" {
-		// Verificar se a função está no módulo atual
-		function, exists := v.currentModule.Functions[funcName]
-		if exists {
-			return true, function, ""
-		}
-	}
-
-	// Verificar no módulo global
-	function, exists := globalModule.Functions[funcName]
-	if exists {
-		return true, function, ""
-	}
-
-	// Tente encontrar o objeto primeiro (ex: para 'console.log', buscamos 'console')
-	objName := strings.Split(funcName, ".")[0]
-	if strings.Contains(funcName, ".") {
-		// Vamos ver se existem métodos para este objeto
-		var objectMethods []string
-		for fname := range globalModule.Functions {
-			if strings.HasPrefix(fname, objName+".") {
-				objectMethods = append(objectMethods, fname)
-			}
-		}
-
-		if len(objectMethods) > 0 {
-			// Se encontrarmos métodos para este objeto, sugerimos eles
-			suggestions := objectMethods
-			if len(suggestions) > 3 {
-				suggestions = suggestions[:3]
-			}
-
-			errorMessage := fmt.Sprintf(
-				"/* ERROR: Function '%s' not found. Você quis dizer: %s? */",
-				funcName, strings.Join(suggestions, ", "),
-			)
-			return false, Function{}, errorMessage
-		}
-	}
-
-	// Se não encontrarmos o objeto ou não for uma referência a objeto,
-	// buscamos funções com nomes similares
-	suggestions := findSimilarFunctions(globalModule.Functions, funcName)
-
-	errorMessage := fmt.Sprintf("/* ERROR: Function '%s' not found */", funcName)
-	if len(suggestions) > 0 {
-		errorMessage += fmt.Sprintf(" /* Você quis dizer: %s? */", strings.Join(suggestions, ", "))
-	}
-
-	return false, Function{}, errorMessage
 }

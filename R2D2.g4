@@ -69,7 +69,7 @@ genericType
   ;
 
 typeDeclaration
-  : 'type' IDENTIFIER LBRACE (variableDeclaration)* RBRACE
+  : (EXPORT)? 'type' IDENTIFIER LBRACE (variableDeclaration)* RBRACE
   ;
 
 variableDeclaration
@@ -121,7 +121,7 @@ assignmentOperator
   ;
 
 simpleFor
-  : (variableDeclaration | assignment)? (expression SEMI)? (assignment)?
+  : (variableDeclaration | assignment SEMI)? (expression SEMI)? (assignment)?
   ;
 
 whileStatement
