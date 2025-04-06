@@ -334,3 +334,65 @@ func min(a, b, c int) int {
 	}
 	return c
 }
+
+func (v *R2D2Visitor) isAccessibleFunction(funcName string) (bool, Function, string) {
+	// Verificar se a função existe no módulo global
+	globalModule, exists := v.symbolTable.Modules["global"]
+	if !exists {
+		return false, Function{}, "/* ERROR: Global module not initialized */"
+	}
+
+	// Verificar se a função existe no módulo atual (se estiver definido)
+	// Precisamos verificar se o currentModule existe de outra forma, já que não é um ponteiro
+	// Uma maneira de verificar é verificando se o campo Name não está vazio
+	if v.currentModule.Name != "" {
+		// Verificar se a função está no módulo atual
+		function, exists := v.currentModule.Functions[funcName]
+		if exists {
+			return true, function, ""
+		}
+	}
+
+	// Verificar no módulo global
+	function, exists := globalModule.Functions[funcName]
+	if exists {
+		return true, function, ""
+	}
+
+	// Tente encontrar o objeto primeiro (ex: para 'console.log', buscamos 'console')
+	objName := strings.Split(funcName, ".")[0]
+	if strings.Contains(funcName, ".") {
+		// Vamos ver se existem métodos para este objeto
+		var objectMethods []string
+		for fname := range globalModule.Functions {
+			if strings.HasPrefix(fname, objName+".") {
+				objectMethods = append(objectMethods, fname)
+			}
+		}
+
+		if len(objectMethods) > 0 {
+			// Se encontrarmos métodos para este objeto, sugerimos eles
+			suggestions := objectMethods
+			if len(suggestions) > 3 {
+				suggestions = suggestions[:3]
+			}
+
+			errorMessage := fmt.Sprintf(
+				"/* ERROR: Function '%s' not found. Você quis dizer: %s? */",
+				funcName, strings.Join(suggestions, ", "),
+			)
+			return false, Function{}, errorMessage
+		}
+	}
+
+	// Se não encontrarmos o objeto ou não for uma referência a objeto,
+	// buscamos funções com nomes similares
+	suggestions := findSimilarFunctions(globalModule.Functions, funcName)
+
+	errorMessage := fmt.Sprintf("/* ERROR: Function '%s' not found */", funcName)
+	if len(suggestions) > 0 {
+		errorMessage += fmt.Sprintf(" /* Você quis dizer: %s? */", strings.Join(suggestions, ", "))
+	}
+
+	return false, Function{}, errorMessage
+}

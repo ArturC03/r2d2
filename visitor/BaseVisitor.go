@@ -57,8 +57,9 @@ type SymbolTable struct {
 
 type R2D2Visitor struct {
 	parser.BaseR2D2Visitor
-	symbolTable SymbolTable
-	JsCode      string
+	symbolTable   SymbolTable
+	JsCode        string
+	currentModule Module
 }
 
 func NewR2D2Visitor() *R2D2Visitor {
@@ -67,6 +68,12 @@ func NewR2D2Visitor() *R2D2Visitor {
 			Modules:    make(map[string]Module),
 			Interfaces: make(map[string]Interface),
 			Globals:    make(map[string]Global),
+		},
+		currentModule: Module{
+			Name:      "",
+			Functions: make(map[string]Function),
+			Variables: make(map[string]Variable),
+			Types:     make(map[string]any),
 		},
 		JsCode: "",
 	}
@@ -93,6 +100,7 @@ func (v *R2D2Visitor) VisitDeclaration(ctx *parser.DeclarationContext) any {
 	return v.VisitChildren(ctx)
 }
 
+// TODO: Add support for importing files
 func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContext) any {
 
 	// Has String Literal
@@ -168,7 +176,11 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 			Variables: make(map[string]Variable),
 			Types:     make(map[string]any),
 		}
+		v.currentModule = v.symbolTable.Modules[moduleName]
 		// fmt.Println(r2d2Styles.InfoMessage("Módulo " + moduleName + " criado"))
+	} else {
+		fmt.Println(r2d2Styles.ErrorMessage("Module " + moduleName + " already exists"))
+		return nil
 	}
 
 	// Function Declaration
@@ -185,7 +197,6 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 				isExported: isExported(funcDecl),
 				isPseudo:   isPseudo(funcDecl),
 			}
-
 			// Add Function to Module
 			v.symbolTable.Modules[moduleName].Functions[funcName] = function
 		}
@@ -205,6 +216,7 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 			if varDecl.ASSIGN() != nil {
 				variable.Value = varDecl.Expression().GetText()
 			} else {
+				variable.Value = ""
 			}
 			v.symbolTable.Modules[moduleName].Variables[varName] = variable
 		}
@@ -335,54 +347,9 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 		funcName = funcName + "." + ctx.IDENTIFIER(1).GetText()
 	}
 
-	// Verificar se a função existe no módulo global
-	globalModule, exists := v.symbolTable.Modules["global"]
-	if !exists {
-		errorMessage := "/* ERROR: Global module not initialized */"
-		v.JsCode += errorMessage + "\n"
-		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
-		return nil
-	}
-
-	function, exists := globalModule.Functions[funcName]
-	if !exists {
-		// Tente encontrar o objeto primeiro (ex: para 'console.log', buscamos 'console')
-		objName := strings.Split(funcName, ".")[0]
-		if strings.Contains(funcName, ".") {
-			// Vamos ver se existem métodos para este objeto
-			var objectMethods []string
-			for fname := range globalModule.Functions {
-				if strings.HasPrefix(fname, objName+".") {
-					objectMethods = append(objectMethods, fname)
-				}
-			}
-
-			if len(objectMethods) > 0 {
-				// Se encontrarmos métodos para este objeto, sugerimos eles
-				suggestions := objectMethods
-				if len(suggestions) > 3 {
-					suggestions = suggestions[:3]
-				}
-
-				errorMessage := fmt.Sprintf(
-					"/* ERROR: Function '%s' not found. Você quis dizer: %s? */",
-					funcName, strings.Join(suggestions, ", "),
-				)
-				v.JsCode += errorMessage + "\n"
-				fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
-				return nil
-			}
-		}
-
-		// Se não encontrarmos o objeto ou não for uma referência a objeto,
-		// buscamos funções com nomes similares
-		suggestions := findSimilarFunctions(globalModule.Functions, funcName)
-
-		errorMessage := fmt.Sprintf("/* ERROR: Function '%s' not found */", funcName)
-		if len(suggestions) > 0 {
-			errorMessage += fmt.Sprintf(" /* Você quis dizer: %s? */", strings.Join(suggestions, ", "))
-		}
-
+	// Verificar se a função está acessível
+	isAccessible, function, errorMessage := v.isAccessibleFunction(funcName)
+	if !isAccessible {
 		v.JsCode += errorMessage + "\n"
 		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
 		return nil
@@ -447,7 +414,7 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 	}
 
 	// Gerar o código JavaScript para a chamada de função
-	v.JsCode += fmt.Sprintf("%s(%s)", funcName, strings.Join(passedArgs, ", "))
+	v.JsCode += fmt.Sprintf("%s.%s(%s)", v.currentModule.Name, funcName, strings.Join(passedArgs, ", "))
 	return nil
 }
 
