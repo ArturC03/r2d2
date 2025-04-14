@@ -706,6 +706,16 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 }
 
 func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationContext) any {
+	if _, ok := ctx.GetParent().(*parser.ForStatementContext); ok {
+		defer func() {
+			v.JsCode += ";"
+		}()
+	} else if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
+		defer func() {
+			v.JsCode += ";"
+		}()
+	}
+
 	// Skip if no identifier
 	if ctx.IDENTIFIER() == nil {
 		return v.VisitChildren(ctx)
@@ -742,11 +752,6 @@ func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationCo
 		v.JsCode += fmt.Sprintf(" = %s", ctx.Expression().GetText())
 	}
 
-	// Add semicolon for module-level statements
-	// if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
-	// v.JsCode += ";"
-	// }
-
 	return v.VisitChildren(ctx)
 }
 
@@ -759,6 +764,7 @@ func (v *R2D2Visitor) VisitStatement(ctx *parser.StatementContext) any {
 	case *parser.ExpressionStatementContext,
 		*parser.AssignmentDeclarationContext,
 		*parser.FunctionCallStatementContext,
+		*parser.CicleControlContext,
 		*parser.ReturnStatementContext,
 		*parser.VariableDeclarationContext:
 		v.JsCode += ";"
@@ -873,13 +879,6 @@ func (v *R2D2Visitor) VisitAssignmentDeclaration(ctx *parser.AssignmentDeclarati
 
 func (v *R2D2Visitor) VisitBreakStatement(ctx *parser.BreakStatementContext) any {
 	// Verify we're in a loop context
-	inLoop := findParent(ctx, (*parser.LoopStatementContext)(nil), (*parser.ForStatementContext)(nil), (*parser.WhileStatementContext)(nil))
-
-	if !inLoop {
-		errorMessage := fmt.Sprintf("Break statement on line %d must be within a loop", ctx.GetStart().GetLine())
-		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
-	}
-
 	v.JsCode += "break"
 	return nil
 }
@@ -1105,4 +1104,15 @@ func (v *R2D2Visitor) VisitExpressionStatement(ctx *parser.ExpressionStatementCo
 		v.JsCode += ctx.Expression().GetText()
 	}
 	return nil
+}
+
+func (v *R2D2Visitor) VisitCicleControl(ctx *parser.CicleControlContext) any {
+	inLoop := findParent(ctx, (*parser.LoopStatementContext)(nil), (*parser.ForStatementContext)(nil), (*parser.WhileStatementContext)(nil))
+
+	if !inLoop {
+		errorMessage := fmt.Sprintf("Cicle control statement on line %d must be within a loop", ctx.GetStart().GetLine())
+		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+	}
+
+	return v.VisitChildren(ctx)
 }

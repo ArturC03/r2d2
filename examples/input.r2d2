@@ -3,7 +3,7 @@ import "mathUtils" from "utils";
 
 // Interface declarando a função de ajuste de tamanho
 interface Config {
-    export fn adjustSize(h: i32, w: i32);  // Assinatura da função (apenas declaração)
+    export fn adjustSize(h i32, w i32);  // Assinatura da função (apenas declaração)
 }
 
 // Modelo que implementa a interface Config
@@ -14,7 +14,7 @@ module Settings implements Config {
     const bool isActive = true;  // constante, define se está ativo
     
     // Função que implementa a interface Config
-    export fn adjustSize(h: i32, w: i32) {
+    export fn adjustSize(h i32, w i32) {
         height = h;  // Atualiza altura
     }
 }
@@ -36,12 +36,12 @@ fn main() {
     }
     
     // Laço de repetição - for (seguindo a estrutura de C)
-    for i: i32 = 0; i < 10; i++ {
+    for i i32 = 0; i < 10; i++ {
         send i;  // Envia cada valor de i
     }
 
     // Laço de repetição - while
-    var i: i32 = 0;
+    var i i32 = 0;
     while i < 5 {
         send i;  // Envia i enquanto for menor que 5
         i++;     // Incrementa i
@@ -54,7 +54,7 @@ fn main() {
     }
 
     // Usando funções internas
-    let result: i32 = addNumbers(x, y);  // Função de adição
+    let result i32 = addNumbers(x, y);  // Função de adição
     send result;  // Envia o resultado
 
     // Uso da interface através de implementações
@@ -66,7 +66,7 @@ pseudo fn send() {
 }
 
 // Função de adição simples
-fn addNumbers(a: i32, b: i32): i32 {
+fn addNumbers(a i32, b i32) i32 {
     return a + b;  // Retorno de valores
 }
 

@@ -125,7 +125,7 @@ simpleFor
   ;
 
 whileStatement
-  : WHILE LPAREN expression RPAREN block
+  : WHILE (LPAREN)? expression (RPAREN)? block
   ;
 
 loopStatement
