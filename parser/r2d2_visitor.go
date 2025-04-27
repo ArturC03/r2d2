@@ -101,23 +101,32 @@ type R2D2Visitor interface {
 	// Visit a parse tree produced by R2D2Parser#returnStatement.
 	VisitReturnStatement(ctx *ReturnStatementContext) interface{}
 
-	// Visit a parse tree produced by R2D2Parser#expression.
-	VisitExpression(ctx *ExpressionContext) interface{}
+	// Visit a parse tree produced by R2D2Parser#additiveExpression.
+	VisitAdditiveExpression(ctx *AdditiveExpressionContext) interface{}
 
-	// Visit a parse tree produced by R2D2Parser#logicalExpression.
-	VisitLogicalExpression(ctx *LogicalExpressionContext) interface{}
+	// Visit a parse tree produced by R2D2Parser#identifierExpression.
+	VisitIdentifierExpression(ctx *IdentifierExpressionContext) interface{}
+
+	// Visit a parse tree produced by R2D2Parser#functionCallExpression.
+	VisitFunctionCallExpression(ctx *FunctionCallExpressionContext) interface{}
+
+	// Visit a parse tree produced by R2D2Parser#parenthesisExpression.
+	VisitParenthesisExpression(ctx *ParenthesisExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#comparisonExpression.
 	VisitComparisonExpression(ctx *ComparisonExpressionContext) interface{}
 
-	// Visit a parse tree produced by R2D2Parser#additiveExpression.
-	VisitAdditiveExpression(ctx *AdditiveExpressionContext) interface{}
-
 	// Visit a parse tree produced by R2D2Parser#multiplicativeExpression.
 	VisitMultiplicativeExpression(ctx *MultiplicativeExpressionContext) interface{}
 
+	// Visit a parse tree produced by R2D2Parser#literalExpression.
+	VisitLiteralExpression(ctx *LiteralExpressionContext) interface{}
+
 	// Visit a parse tree produced by R2D2Parser#unaryExpression.
 	VisitUnaryExpression(ctx *UnaryExpressionContext) interface{}
+
+	// Visit a parse tree produced by R2D2Parser#logicalExpression.
+	VisitLogicalExpression(ctx *LogicalExpressionContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#memberExpression.
 	VisitMemberExpression(ctx *MemberExpressionContext) interface{}

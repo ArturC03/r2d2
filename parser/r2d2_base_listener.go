@@ -207,17 +207,29 @@ func (s *BaseR2D2Listener) EnterReturnStatement(ctx *ReturnStatementContext) {}
 // ExitReturnStatement is called when production returnStatement is exited.
 func (s *BaseR2D2Listener) ExitReturnStatement(ctx *ReturnStatementContext) {}
 
-// EnterExpression is called when production expression is entered.
-func (s *BaseR2D2Listener) EnterExpression(ctx *ExpressionContext) {}
+// EnterAdditiveExpression is called when production additiveExpression is entered.
+func (s *BaseR2D2Listener) EnterAdditiveExpression(ctx *AdditiveExpressionContext) {}
 
-// ExitExpression is called when production expression is exited.
-func (s *BaseR2D2Listener) ExitExpression(ctx *ExpressionContext) {}
+// ExitAdditiveExpression is called when production additiveExpression is exited.
+func (s *BaseR2D2Listener) ExitAdditiveExpression(ctx *AdditiveExpressionContext) {}
 
-// EnterLogicalExpression is called when production logicalExpression is entered.
-func (s *BaseR2D2Listener) EnterLogicalExpression(ctx *LogicalExpressionContext) {}
+// EnterIdentifierExpression is called when production identifierExpression is entered.
+func (s *BaseR2D2Listener) EnterIdentifierExpression(ctx *IdentifierExpressionContext) {}
 
-// ExitLogicalExpression is called when production logicalExpression is exited.
-func (s *BaseR2D2Listener) ExitLogicalExpression(ctx *LogicalExpressionContext) {}
+// ExitIdentifierExpression is called when production identifierExpression is exited.
+func (s *BaseR2D2Listener) ExitIdentifierExpression(ctx *IdentifierExpressionContext) {}
+
+// EnterFunctionCallExpression is called when production functionCallExpression is entered.
+func (s *BaseR2D2Listener) EnterFunctionCallExpression(ctx *FunctionCallExpressionContext) {}
+
+// ExitFunctionCallExpression is called when production functionCallExpression is exited.
+func (s *BaseR2D2Listener) ExitFunctionCallExpression(ctx *FunctionCallExpressionContext) {}
+
+// EnterParenthesisExpression is called when production parenthesisExpression is entered.
+func (s *BaseR2D2Listener) EnterParenthesisExpression(ctx *ParenthesisExpressionContext) {}
+
+// ExitParenthesisExpression is called when production parenthesisExpression is exited.
+func (s *BaseR2D2Listener) ExitParenthesisExpression(ctx *ParenthesisExpressionContext) {}
 
 // EnterComparisonExpression is called when production comparisonExpression is entered.
 func (s *BaseR2D2Listener) EnterComparisonExpression(ctx *ComparisonExpressionContext) {}
@@ -225,23 +237,29 @@ func (s *BaseR2D2Listener) EnterComparisonExpression(ctx *ComparisonExpressionCo
 // ExitComparisonExpression is called when production comparisonExpression is exited.
 func (s *BaseR2D2Listener) ExitComparisonExpression(ctx *ComparisonExpressionContext) {}
 
-// EnterAdditiveExpression is called when production additiveExpression is entered.
-func (s *BaseR2D2Listener) EnterAdditiveExpression(ctx *AdditiveExpressionContext) {}
-
-// ExitAdditiveExpression is called when production additiveExpression is exited.
-func (s *BaseR2D2Listener) ExitAdditiveExpression(ctx *AdditiveExpressionContext) {}
-
 // EnterMultiplicativeExpression is called when production multiplicativeExpression is entered.
 func (s *BaseR2D2Listener) EnterMultiplicativeExpression(ctx *MultiplicativeExpressionContext) {}
 
 // ExitMultiplicativeExpression is called when production multiplicativeExpression is exited.
 func (s *BaseR2D2Listener) ExitMultiplicativeExpression(ctx *MultiplicativeExpressionContext) {}
 
+// EnterLiteralExpression is called when production literalExpression is entered.
+func (s *BaseR2D2Listener) EnterLiteralExpression(ctx *LiteralExpressionContext) {}
+
+// ExitLiteralExpression is called when production literalExpression is exited.
+func (s *BaseR2D2Listener) ExitLiteralExpression(ctx *LiteralExpressionContext) {}
+
 // EnterUnaryExpression is called when production unaryExpression is entered.
 func (s *BaseR2D2Listener) EnterUnaryExpression(ctx *UnaryExpressionContext) {}
 
 // ExitUnaryExpression is called when production unaryExpression is exited.
 func (s *BaseR2D2Listener) ExitUnaryExpression(ctx *UnaryExpressionContext) {}
+
+// EnterLogicalExpression is called when production logicalExpression is entered.
+func (s *BaseR2D2Listener) EnterLogicalExpression(ctx *LogicalExpressionContext) {}
+
+// ExitLogicalExpression is called when production logicalExpression is exited.
+func (s *BaseR2D2Listener) ExitLogicalExpression(ctx *LogicalExpressionContext) {}
 
 // EnterMemberExpression is called when production memberExpression is entered.
 func (s *BaseR2D2Listener) EnterMemberExpression(ctx *MemberExpressionContext) {}

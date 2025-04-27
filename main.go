@@ -159,3 +159,32 @@ func BuildCode(input string) {
 	formattedTime := stopwatch.MeasureExecutionTime(startTime)
 	fmt.Println(fmt.Sprintf("Compilation completed in %s", formattedTime)) // Exibe a mensagem atualizada
 }
+
+func BuildJsFile(input string, filename string) {
+	code := buildJSCode(input)
+
+	// Extract base filename without extension
+	baseName := filename
+	if len(filename) > 5 && filename[len(filename)-5:] == ".r2d2" {
+		baseName = filename[:len(filename)-5]
+	}
+
+	// Create output JavaScript file with same base name
+	outputName := baseName + ".js"
+	outFile, err := os.Create(outputName)
+	if err != nil {
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error creating JavaScript file: %v", err)))
+		return
+	}
+	defer outFile.Close()
+
+	// Write JavaScript code to the file
+	_, err = outFile.WriteString(code)
+	if err != nil {
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error writing to JavaScript file: %v", err)))
+		return
+	}
+
+	// Display success message
+	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Created JavaScript file: %s", outputName)))
+}

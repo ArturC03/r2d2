@@ -513,3 +513,24 @@ func min(a, b, c int) int {
 	}
 	return c
 }
+
+func isAccessibleVariable(v *R2D2Visitor, varName string) (bool, Variable) {
+	// Check if variable is a global-level variable
+	if _, exists := v.symbolTable.Globals[varName]; exists {
+		return true, Variable{}
+	}
+
+	// Check if variable is a module-level variable
+	if _, exists := v.currentModule.Variables[varName]; exists {
+		return true, v.currentModule.Variables[varName]
+	}
+
+	// Check if variable is a function-level variable
+	if _, exists := v.currentFunction.Variables[varName]; exists {
+		return true, v.currentFunction.Variables[varName]
+	}
+
+	fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' not found", varName)))
+	return false, Variable{}
+
+}

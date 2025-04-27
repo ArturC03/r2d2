@@ -101,23 +101,32 @@ type R2D2Listener interface {
 	// EnterReturnStatement is called when entering the returnStatement production.
 	EnterReturnStatement(c *ReturnStatementContext)
 
-	// EnterExpression is called when entering the expression production.
-	EnterExpression(c *ExpressionContext)
+	// EnterAdditiveExpression is called when entering the additiveExpression production.
+	EnterAdditiveExpression(c *AdditiveExpressionContext)
 
-	// EnterLogicalExpression is called when entering the logicalExpression production.
-	EnterLogicalExpression(c *LogicalExpressionContext)
+	// EnterIdentifierExpression is called when entering the identifierExpression production.
+	EnterIdentifierExpression(c *IdentifierExpressionContext)
+
+	// EnterFunctionCallExpression is called when entering the functionCallExpression production.
+	EnterFunctionCallExpression(c *FunctionCallExpressionContext)
+
+	// EnterParenthesisExpression is called when entering the parenthesisExpression production.
+	EnterParenthesisExpression(c *ParenthesisExpressionContext)
 
 	// EnterComparisonExpression is called when entering the comparisonExpression production.
 	EnterComparisonExpression(c *ComparisonExpressionContext)
 
-	// EnterAdditiveExpression is called when entering the additiveExpression production.
-	EnterAdditiveExpression(c *AdditiveExpressionContext)
-
 	// EnterMultiplicativeExpression is called when entering the multiplicativeExpression production.
 	EnterMultiplicativeExpression(c *MultiplicativeExpressionContext)
 
+	// EnterLiteralExpression is called when entering the literalExpression production.
+	EnterLiteralExpression(c *LiteralExpressionContext)
+
 	// EnterUnaryExpression is called when entering the unaryExpression production.
 	EnterUnaryExpression(c *UnaryExpressionContext)
+
+	// EnterLogicalExpression is called when entering the logicalExpression production.
+	EnterLogicalExpression(c *LogicalExpressionContext)
 
 	// EnterMemberExpression is called when entering the memberExpression production.
 	EnterMemberExpression(c *MemberExpressionContext)
@@ -242,23 +251,32 @@ type R2D2Listener interface {
 	// ExitReturnStatement is called when exiting the returnStatement production.
 	ExitReturnStatement(c *ReturnStatementContext)
 
-	// ExitExpression is called when exiting the expression production.
-	ExitExpression(c *ExpressionContext)
+	// ExitAdditiveExpression is called when exiting the additiveExpression production.
+	ExitAdditiveExpression(c *AdditiveExpressionContext)
 
-	// ExitLogicalExpression is called when exiting the logicalExpression production.
-	ExitLogicalExpression(c *LogicalExpressionContext)
+	// ExitIdentifierExpression is called when exiting the identifierExpression production.
+	ExitIdentifierExpression(c *IdentifierExpressionContext)
+
+	// ExitFunctionCallExpression is called when exiting the functionCallExpression production.
+	ExitFunctionCallExpression(c *FunctionCallExpressionContext)
+
+	// ExitParenthesisExpression is called when exiting the parenthesisExpression production.
+	ExitParenthesisExpression(c *ParenthesisExpressionContext)
 
 	// ExitComparisonExpression is called when exiting the comparisonExpression production.
 	ExitComparisonExpression(c *ComparisonExpressionContext)
 
-	// ExitAdditiveExpression is called when exiting the additiveExpression production.
-	ExitAdditiveExpression(c *AdditiveExpressionContext)
-
 	// ExitMultiplicativeExpression is called when exiting the multiplicativeExpression production.
 	ExitMultiplicativeExpression(c *MultiplicativeExpressionContext)
 
+	// ExitLiteralExpression is called when exiting the literalExpression production.
+	ExitLiteralExpression(c *LiteralExpressionContext)
+
 	// ExitUnaryExpression is called when exiting the unaryExpression production.
 	ExitUnaryExpression(c *UnaryExpressionContext)
+
+	// ExitLogicalExpression is called when exiting the logicalExpression production.
+	ExitLogicalExpression(c *LogicalExpressionContext)
 
 	// ExitMemberExpression is called when exiting the memberExpression production.
 	ExitMemberExpression(c *MemberExpressionContext)

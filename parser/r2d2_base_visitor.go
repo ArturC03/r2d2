@@ -132,11 +132,19 @@ func (v *BaseR2D2Visitor) VisitReturnStatement(ctx *ReturnStatementContext) inte
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitExpression(ctx *ExpressionContext) interface{} {
+func (v *BaseR2D2Visitor) VisitAdditiveExpression(ctx *AdditiveExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitLogicalExpression(ctx *LogicalExpressionContext) interface{} {
+func (v *BaseR2D2Visitor) VisitIdentifierExpression(ctx *IdentifierExpressionContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseR2D2Visitor) VisitFunctionCallExpression(ctx *FunctionCallExpressionContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseR2D2Visitor) VisitParenthesisExpression(ctx *ParenthesisExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
@@ -144,15 +152,19 @@ func (v *BaseR2D2Visitor) VisitComparisonExpression(ctx *ComparisonExpressionCon
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitAdditiveExpression(ctx *AdditiveExpressionContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
 func (v *BaseR2D2Visitor) VisitMultiplicativeExpression(ctx *MultiplicativeExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseR2D2Visitor) VisitLiteralExpression(ctx *LiteralExpressionContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseR2D2Visitor) VisitUnaryExpression(ctx *UnaryExpressionContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
+func (v *BaseR2D2Visitor) VisitLogicalExpression(ctx *LogicalExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

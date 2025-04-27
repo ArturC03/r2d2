@@ -149,29 +149,41 @@ returnStatement
   ;
 
 expression
-  : logicalExpression
+  : literal                                                #literalExpression
+  | IDENTIFIER                                             #identifierExpression
+  | functionCall                                           #functionCallExpression
+  | '(' expression ')'                                     #parenthesisExpression
+  | (NOT | MINUS | INCREMENT | DECREMENT) expression       #unaryExpression
+  | expression (MULT | DIV | MOD) expression               #multiplicativeExpression
+  | expression (PLUS | MINUS) expression                   #additiveExpression
+  | expression (EQ | NEQ | LT | GT | LEQ | GEQ) expression #comparisonExpression
+  | expression (AND | OR) expression                       #logicalExpression
   ;
 
-logicalExpression
-  : comparisonExpression ((AND | OR) comparisonExpression)*
-  ;
-
-comparisonExpression
-  : additiveExpression ((EQ | NEQ | LT | GT | LEQ | GEQ) additiveExpression)*
-  ;
-
-additiveExpression
-  : multiplicativeExpression ((PLUS | MINUS) multiplicativeExpression)*
-  ;
-
-multiplicativeExpression
-  : unaryExpression ((MULT | DIV | MOD) unaryExpression)*
-  ;
-
-unaryExpression
-  : (NOT | MINUS | INCREMENT | DECREMENT) unaryExpression
-  | memberExpression
-  ;
+// expression
+//   : logicalExpression
+//   ;
+//
+// logicalExpression
+//   : comparisonExpression ((AND | OR) comparisonExpression)*
+//   ;
+//
+// comparisonExpression
+//   : additiveExpression ((EQ | NEQ | LT | GT | LEQ | GEQ) additiveExpression)*
+//   ;
+//
+// additiveExpression
+//   : multiplicativeExpression ((PLUS | MINUS) multiplicativeExpression)*
+//   ;
+//
+// multiplicativeExpression
+//   : unaryExpression ((MULT | DIV | MOD) unaryExpression)*
+//   ;
+//
+// unaryExpression
+//   : (NOT | MINUS | INCREMENT | DECREMENT) unaryExpression
+//   | memberExpression
+//   ;
 
 memberExpression
   : primaryExpression memberPart*
