@@ -218,7 +218,7 @@ func loadGlobalFunctions(v *R2D2Visitor) error {
 
 	// Process discovered functions
 	for funcName, info := range result {
-		infoMap, ok := info.(map[string]interface{})
+		infoMap, ok := info.(map[string]any)
 		if !ok {
 			continue
 		}
@@ -532,5 +532,26 @@ func isAccessibleVariable(v *R2D2Visitor, varName string) (bool, Variable) {
 
 	fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' not found", varName)))
 	return false, Variable{}
+
+}
+
+func isAccessibleFunction(v *R2D2Visitor, funcName string) (bool, Function) {
+	// Check if function is a global-level function-level
+	// if _, exists := v.symbolTable.Globals[funcName]; exists {
+	// 	return true, Function{}
+	// }
+
+	// Check if function is a module-level function-level
+	if _, exists := v.currentModule.Functions[funcName]; exists {
+		return true, v.currentModule.Functions[funcName]
+	}
+
+	// Check if function is a function-level function-level
+	if _, exists := v.currentFunction.Functions[funcName]; exists {
+		return true, v.currentFunction.Functions[funcName]
+	}
+
+	fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' not found", funcName)))
+	return false, Function{}
 
 }

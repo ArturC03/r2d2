@@ -567,7 +567,7 @@ func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationCo
 					Type: param.TypeExpression().GetText(),
 				}
 				v.currentFunction.Variables[variable.Name] = variable
-				fmt.Println(v.currentFunction.Variables)
+				// fmt.Println(v.currentFunction.Variables)
 			}
 		}
 
@@ -854,8 +854,6 @@ func (v *R2D2Visitor) VisitStatement(ctx *parser.StatementContext) any {
 // }
 
 func (v *R2D2Visitor) VisitExpression(ctx *parser.ExpressionContext) any {
-	// For expressions, we'll just use the raw text for now
-	// In a real compiler, you would build an expression tree
 	return v.VisitChildren(ctx)
 }
 
@@ -1323,6 +1321,12 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 		funcName = funcName + "." + ctx.IDENTIFIER(1).GetText()
 	}
 
+	isAccessible, _ := isAccessibleFunction(v, funcName)
+	if !isAccessible {
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' not found", funcName)))
+		return nil
+	}
+
 	// Generate JS code for function call
 	if strings.Contains(funcName, ".") {
 		v.JsCode += funcName
@@ -1334,23 +1338,18 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 
 	v.JsCode += "("
 
-	// Get arguments using our improved expression visitor
-	var passedArgs []string
+	// Visit arguments properly
 	argumentList := ctx.ArgumentList()
 	if argumentList != nil {
-		for _, arg := range argumentList.AllExpression() {
-			exprResult := arg.Accept(v)
-			if exprText, ok := exprResult.(string); ok && exprText != "" {
-				// fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Passed argument: %s", exprText)))
-				passedArgs = append(passedArgs, exprText)
-			} else {
-				// fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Passed argument: %s", exprText)))
-				passedArgs = append(passedArgs, arg.GetText())
+		exprs := argumentList.AllExpression()
+		for i, expr := range exprs {
+			expr.Accept(v) // visita normalmente o argumento
+			if i < len(exprs)-1 {
+				v.JsCode += ", "
 			}
 		}
 	}
 
-	v.JsCode += strings.Join(passedArgs, ", ")
 	v.JsCode += ")"
 
 	return nil
