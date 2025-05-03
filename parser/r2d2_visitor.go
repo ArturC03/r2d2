@@ -157,4 +157,7 @@ type R2D2Visitor interface {
 
 	// Visit a parse tree produced by R2D2Parser#defaultCase.
 	VisitDefaultCase(ctx *DefaultCaseContext) interface{}
+
+	// Visit a parse tree produced by R2D2Parser#jsStatement.
+	VisitJsStatement(ctx *JsStatementContext) interface{}
 }

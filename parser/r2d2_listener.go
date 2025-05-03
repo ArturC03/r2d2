@@ -158,6 +158,9 @@ type R2D2Listener interface {
 	// EnterDefaultCase is called when entering the defaultCase production.
 	EnterDefaultCase(c *DefaultCaseContext)
 
+	// EnterJsStatement is called when entering the jsStatement production.
+	EnterJsStatement(c *JsStatementContext)
+
 	// ExitProgram is called when exiting the program production.
 	ExitProgram(c *ProgramContext)
 
@@ -307,4 +310,7 @@ type R2D2Listener interface {
 
 	// ExitDefaultCase is called when exiting the defaultCase production.
 	ExitDefaultCase(c *DefaultCaseContext)
+
+	// ExitJsStatement is called when exiting the jsStatement production.
+	ExitJsStatement(c *JsStatementContext)
 }

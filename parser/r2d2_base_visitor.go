@@ -207,3 +207,7 @@ func (v *BaseR2D2Visitor) VisitSwitchCase(ctx *SwitchCaseContext) interface{} {
 func (v *BaseR2D2Visitor) VisitDefaultCase(ctx *DefaultCaseContext) interface{} {
 	return v.VisitChildren(ctx)
 }
+
+func (v *BaseR2D2Visitor) VisitJsStatement(ctx *JsStatementContext) interface{} {
+	return v.VisitChildren(ctx)
+}

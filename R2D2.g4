@@ -88,6 +88,7 @@ statement
   | returnStatement
   | switchStatement
   | assignmentDeclaration
+  | jsStatement
   ;
 
 expressionStatement
@@ -218,6 +219,7 @@ literal
   | FLOAT_LITERAL
   | STRING_LITERAL
   | BOOL_LITERAL
+  | NULL_LITERAL
   ;
 
 block
@@ -234,6 +236,10 @@ switchCase
 
 defaultCase
   : DEFAULT COLON block
+  ;
+
+jsStatement
+  : AT JS JS_BLOCK SEMI
   ;
 
 /*
@@ -301,14 +307,16 @@ DOT: '.';
 COLON: ':';
 SEMI: ';';
 
-// Identifiers and literals
-IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
+// Other stuff
+AT      : '@';
+JS      : 'js';
+JS_BLOCK: '<<' .*? '>>';
 
 TYPE
-  : 'i8' | 'i16' | 'i32' | 'i64'
-  | 'u8' | 'u16' | 'u32' | 'u64'
-  | 'f32' | 'f64'
-  | 'bool' | 'string' | 'void'
+  : 'number'
+  | 'boolean'
+  | 'string'
+  | 'void'
   ;
 
 STRING_LITERAL
@@ -320,12 +328,19 @@ BOOL_LITERAL
   | 'false'
   ;
 
+  NULL_LITERAL
+  : 'null'
+  ;
+
 INT_LITERAL
   : DecimalIntegerLiteral
   | HexIntegerLiteral
   | OctalIntegerLiteral
   | BinaryIntegerLiteral
   ;
+
+// Identifiers and literals
+IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
 
 fragment DecimalIntegerLiteral
   : SignPart? DecimalNumeral
@@ -407,6 +422,8 @@ COMMENT
 BLOCK_COMMENT
   : '/*' .*? '*/' -> skip
   ;
+
+// JavaScript block delimiter token
 
 WHITESPACE
   : [ \t\r\n\u000C\u00A0\u2028\u2029]+ -> skip

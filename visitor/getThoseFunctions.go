@@ -81,136 +81,136 @@ func loadGlobalFunctions(v *R2D2Visitor) error {
 	cmd := exec.Command("deno", "eval", `
 	const availableFunctions = {};
 
-    // Helper to extract parameter names and types from function
-    function getParameterInfo(func) {
-        try {
-            const funcStr = func.toString();
-            const params = [];
+				// Helper to extract parameter names and types from function
+				function getParameterInfo(func) {
+								try {
+												const funcStr = func.toString();
+												const params = [];
 
-            // Get parameters from function string
-            const match = funcStr.match(/\\((.*?)\\)/);
-            if (match && match[1].trim()) {
-                const paramNames = match[1].split(',').map(p => p.trim());
+												// Get parameters from function string
+												const match = funcStr.match(/\\((.*?)\\)/);
+												if (match && match[1].trim()) {
+																const paramNames = match[1].split(',').map(p => p.trim());
 
-                paramNames.forEach((param, index) => {
-                    // Remove any default values
-                    const cleanParam = param.split('=')[0].trim();
-                    // Remove any type annotations
-                    const finalParam = cleanParam.split(':')[0].trim();
+																paramNames.forEach((param, index) => {
+																				// Remove any default values
+																				const cleanParam = param.split('=')[0].trim();
+																				// Remove any type annotations
+																				const finalParam = cleanParam.split(':')[0].trim();
 
-                    params.push({
-                        name: finalParam || 'arg' + (index + 1),
-                        type: inferParameterType(func, index)
-                    });
-                });
-            }
-            return params;
-        } catch (e) {
-            return [];
-        }
-    }
+																				params.push({
+																								name: finalParam || 'arg' + (index + 1),
+																								type: inferParameterType(func, index)
+																				});
+																});
+												}
+												return params;
+								} catch (e) {
+												return [];
+								}
+				}
 
-    // Helper to infer parameter type by testing the function
-    function inferParameterType(func, paramIndex) {
-        try {
-            // Create test values of different types
-            const testValues = {
-                'number': 42,
-                'string': 'test',
-                'boolean': true,
-                'object': {},
-                'array': [],
-                'function': () => {}
-            };
+				// Helper to infer parameter type by testing the function
+				function inferParameterType(func, paramIndex) {
+								try {
+												// Create test values of different types
+												const testValues = {
+																'number': 42,
+																'string': 'test',
+																'boolean': true,
+																'object': {},
+																'array': [],
+																'function': () => {}
+												};
 
-            // Try to call the function with different types
-            for (const [type, value] of Object.entries(testValues)) {
-                const args = Array(paramIndex).fill(undefined);
-                args.push(value);
+												// Try to call the function with different types
+												for (const [type, value] of Object.entries(testValues)) {
+																const args = Array(paramIndex).fill(undefined);
+																args.push(value);
 
-                try {
-                    func.apply(null, args);
-                    return type;
-                } catch (e) {
-                    // If error contains type information, use it
-                    if (e instanceof TypeError) {
-                        const errorMsg = e.toString().toLowerCase();
-                        if (errorMsg.includes('number')) return 'number';
-                        if (errorMsg.includes('string')) return 'string';
-                        if (errorMsg.includes('boolean')) return 'boolean';
-                        if (errorMsg.includes('function')) return 'function';
-                        if (errorMsg.includes('object')) return 'object';
-                    }
-                }
-            }
-        } catch (e) {}
+																try {
+																				func.apply(null, args);
+																				return type;
+																} catch (e) {
+																				// If error contains type information, use it
+																				if (e instanceof TypeError) {
+																								const errorMsg = e.toString().toLowerCase();
+																								if (errorMsg.includes('number')) return 'number';
+																								if (errorMsg.includes('string')) return 'string';
+																								if (errorMsg.includes('boolean')) return 'boolean';
+																								if (errorMsg.includes('function')) return 'function';
+																								if (errorMsg.includes('object')) return 'object';
+																				}
+																}
+												}
+								} catch (e) {}
 
-        return 'any'; // Default to 'any' if type cannot be determined
-    }
+								return 'any'; // Default to 'any' if type cannot be determined
+				}
 
-    // Process global objects and their methods
-    function processObject(obj, name, isPrototype = false) {
-        if (obj === null || obj === undefined) return;
+				// Process global objects and their methods
+				function processObject(obj, name, isPrototype = false) {
+								if (obj === null || obj === undefined) return;
 
-        try {
-            const props = Object.getOwnPropertyNames(obj);
-            props.forEach(prop => {
-                try {
-                    const fullName = isPrototype ? name + '.prototype.' + prop : name + '.' + prop;
-                    const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
+								try {
+												const props = Object.getOwnPropertyNames(obj);
+												props.forEach(prop => {
+																try {
+																				const fullName = isPrototype ? name + '.prototype.' + prop : name + '.' + prop;
+																				const descriptor = Object.getOwnPropertyDescriptor(obj, prop);
 
-                    if (descriptor && typeof descriptor.value === 'function') {
-                        availableFunctions[fullName] = {
-                            type: 'function',
-                            parameters: getParameterInfo(descriptor.value),
-                            returnType: 'any'
-                        };
-                    }
-                } catch (e) {}
-            });
-        } catch (e) {}
-    }
+																				if (descriptor && typeof descriptor.value === 'function') {
+																								availableFunctions[fullName] = {
+																												type: 'function',
+																												parameters: getParameterInfo(descriptor.value),
+																												returnType: 'any'
+																								};
+																				}
+																} catch (e) {}
+												});
+								} catch (e) {}
+				}
 
-    // Get all global objects
-    const globals = Object.getOwnPropertyNames(globalThis);
-    globals.forEach(name => {
-        try {
-            const obj = globalThis[name];
+				// Get all global objects
+				const globals = Object.getOwnPropertyNames(globalThis);
+				globals.forEach(name => {
+								try {
+												const obj = globalThis[name];
 
-            if (typeof obj === 'function') {
-                // Store function itself
-                availableFunctions[name] = {
-                    type: 'function',
-                    parameters: getParameterInfo(obj),
-                    returnType: 'any'
-                };
+												if (typeof obj === 'function') {
+																// Store function itself
+																availableFunctions[name] = {
+																				type: 'function',
+																				parameters: getParameterInfo(obj),
+																				returnType: 'any'
+																};
 
-                // Process prototype methods
-                processObject(obj.prototype, name, true);
-            } else if (typeof obj === 'object' && obj !== null) {
-                // Process object methods
-                processObject(obj, name);
-            }
-        } catch (e) {}
-    });
+																// Process prototype methods
+																processObject(obj.prototype, name, true);
+												} else if (typeof obj === 'object' && obj !== null) {
+																// Process object methods
+																processObject(obj, name);
+												}
+								} catch (e) {}
+				});
 
-    console.log(JSON.stringify(availableFunctions, null, 2));
-    `)
+				console.log(JSON.stringify(availableFunctions, null, 2));
+				`)
 
 	// Execute command and get output
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		errMsg := fmt.Sprintf("Error executing Deno command: %v", err)
 		fmt.Println(r2d2Styles.ErrorMessage(errMsg))
-		return fmt.Errorf(errMsg)
+		return fmt.Errorf("Error executing Deno command: %w", err)
 	}
 
 	// Parse JSON output
-	var result map[string]interface{}
+	var result map[string]any
 	if err := json.Unmarshal(output, &result); err != nil {
 		errMsg := fmt.Sprintf("Error parsing JSON: %v", err)
 		fmt.Println(r2d2Styles.ErrorMessage(errMsg))
-		return fmt.Errorf(errMsg)
+		return fmt.Errorf("Error parsing JSON: %w", err)
 	}
 
 	globalModule := v.symbolTable.Modules["global"]
@@ -230,10 +230,10 @@ func loadGlobalFunctions(v *R2D2Visitor) error {
 		}
 
 		// Get parameters
-		var args []Argument
+		var args = make(map[string]Argument)
 		params, ok := infoMap["parameters"].([]interface{})
 		if ok {
-			for _, param := range params {
+			for i, param := range params {
 				paramMap, ok := param.(map[string]interface{})
 				if !ok {
 					continue
@@ -242,10 +242,15 @@ func loadGlobalFunctions(v *R2D2Visitor) error {
 				name, _ := paramMap["name"].(string)
 				paramType, _ := paramMap["type"].(string)
 
-				args = append(args, Argument{
+				// Ensure name isn't empty
+				if name == "" {
+					name = fmt.Sprintf("arg%d", i+1)
+				}
+
+				args[name] = Argument{
 					Name: name,
 					Type: paramType,
-				})
+				}
 			}
 		}
 
@@ -294,19 +299,19 @@ func loadGlobalFunctions(v *R2D2Visitor) error {
 	}
 
 	// Add standard library functions explicitly if they weren't discovered
-	standardFunctions := map[string][]Argument{
+	standardFunctions := map[string]map[string]Argument{
 		"console.log": {
-			{Name: "message", Type: "any"},
+			"message": {Name: "message", Type: "any"},
 		},
 		"console.error": {
-			{Name: "message", Type: "any"},
+			"message": {Name: "message", Type: "any"},
 		},
 		"console.warn": {
-			{Name: "message", Type: "any"},
+			"message": {Name: "message", Type: "any"},
 		},
 		"Math.random": {},
 		"Math.floor": {
-			{Name: "value", Type: "number"},
+			"value": {Name: "value", Type: "number"},
 		},
 	}
 
@@ -446,7 +451,7 @@ func (v *R2D2Visitor) isAccessibleFunction(funcName string) (bool, Function, str
 			// Convert Global to Function for interface compatibility
 			return true, Function{
 				Name:       funcName,
-				Arguments:  []Argument{},
+				Arguments:  make(map[string]Argument),
 				isExported: true,
 			}, ""
 		}
@@ -530,7 +535,7 @@ func isAccessibleVariable(v *R2D2Visitor, varName string) (bool, Variable) {
 		return true, v.currentFunction.Variables[varName]
 	}
 
-	fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' not found", varName)))
+	// fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' not found", varName)))
 	return false, Variable{}
 
 }
@@ -551,7 +556,7 @@ func isAccessibleFunction(v *R2D2Visitor, funcName string) (bool, Function) {
 		return true, v.currentFunction.Functions[funcName]
 	}
 
-	fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' not found", funcName)))
+	// fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' not found on line %d", funcName, line)))
 	return false, Function{}
 
 }

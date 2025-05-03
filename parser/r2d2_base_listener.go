@@ -320,3 +320,9 @@ func (s *BaseR2D2Listener) EnterDefaultCase(ctx *DefaultCaseContext) {}
 
 // ExitDefaultCase is called when production defaultCase is exited.
 func (s *BaseR2D2Listener) ExitDefaultCase(ctx *DefaultCaseContext) {}
+
+// EnterJsStatement is called when production jsStatement is entered.
+func (s *BaseR2D2Listener) EnterJsStatement(ctx *JsStatementContext) {}
+
+// ExitJsStatement is called when production jsStatement is exited.
+func (s *BaseR2D2Listener) ExitJsStatement(ctx *JsStatementContext) {}
