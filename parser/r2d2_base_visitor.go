@@ -132,6 +132,10 @@ func (v *BaseR2D2Visitor) VisitReturnStatement(ctx *ReturnStatementContext) inte
 	return v.VisitChildren(ctx)
 }
 
+func (v *BaseR2D2Visitor) VisitArrayAccessExpression(ctx *ArrayAccessExpressionContext) interface{} {
+	return v.VisitChildren(ctx)
+}
+
 func (v *BaseR2D2Visitor) VisitAdditiveExpression(ctx *AdditiveExpressionContext) interface{} {
 	return v.VisitChildren(ctx)
 }

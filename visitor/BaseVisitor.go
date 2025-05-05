@@ -1506,3 +1506,47 @@ func (v *R2D2Visitor) VisitJsStatement(ctx *parser.JsStatementContext) any {
 
 	return v.VisitChildren(ctx)
 }
+
+func (v *R2D2Visitor) VisitArrayAccessExpression(ctx *parser.ArrayAccessExpressionContext) any {
+	if ctx.Expression(0) != nil {
+		ctx.Expression(0).Accept(v)
+	} else {
+		fmt.Println(r2d2Styles.ErrorMessage("Array not found"))
+	}
+
+	if ctx.LBRACK() != nil {
+		v.JsCode += "["
+	}
+
+	if ctx.Expression(1) != nil {
+		ctx.Expression(1).Accept(v)
+	} else {
+		fmt.Println(r2d2Styles.ErrorMessage("Index not found"))
+	}
+
+	if ctx.RBRACK() != nil {
+		v.JsCode += "]"
+	}
+
+	return nil
+}
+
+func (v *R2D2Visitor) VisitArrayLiteral(ctx *parser.ArrayLiteralContext) any {
+	if ctx.LBRACK() != nil {
+		v.JsCode += "["
+	}
+
+	// Use AllExpression() to get the slice of expressions
+	for i, expr := range ctx.AllExpression() {
+		if i > 0 {
+			v.JsCode += ", "
+		}
+		expr.Accept(v)
+	}
+
+	if ctx.RBRACK() != nil {
+		v.JsCode += "]"
+	}
+
+	return nil
+}

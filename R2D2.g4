@@ -12,6 +12,7 @@ declaration
   : moduleDeclaration
   | interfaceDeclaration
   | globalDeclaration
+  | typeDeclaration
   ;
 
 globalDeclaration
@@ -153,6 +154,7 @@ expression
   : literal                                                #literalExpression
   | IDENTIFIER                                             #identifierExpression
   | functionCall                                           #functionCallExpression
+  | expression LBRACK expression RBRACK                    #arrayAccessExpression
   | '(' expression ')'                                     #parenthesisExpression
   | (NOT | MINUS | INCREMENT | DECREMENT) expression       #unaryExpression
   | expression (MULT | DIV | MOD) expression               #multiplicativeExpression
@@ -220,6 +222,7 @@ literal
   | STRING_LITERAL
   | BOOL_LITERAL
   | NULL_LITERAL
+  | arrayLiteral
   ;
 
 block
@@ -340,7 +343,7 @@ INT_LITERAL
   ;
 
 // Identifiers and literals
-IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*;
+IDENTIFIER: ([a-zA-Z_][a-zA-Z_0-9]* DOT)* ([a-zA-Z_][a-zA-Z_0-9]*);
 
 fragment DecimalIntegerLiteral
   : SignPart? DecimalNumeral

@@ -207,6 +207,12 @@ func (s *BaseR2D2Listener) EnterReturnStatement(ctx *ReturnStatementContext) {}
 // ExitReturnStatement is called when production returnStatement is exited.
 func (s *BaseR2D2Listener) ExitReturnStatement(ctx *ReturnStatementContext) {}
 
+// EnterArrayAccessExpression is called when production arrayAccessExpression is entered.
+func (s *BaseR2D2Listener) EnterArrayAccessExpression(ctx *ArrayAccessExpressionContext) {}
+
+// ExitArrayAccessExpression is called when production arrayAccessExpression is exited.
+func (s *BaseR2D2Listener) ExitArrayAccessExpression(ctx *ArrayAccessExpressionContext) {}
+
 // EnterAdditiveExpression is called when production additiveExpression is entered.
 func (s *BaseR2D2Listener) EnterAdditiveExpression(ctx *AdditiveExpressionContext) {}
 

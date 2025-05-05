@@ -101,6 +101,9 @@ type R2D2Listener interface {
 	// EnterReturnStatement is called when entering the returnStatement production.
 	EnterReturnStatement(c *ReturnStatementContext)
 
+	// EnterArrayAccessExpression is called when entering the arrayAccessExpression production.
+	EnterArrayAccessExpression(c *ArrayAccessExpressionContext)
+
 	// EnterAdditiveExpression is called when entering the additiveExpression production.
 	EnterAdditiveExpression(c *AdditiveExpressionContext)
 
@@ -253,6 +256,9 @@ type R2D2Listener interface {
 
 	// ExitReturnStatement is called when exiting the returnStatement production.
 	ExitReturnStatement(c *ReturnStatementContext)
+
+	// ExitArrayAccessExpression is called when exiting the arrayAccessExpression production.
+	ExitArrayAccessExpression(c *ArrayAccessExpressionContext)
 
 	// ExitAdditiveExpression is called when exiting the additiveExpression production.
 	ExitAdditiveExpression(c *AdditiveExpressionContext)

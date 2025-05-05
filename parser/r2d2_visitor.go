@@ -101,6 +101,9 @@ type R2D2Visitor interface {
 	// Visit a parse tree produced by R2D2Parser#returnStatement.
 	VisitReturnStatement(ctx *ReturnStatementContext) interface{}
 
+	// Visit a parse tree produced by R2D2Parser#arrayAccessExpression.
+	VisitArrayAccessExpression(ctx *ArrayAccessExpressionContext) interface{}
+
 	// Visit a parse tree produced by R2D2Parser#additiveExpression.
 	VisitAdditiveExpression(ctx *AdditiveExpressionContext) interface{}
 
