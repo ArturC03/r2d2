@@ -379,6 +379,10 @@ func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContex
 	lexer := parser.NewR2D2Lexer(input)
 	tokens := antlr.NewCommonTokenStream(lexer, 0)
 	p := parser.NewR2D2Parser(tokens)
+	el := parser.NewR2D2ErrorListener()
+	p.RemoveErrorListeners()
+	p.AddErrorListener(el)
+	p.BuildParseTrees = true
 	tree := p.Program()
 
 	// Create a sub-visitor to process the imported content
