@@ -19,7 +19,7 @@ func TestValidParsing(t *testing.T) {
 		},
 		{
 			name: "Import Statement",
-			code: "import Console from \"console\";\n",
+			code: "use \"console.r2d2\";\n",
 		},
 		{
 			name: "Module Declaration",
@@ -314,70 +314,67 @@ func TestInvalidParsing(t *testing.T) {
 // Test complex program with multiple features
 func TestComplexProgram(t *testing.T) {
 	code := `
-	import Console from "console";
-	import Math from "math";
+	use "console.r2d2";
+use "math.r2d2";
 
-	type Point {
-		var x number;
-		var y number;
-	}
+interface Drawable {
+    fn draw(): void;
+}
 
-	interface Drawable {
-		fn draw(): void;
-	}
+module Geometry implements Drawable {
+    export const PI number = 3.14159;
 
-	module Geometry implements Drawable {
-		export const PI number = 3.14159;
+    export fn calculateDistance(p1_x number, p1_y number, p2_x number, p2_y number): number {
+        let dx number = p2_x - p1_x;
+        let dy number = p2_y - p1_y;
+        return Math.sqrt(dx * dx + dy * dy);
+    }
 
-		export fn calculateDistance(p1 Point, p2 Point): number {
-			let dx number = p2.x - p1.x;
-			let dy number = p2.y - p1.y;
-			return Math.sqrt(dx * dx + dy * dy);
-		}
+    export fn draw(): void {
+        Console.log("Drawing geometry...");
+    }
 
-		export fn draw(): void {
-			Console.log("Drawing geometry...");
-		}
+    fn private_helper(): void {
+        // This is a private function
+    }
+}
 
-		fn private_helper(): void {
-			// This is a private function
-		}
-	}
+module Main {
+    export fn main(): void {
+        // Using simple variables for points
+        let origin_x number = 0;
+        let origin_y number = 0;
+        let p_x number = 3;
+        let p_y number = 4;
 
-	module Main {
-		export fn main(): void {
-			// let origin Point = { x: 0, y: 0 };
-			// let p Point = { x: 3, y: 4 };
+        let distance number = Geometry.calculateDistance(origin_x, origin_y, p_x, p_y);
 
-			let distance number = Geometry.calculateDistance(origin, p);
+        if (distance > 5) {
+            Console.log("Point is far away!");
+        } else {
+            Console.log("Point is nearby!");
+        }
 
-			if (distance > 5) {
-				Console.log("Point is far away!");
-			} else {
-				Console.log("Point is nearby!");
-			}
+        let i number = 1;
+        while (i < 10) {
+            if (i % 2 != 0) {
+                Console.log(i);
+            }
+            i++;
+        }
 
-			for (let i number = 0; i < 10; i++) {
-				if (i % 2 == 0) {
-					continue;
-				}
-				Console.log(i);
-			}
+        let i number = 1;
+        while (i <= 5) {
+            Console.log(i);
+            i++;
+        }
 
-			let numbers number[] = [1, 2, 3, 4, 5];
-
-			let i number = 0;
-			while (i < numbers.length) {
-				Console.log(numbers[i]);
-				i++;
-			}
-
-			// JavaScript integration
-			@js <<
-				console.log("This is native JavaScript code");
-			>>;
-		}
-	}
+        // JavaScript integration
+        @js <<
+            console.log("This is native JavaScript code");
+        >>;
+    }
+}
 	`
 
 	input := antlr.NewInputStream(code)

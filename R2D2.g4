@@ -20,7 +20,7 @@ globalDeclaration
   ;
 
 importDeclaration
-  : IMPORT IDENTIFIER FROM STRING_LITERAL SEMI
+  : USE STRING_LITERAL SEMI
   ;
 
 interfaceDeclaration
@@ -250,6 +250,7 @@ jsStatement
  */
 
 // Keywords
+USE: 'use';
 IMPORT: 'import';
 FROM: 'from';
 INTERFACE: 'interface';
@@ -343,7 +344,7 @@ INT_LITERAL
   ;
 
 // Identifiers and literals
-IDENTIFIER: ([a-zA-Z_][a-zA-Z_0-9]* DOT)* ([a-zA-Z_][a-zA-Z_0-9]*);
+IDENTIFIER: ([a-zA-Z_][a-zA-Z_0-9]*);
 
 fragment DecimalIntegerLiteral
   : SignPart? DecimalNumeral
@@ -425,8 +426,6 @@ COMMENT
 BLOCK_COMMENT
   : '/*' .*? '*/' -> skip
   ;
-
-// JavaScript block delimiter token
 
 WHITESPACE
   : [ \t\r\n\u000C\u00A0\u2028\u2029]+ -> skip

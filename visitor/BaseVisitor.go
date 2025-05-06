@@ -44,6 +44,26 @@ type Module struct {
 	Types     map[string]any
 }
 
+type Interface struct {
+	Name      string
+	Functions map[string]Function
+}
+
+type SymbolTable struct {
+	Modules    map[string]Module
+	Interfaces map[string]Interface
+	Globals    map[string]Global
+}
+
+type R2D2Visitor struct {
+	parser.BaseR2D2Visitor
+	symbolTable      SymbolTable
+	JsCode           string
+	currentModule    Module
+	currentFunction  Function
+	currentInterface Interface
+}
+
 // Exports returns a list of exported function and variable names
 func (m Module) Exports() []string {
 	var exports []string
@@ -63,26 +83,6 @@ func (m Module) Exports() []string {
 	}
 
 	return exports
-}
-
-type Interface struct {
-	Name      string
-	Functions map[string]Function
-}
-
-type SymbolTable struct {
-	Modules    map[string]Module
-	Interfaces map[string]Interface
-	Globals    map[string]Global
-}
-
-type R2D2Visitor struct {
-	parser.BaseR2D2Visitor
-	symbolTable      SymbolTable
-	JsCode           string
-	currentModule    Module
-	currentFunction  Function
-	currentInterface Interface
 }
 
 func NewR2D2Visitor() *R2D2Visitor {
@@ -342,26 +342,52 @@ func (v *R2D2Visitor) VisitDeclaration(ctx *parser.DeclarationContext) any {
 
 // TODO: Add support for importing files
 func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContext) any {
-	// Has String Literal
+	// Check if the file path is present
 	if ctx.STRING_LITERAL() == nil {
 		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("File path not found on line %d", ctx.GetStart().GetLine())))
-		return v.VisitChildren(ctx)
+		return nil
 	}
 
-	path := ctx.STRING_LITERAL().GetText() // path of file with no quotes
-
-	// Empty String
-	if path == "\"\"" {
+	// Extract and clean the file path
+	rawPath := ctx.STRING_LITERAL().GetText()
+	if rawPath == "\"\"" {
 		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Empty file path on line %d", ctx.GetStart().GetLine())))
-	} else {
-		justPath := strings.Trim(path, "\"")
-		_, err := os.Stat(justPath)
-		if err != nil {
-			fmt.Println(r2d2Styles.ErrorMessage("File not found on path " + justPath))
-		}
+		return nil
 	}
 
-	return v.VisitChildren(ctx)
+	justPath := strings.Trim(rawPath, "\"")
+
+	// Check if the file exists
+	if _, err := os.Stat(justPath); err != nil {
+		if os.IsNotExist(err) {
+			fmt.Println(r2d2Styles.ErrorMessage("File not found on path " + justPath))
+		} else {
+			fmt.Println(r2d2Styles.ErrorMessage("Error checking file: " + err.Error()))
+		}
+		return nil
+	}
+
+	// Read the content of the file
+	content, err := os.ReadFile(justPath)
+	if err != nil {
+		fmt.Println(r2d2Styles.ErrorMessage("Failed to read file: " + justPath))
+		return nil
+	}
+
+	// Parse the content as if it were part of the same code
+	input := antlr.NewInputStream(string(content))
+	lexer := parser.NewR2D2Lexer(input)
+	tokens := antlr.NewCommonTokenStream(lexer, 0)
+	p := parser.NewR2D2Parser(tokens)
+	tree := p.Program()
+
+	// Create a sub-visitor to process the imported content
+	sub := NewR2D2Visitor()
+	tree.Accept(sub)
+
+	v.JsCode = sub.JsCode + v.JsCode
+
+	return nil
 }
 
 func (v *R2D2Visitor) VisitGlobalDeclaration(ctx *parser.GlobalDeclarationContext) any {
@@ -401,6 +427,10 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 	// Garantir que a tabela de símbolos global seja inicializada
 	if v.symbolTable.Globals == nil {
 		v.symbolTable.Globals = make(map[string]Global)
+	}
+
+	if v.symbolTable.Modules == nil {
+		v.symbolTable.Modules = make(map[string]Module)
 	}
 
 	// Verificação para garantir que o módulo tenha um identificador
@@ -535,6 +565,7 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 }
 
 func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationContext) any {
+
 	// Skip if no identifier
 	if ctx.IDENTIFIER() == nil {
 		return v.VisitChildren(ctx)
