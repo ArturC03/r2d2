@@ -105,7 +105,7 @@ func NewR2D2Visitor() *R2D2Visitor {
 }
 
 // Helper functions
-func isExported(node interface{}) bool {
+func isExported(node any) bool {
 	// Check if the node has an EXPORT token
 	switch n := node.(type) {
 	case *parser.FunctionDeclarationContext:
@@ -122,7 +122,7 @@ func isPseudo(node *parser.FunctionDeclarationContext) bool {
 	return node.PSEUDO() != nil
 }
 
-func findChild(parent antlr.RuleContext, types ...interface{}) bool {
+func findChild(parent antlr.RuleContext, types ...any) bool {
 	for i := range parent.GetChildCount() {
 		child := parent.GetChild(i)
 
@@ -153,7 +153,7 @@ func findChild(parent antlr.RuleContext, types ...interface{}) bool {
 	return false
 }
 
-func findParent(node antlr.RuleContext, types ...interface{}) bool {
+func findParent(node antlr.RuleContext, types ...any) bool {
 	parent := node.GetParent()
 	if parent == nil {
 		return false
