@@ -320,6 +320,8 @@ TYPE
   : 'number'
   | 'boolean'
   | 'string'
+  | 'array'
+  | 'object'
   | 'void'
   ;
 
