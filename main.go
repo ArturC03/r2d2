@@ -31,9 +31,9 @@ func buildJSCode(userInput string) string {
 	p.BuildParseTrees = true
 	tree := p.Program()
 	v := visitor.NewR2D2Visitor()
-	fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
+	// fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
 	tree.Accept(v)
-	fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
+	// fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
 
 	// fmt.Println(r2d2Styles.InfoMessage("Running the code generated"))
 	return v.JsCode
@@ -97,14 +97,15 @@ func RunCode(input string) {
 	// If successful, print output and execution time
 	m.SetDone(true)
 	if outBuf.Len() > 0 {
-		fmt.Println(r2d2Styles.SuccessMessage("Program Output:"))
+		fmt.Println(r2d2Styles.InfoMessage("Program Output:"))
 		fmt.Println(outBuf.String())
 	}
-	fmt.Println(fmt.Sprintf("Execution completed in %s", formattedTime))
+	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Execution completed in %s", formattedTime)))
 }
 
 // BuildCode executa o comando Deno compile com spinner
-func BuildCode(input string) {
+func BuildCode(input string, filename string) {
+	fmt.Println(filename)
 	code := buildJSCode(input)
 	tmpFile, err := os.CreateTemp(os.TempDir(), "deno_code_*.js")
 	if err != nil {
