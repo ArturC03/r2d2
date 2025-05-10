@@ -32,7 +32,7 @@ moduleDeclaration
   ;
 
 functionDeclaration
-  : (EXPORT)? (PSEUDO)? FN IDENTIFIER LPAREN parameterList? RPAREN (COLON typeExpression)? (block | SEMI)
+  : (EXPORT)? (PSEUDO)? FN IDENTIFIER LPAREN parameterList? RPAREN (typeExpression)? (block | SEMI)
   ;
 
 functionCallStatement
@@ -53,6 +53,7 @@ parameter
 
 typeExpression
   : baseType arrayDimensions?
+  | arrayDimensions? baseType
   ;
 
 arrayDimensions

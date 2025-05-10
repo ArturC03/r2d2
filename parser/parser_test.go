@@ -32,7 +32,7 @@ func TestValidParsing(t *testing.T) {
 		{
 			name: "Function Declaration in Module",
 			code: `module TestModule {
-				fn test(a number, b string): number {
+				fn test(a number, b string) number {
 					return a;
 				}
 			}`,
@@ -113,7 +113,7 @@ func TestValidParsing(t *testing.T) {
 		{
 			name: "Interface Declaration",
 			code: `interface Printable {
-				fn print(message string): void;
+				fn print(message string) void;
 			}
 
 			module TestModule {
@@ -318,29 +318,29 @@ func TestComplexProgram(t *testing.T) {
 use "math.r2d2";
 
 interface Drawable {
-    fn draw(): void;
+    fn draw() void;
 }
 
 module Geometry implements Drawable {
     export const PI number = 3.14159;
 
-    export fn calculateDistance(p1_x number, p1_y number, p2_x number, p2_y number): number {
+    export fn calculateDistance(p1_x number, p1_y number, p2_x number, p2_y number) number {
         let dx number = p2_x - p1_x;
         let dy number = p2_y - p1_y;
         return Math.sqrt(dx * dx + dy * dy);
     }
 
-    export fn draw(): void {
+    export fn draw() void {
         Console.log("Drawing geometry...");
     }
 
-    fn private_helper(): void {
+    fn private_helper() void {
         // This is a private function
     }
 }
 
 module Main {
-    export fn main(): void {
+    export fn main() void {
         // Using simple variables for points
         let origin_x number = 0;
         let origin_y number = 0;
@@ -559,7 +559,7 @@ func (l *countingErrorListener) SyntaxError(recognizer antlr.Recognizer, offendi
 func TestTreeWalking(t *testing.T) {
 	code := `
 	module Test {
-		fn sayHello(name string): void {
+		fn sayHello(name string) void {
 			console.log("Hello, " + name);
 		}
 	}

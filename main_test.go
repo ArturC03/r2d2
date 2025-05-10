@@ -194,7 +194,7 @@ func TestBuildCode(t *testing.T) {
 	defer os.Remove(outputName)
 
 	// Run the function
-	BuildCode(testProgram)
+	BuildCode(testProgram, outputName)
 
 	// Restore stdout
 	w.Close()

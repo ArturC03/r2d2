@@ -44,7 +44,7 @@ func RunCode(input string) {
 	// Create a temporary file to store the generated code
 	tmpFile, err := os.CreateTemp(os.TempDir(), "deno_run_*.js")
 	if err != nil {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error creating temporary file: %v", err)))
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error creating temporary file: %v", r2d2Styles.Bold(err.Error()))))
 		return
 	}
 	defer os.Remove(tmpFile.Name())
@@ -88,7 +88,7 @@ func RunCode(input string) {
 	// Handle command execution results
 	if err != nil {
 		// If there's an error, print error message
-		log.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Deno run error: %v", err)))
+		log.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Deno run error: %s", r2d2Styles.Bold(err.Error()))))
 		fmt.Println(r2d2Styles.ErrorMessage("Standard Error Output:"))
 		fmt.Println(errBuf.String())
 		return
@@ -97,26 +97,30 @@ func RunCode(input string) {
 	// If successful, print output and execution time
 	m.SetDone(true)
 	if outBuf.Len() > 0 {
-		fmt.Println(r2d2Styles.InfoMessage("Program Output:"))
+		// fmt.Println(r2d2Styles.InfoMessage("Program Output:"))
 		fmt.Println(outBuf.String())
 	}
-	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Execution completed in %s", formattedTime)))
+	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Execution completed in %s", r2d2Styles.Bold(formattedTime))))
 }
 
 // BuildCode executa o comando Deno compile com spinner
 func BuildCode(input string, filename string) {
-	fmt.Println(filename)
 	code := buildJSCode(input)
 	tmpFile, err := os.CreateTemp(os.TempDir(), "deno_code_*.js")
 	if err != nil {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error creating temporary file: %v", err)))
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error creating temporary file at %s: %v", r2d2Styles.Bold(os.TempDir()), err)))
 		return
 	}
 	defer os.Remove(tmpFile.Name())
 	tmpFile.WriteString(code)
 	tmpFile.Close()
 
-	outputName := "program"
+	baseName := filename
+	if len(filename) > 5 && filename[len(filename)-5:] == ".r2d2" {
+		baseName = filename[:len(filename)-5]
+	}
+
+	outputName := baseName
 	if runtime.GOOS == "windows" {
 		outputName += ".exe"
 	}
@@ -146,19 +150,18 @@ func BuildCode(input string, filename string) {
 	err = cmd.Run()
 	p.Send(tea.Quit())
 	<-done // Aguarda o encerramento correto do spinner
-
 	if err != nil {
-		log.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Deno compile: %v", err)))
+		log.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Deno compile: %v", r2d2Styles.Bold(err.Error()))))
 		return
 	}
 
 	// Exibe o nome do executável gerado e o tempo com precisão de milissegundos
 	m.SetDone(true)
-	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Created executable: %s\n", outputName)))
+	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Created executable: %s\n", r2d2Styles.Bold(outputName))))
 
 	// Calcula e exibe o tempo de execução
 	formattedTime := stopwatch.MeasureExecutionTime(startTime)
-	fmt.Println(fmt.Sprintf("Compilation completed in %s", formattedTime)) // Exibe a mensagem atualizada
+	fmt.Println(fmt.Sprintf("Compilation completed in %s", r2d2Styles.Bold(formattedTime))) // Exibe a mensagem atualizada
 }
 
 func BuildJsFile(input string, filename string) {
@@ -174,7 +177,7 @@ func BuildJsFile(input string, filename string) {
 	outputName := baseName + ".js"
 	outFile, err := os.Create(outputName)
 	if err != nil {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error creating JavaScript file: %v", err)))
+		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Error creating JavaScript file %s: %v", r2d2Styles.Bold(outputName), err)))
 		return
 	}
 	defer outFile.Close()
@@ -187,5 +190,5 @@ func BuildJsFile(input string, filename string) {
 	}
 
 	// Display success message
-	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Created JavaScript file: %s", outputName)))
+	fmt.Println(r2d2Styles.SuccessMessage(fmt.Sprintf("Created JavaScript file: %s", r2d2Styles.Bold(outputName))))
 }

@@ -16,9 +16,8 @@ type R2D2ErrorListener struct {
 func NewR2D2ErrorListener() *R2D2ErrorListener {
 	return &R2D2ErrorListener{antlr.NewDefaultErrorListener()}
 }
-
-func (l *R2D2ErrorListener) SyntaxError(recognizer antlr.Recognizer, offendingSymbol interface{}, line, column int, msg string, e antlr.RecognitionException) {
-	fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Syntax error at line %d:%d: %s", line, column, msg)))
+func (l *R2D2ErrorListener) SyntaxError(recognizer antlr.Recognizer, offendingSymbol any, line, column int, msg string, e antlr.RecognitionException) {
+	fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Syntax error at %s: %s", r2d2Styles.Bold(fmt.Sprintf("line %d:%d", line, column)), msg)))
 	// panic(nil)
 	// Finaliza silenciosamente o processo
 	os.Stdout.Close() // Evita saída residual

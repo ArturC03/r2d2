@@ -208,7 +208,8 @@ func loadGlobalFunctions(v *R2D2Visitor) error {
 	// Parse JSON output
 	var result map[string]any
 	if err := json.Unmarshal(output, &result); err != nil {
-		errMsg := fmt.Sprintf("Error parsing JSON: %v", err)
+		lineMsg := r2d2Styles.Bold(fmt.Sprintf("Error parsing JSON at line %d", 1))
+		errMsg := fmt.Sprintf("Error parsing JSON: %v. %s", err, lineMsg)
 		fmt.Println(r2d2Styles.ErrorMessage(errMsg))
 		return fmt.Errorf("Error parsing JSON: %w", err)
 	}
@@ -541,22 +542,39 @@ func isAccessibleVariable(v *R2D2Visitor, varName string) (bool, Variable) {
 }
 
 func isAccessibleFunction(v *R2D2Visitor, funcName string) (bool, Function) {
-	// Check if function is a global-level function-level
-	// if _, exists := v.symbolTable.Globals[funcName]; exists {
-	// 	return true, Function{}
-	// }
+	// Split function name by module prefix if it exists
+	parts := strings.Split(funcName, ".")
 
-	// Check if function is a module-level function-level
+	if len(parts) == 2 {
+		// Module.function format
+		moduleName, methodName := parts[0], parts[1]
+
+		// Check if module exists
+		if module, exists := v.symbolTable.Modules[moduleName]; exists {
+			// Check if function exists in module
+			if fn, exists := module.Functions[methodName]; exists && fn.isExported {
+				return true, fn
+			}
+		}
+		return false, Function{}
+	}
+
+	// Check if function is a module-level function
 	if _, exists := v.currentModule.Functions[funcName]; exists {
 		return true, v.currentModule.Functions[funcName]
 	}
 
-	// Check if function is a function-level function-level
+	// Check if function is a function-level function
 	if _, exists := v.currentFunction.Functions[funcName]; exists {
 		return true, v.currentFunction.Functions[funcName]
 	}
 
-	// fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' not found on line %d", funcName, line)))
-	return false, Function{}
+	// Check all modules for exported functions
+	for _, module := range v.symbolTable.Modules {
+		if fn, exists := module.Functions[funcName]; exists && fn.isExported {
+			return true, fn
+		}
+	}
 
+	return false, Function{}
 }
