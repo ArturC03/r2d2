@@ -6,9 +6,34 @@ import (
 	"strings"
 
 	"github.com/ArturC03/r2d2/parser"
-	r2d2Styles "github.com/ArturC03/r2d2Styles"
+	"github.com/ArturC03/r2d2Styles"
 	"github.com/antlr4-go/antlr/v4"
 )
+
+// formatErrorMessage creates a standardized error message with line number
+func formatErrorMessage(message string, line int) string {
+	return fmt.Sprintf("%s on line %s", message, r2d2Styles.Bold(fmt.Sprintf("%d", line)))
+}
+
+// formatWarningMessage creates a standardized warning message with line number
+func formatWarningMessage(message string, line int) string {
+	return fmt.Sprintf("%s on line %s", message, r2d2Styles.Bold(fmt.Sprintf("%d", line)))
+}
+
+// formatErrorMessageNoLine creates a standardized error message without line number
+func formatErrorMessageNoLine(message string) string {
+	return message
+}
+
+// formatWarningMessageNoLine creates a standardized warning message without line number
+func formatWarningMessageNoLine(message string) string {
+	return message
+}
+
+// formatFileErrorMessage creates a standardized error message for file operations
+func formatFileErrorMessage(message string, filePath string) string {
+	return fmt.Sprintf("%s: %s", message, r2d2Styles.Bold(filePath))
+}
 
 type Variable struct {
 	Name       string
@@ -207,14 +232,14 @@ func (v *R2D2Visitor) VisitDeclaration(ctx *parser.DeclarationContext) any {
 func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContext) any {
 	// Check if the file path is present
 	if ctx.STRING_LITERAL() == nil {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("File path not found on line %s", r2d2Styles.Bold(fmt.Sprintf("%d", ctx.GetStart().GetLine())))))
+		fmt.Println(r2d2Styles.ErrorMessage(formatFileErrorMessage("File path not found", fmt.Sprintf("%d", ctx.GetStart().GetLine()))))
 		return nil
 	}
 
 	// Extract and clean the file path
 	rawPath := ctx.STRING_LITERAL().GetText()
 	if rawPath == "\"\"" {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Empty file path on line %s", r2d2Styles.Bold(fmt.Sprintf("%d", ctx.GetStart().GetLine())))))
+		fmt.Println(r2d2Styles.ErrorMessage(formatFileErrorMessage("Empty file path", fmt.Sprintf("%d", ctx.GetStart().GetLine()))))
 		return nil
 	}
 
@@ -223,9 +248,9 @@ func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContex
 	// Check if the file exists
 	if _, err := os.Stat(justPath); err != nil {
 		if os.IsNotExist(err) {
-			fmt.Println(r2d2Styles.ErrorMessage("File not found on path " + r2d2Styles.Bold(justPath)))
+			fmt.Println(r2d2Styles.ErrorMessage(formatFileErrorMessage("File not found on path", justPath)))
 		} else {
-			fmt.Println(r2d2Styles.ErrorMessage("Error checking file: " + r2d2Styles.Bold(err.Error())))
+			fmt.Println(r2d2Styles.ErrorMessage(formatFileErrorMessage("Error checking file", err.Error())))
 		}
 		return nil
 	}
@@ -233,7 +258,7 @@ func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContex
 	// Read the content of the file
 	content, err := os.ReadFile(justPath)
 	if err != nil {
-		fmt.Println(r2d2Styles.ErrorMessage("Failed to read file: " + r2d2Styles.Bold(justPath)))
+		fmt.Println(r2d2Styles.ErrorMessage(formatFileErrorMessage("Failed to read file", justPath)))
 		return nil
 	}
 
@@ -314,7 +339,7 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 
 	// Verificação para garantir que o módulo tenha um identificador
 	if ctx.IDENTIFIER(0) == nil || len(ctx.AllIDENTIFIER()) == 0 {
-		fmt.Println(r2d2Styles.ErrorMessage("Error: Module declaration without identifier"))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Module declaration without identifier")))
 		return nil
 	}
 
@@ -334,7 +359,7 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 			v.symbolTable.Modules[v.currentModule.Name] = v.currentModule
 		}()
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage("Module " + r2d2Styles.Bold(moduleName) + " already exists"))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine(fmt.Sprintf("Module '%s' already exists", moduleName))))
 		return nil
 	}
 
@@ -396,7 +421,8 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 				// O valor da variável não será extraído, mantendo o comportamento que você deseja
 				// Continue sem pegar o texto da expressão
 				// variável.Value = varDecl.Expression().GetText()
-				variable.Value = "UNDEFINED" // Ou algo similar se não precisar de valor
+				expr := varDecl.Expression()
+				variable.Value = expr.GetText()
 			} else {
 				variable.Value = ""
 			}
@@ -522,7 +548,7 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 					// Not FunctionCall
 					if _, ok := stmtCtx.GetChild(0).(*parser.FunctionCallStatementContext); !ok {
 						line := stmtCtx.GetStart().GetLine()
-						fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Line %s: statement %s not allowed in a pseudo function", r2d2Styles.Bold(fmt.Sprintf("%d", line)), r2d2Styles.Bold(stmtCtx.GetStart().GetText()))))
+						fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(fmt.Sprintf("Statement '%s' not allowed in a pseudo function", stmtCtx.GetStart().GetText()), line)))
 					}
 				}
 			}
@@ -536,7 +562,7 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 		// No Escape
 		if !canEscape {
 			line := parentLoop.GetStart().GetLine()
-			fmt.Println(r2d2Styles.WarningMessage(fmt.Sprintf("Loop on line %d has no escape!", line)))
+			fmt.Println(r2d2Styles.WarningMessage(formatWarningMessage("Loop has no escape!", line)))
 		}
 	}
 
@@ -562,28 +588,14 @@ func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationCo
 	if ctx.IDENTIFIER() == nil {
 		return v.VisitChildren(ctx)
 	}
-
 	varName := ctx.IDENTIFIER().GetText()
-
 	// Create variable object
 	variable := Variable{
 		Name:       varName,
 		isExported: ctx.EXPORT() != nil,
 	}
-
 	if ctx.TypeExpression() != nil {
 		variable.Type = ctx.TypeExpression().GetText()
-	}
-
-	// If this is a module-level variable
-	if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
-		v.currentModule.Variables[varName] = variable
-	} else {
-		// Check for invalid export
-		if ctx.EXPORT() != nil {
-			fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable cannot be exported in a function")))
-		}
-		v.currentFunction.Variables[varName] = variable
 	}
 
 	// Generate JS declaration
@@ -591,7 +603,7 @@ func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationCo
 		v.JsCode += fmt.Sprintf("let %s", varName)
 	} else if ctx.CONST() != nil {
 		if ctx.ASSIGN() == nil {
-			fmt.Println(r2d2Styles.ErrorMessage("Const variable must be assigned a value"))
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Const variable must be assigned a value")))
 		}
 		v.JsCode += fmt.Sprintf("const %s", varName)
 	} else if ctx.VAR() != nil {
@@ -602,10 +614,21 @@ func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationCo
 	if ctx.ASSIGN() != nil && ctx.Expression() != nil {
 		v.JsCode += " = "
 		ctx.Expression().Accept(v)
+		variable.Value = "sei la" // Set the value before storing the variable
+	}
+
+	// Store the variable AFTER setting all its properties
+	if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
+		v.currentModule.Variables[varName] = variable
+	} else {
+		// Check for invalid export
+		if ctx.EXPORT() != nil {
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Variable cannot be exported in a function")))
+		}
+		v.currentFunction.Variables[varName] = variable
 	}
 
 	// v.JsCode += ";"
-
 	return nil
 }
 
@@ -632,7 +655,13 @@ func (v *R2D2Visitor) VisitExpression(ctx *parser.ExpressionContext) any {
 }
 
 func (v *R2D2Visitor) VisitBreakStatement(ctx *parser.BreakStatementContext) any {
-	// Verify we're in a loop context
+	inLoop := findParent(ctx, (*parser.LoopStatementContext)(nil), (*parser.ForStatementContext)(nil), (*parser.WhileStatementContext)(nil))
+
+	if !inLoop {
+		errorMessage := fmt.Sprintf("Break statement on %s must be within a loop", r2d2Styles.Bold(fmt.Sprintf("line %d", ctx.GetStart().GetLine())))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(errorMessage, ctx.GetStart().GetLine())))
+	}
+
 	v.JsCode += "break"
 	return nil
 }
@@ -642,8 +671,8 @@ func (v *R2D2Visitor) VisitContinueStatement(ctx *parser.ContinueStatementContex
 	inLoop := findParent(ctx, (*parser.LoopStatementContext)(nil), (*parser.ForStatementContext)(nil), (*parser.WhileStatementContext)(nil))
 
 	if !inLoop {
-		errorMessage := fmt.Sprintf("Continue statement on line %d must be within a loop", ctx.GetStart().GetLine())
-		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+		errorMessage := fmt.Sprintf("Continue statement on %s must be within a loop", r2d2Styles.Bold(fmt.Sprintf("line %d", ctx.GetStart().GetLine())))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(errorMessage, ctx.GetStart().GetLine())))
 	}
 
 	v.JsCode += "continue"
@@ -784,12 +813,12 @@ func (v *R2D2Visitor) VisitExpressionStatement(ctx *parser.ExpressionStatementCo
 }
 
 func (v *R2D2Visitor) VisitCicleControl(ctx *parser.CicleControlContext) any {
-	inLoop := findParent(ctx, (*parser.LoopStatementContext)(nil), (*parser.ForStatementContext)(nil), (*parser.WhileStatementContext)(nil))
+	// inLoop := findParent(ctx, (*parser.LoopStatementContext)(nil), (*parser.ForStatementContext)(nil), (*parser.WhileStatementContext)(nil))
 
-	if !inLoop {
-		errorMessage := fmt.Sprintf("Cicle control statement on line %d must be within a loop", ctx.GetStart().GetLine())
-		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
-	}
+	// if !inLoop {
+	// 	errorMessage := fmt.Sprintf("Cicle control statement on line %d must be within a loop", ctx.GetStart().GetLine())
+	// 	fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+	// }
 
 	return v.VisitChildren(ctx)
 }
@@ -849,7 +878,7 @@ func (v *R2D2Visitor) VisitAssignmentDeclaration(ctx *parser.AssignmentDeclarati
 // VisitAssignment handles assignments
 func (v *R2D2Visitor) VisitAssignment(ctx *parser.AssignmentContext) any {
 	if ctx.IDENTIFIER() == nil {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Assignment identifier missing on line %s", r2d2Styles.Bold(fmt.Sprintf("%d", ctx.GetStart().GetLine())))))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage("Assignment identifier missing", ctx.GetStart().GetLine())))
 		return v.VisitChildren(ctx)
 	}
 
@@ -858,6 +887,7 @@ func (v *R2D2Visitor) VisitAssignment(ctx *parser.AssignmentContext) any {
 
 	// Verify the variable exists in the current scope
 	varExists := false
+	var variabl Variable
 
 	// Check in current function, module, and global variables
 	for _, scope := range []map[string]Variable{
@@ -865,14 +895,15 @@ func (v *R2D2Visitor) VisitAssignment(ctx *parser.AssignmentContext) any {
 		v.currentModule.Variables,
 		// v.symbolTable.Globals,
 	} {
-		if _, exists := scope[varName]; exists {
+		if vari, exists := scope[varName]; exists {
 			varExists = true
+			variabl = vari
 			break
 		}
 	}
 	if !varExists {
 		errorMessage := fmt.Sprintf("Variable '%s' not declared on line %s", r2d2Styles.Bold(varName), r2d2Styles.Bold(fmt.Sprintf("%d", ctx.GetStart().GetLine())))
-		fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(errorMessage, ctx.GetStart().GetLine())))
 		v.JsCode += fmt.Sprintf("/* ERROR: %s */", errorMessage)
 		return nil
 	}
@@ -882,6 +913,12 @@ func (v *R2D2Visitor) VisitAssignment(ctx *parser.AssignmentContext) any {
 
 	// Handle assignment operator
 	if ctx.AssignmentOperator() != nil {
+		if ctx.AssignmentOperator().GetText() != "=" {
+			if variabl.Value == nil || variabl.Value == "" {
+				line := ctx.GetStart().GetLine()
+				fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' not initialized on %s", ctx.IDENTIFIER().GetText(), r2d2Styles.Bold(fmt.Sprintf(" line %d", line)))))
+			}
+		}
 		v.JsCode += " " + ctx.AssignmentOperator().GetText() + " "
 
 		// Use the expression visitor for the right-hand side, without GetText
@@ -971,7 +1008,7 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 	// Get function name (handle both simple and qualified names)
 	var funcName string
 	if ctx.IDENTIFIER(0) == nil {
-		fmt.Println(r2d2Styles.ErrorMessage("Missing function identifier"))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Missing function identifier")))
 		v.JsCode += "/* ERROR: Missing function identifier */"
 		return nil
 	}
@@ -983,9 +1020,9 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 		funcName = funcName + "." + ctx.IDENTIFIER(1).GetText()
 	}
 
-	isAccessible, _ := isAccessibleFunction(v, funcName)
+	isAccessible, fn := isAccessibleFunction(v, funcName)
 	if !isAccessible {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' not found on line %d", funcName, ctx.GetStart().GetLine())))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(fmt.Sprintf("Function '%s' not found", funcName), ctx.GetStart().GetLine())))
 		return nil
 	}
 
@@ -1002,8 +1039,30 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 
 	// Visit arguments properly
 	argumentList := ctx.ArgumentList()
+
 	if argumentList != nil {
 		exprs := argumentList.AllExpression()
+		if len(exprs) != len(fn.Arguments) {
+			lineNum := ctx.GetStart().GetLine()
+			var msg string
+			switch len(exprs) > len(fn.Arguments) {
+			case true:
+				msg = fmt.Sprintf(
+					"Too many arguments passed when calling function %s at line %s",
+					r2d2Styles.Bold(funcName),
+					r2d2Styles.Bold(fmt.Sprintf("%d", lineNum)),
+				)
+
+			case false:
+
+				msg = fmt.Sprintf(
+					"Too little arguments passed when calling function %s at line %s",
+					r2d2Styles.Bold(funcName),
+					r2d2Styles.Bold(fmt.Sprintf("%d", lineNum)),
+				)
+			}
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(msg, ctx.GetStart().GetLine())))
+		}
 		for i, expr := range exprs {
 			expr.Accept(v) // visita normalmente o argumento
 			if i < len(exprs)-1 {
@@ -1030,13 +1089,16 @@ func (v *R2D2Visitor) VisitLiteralExpression(ctx *parser.LiteralExpressionContex
 func (v *R2D2Visitor) VisitIdentifierExpression(ctx *parser.IdentifierExpressionContext) any {
 	line := ctx.GetStart().GetLine()
 	if ctx.IDENTIFIER() != nil {
-		if ok, _ := isAccessibleVariable(v, ctx.IDENTIFIER().GetText()); ok {
+		if ok, variable := isAccessibleVariable(v, ctx.IDENTIFIER().GetText()); ok {
+			if variable.Value == nil || variable.Value == "" {
+				fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' not initialized on %s", ctx.IDENTIFIER().GetText(), r2d2Styles.Bold(fmt.Sprintf(" line %d", line)))))
+			}
 			v.JsCode += ctx.IDENTIFIER().GetText()
 		} else {
-			fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' not found on line %d", ctx.IDENTIFIER().GetText(), line)))
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(fmt.Sprintf("Variable '%s' not found", ctx.IDENTIFIER().GetText()), line)))
 		}
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Identifier not found on line %d", line)))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage("Identifier not found", line)))
 	}
 	return nil
 }
@@ -1067,16 +1129,16 @@ func (v *R2D2Visitor) VisitUnaryExpression(ctx *parser.UnaryExpressionContext) a
 		case parser.R2D2ParserDECREMENT:
 			v.JsCode += "--"
 		default:
-			fmt.Println(r2d2Styles.ErrorMessage("Unknown unary operator"))
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Unknown unary operator")))
 		}
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage("Expected a unary operator"))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Expected a unary operator")))
 	}
 
 	if ctx.Expression() != nil {
 		ctx.Expression().Accept(v)
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage("Expression not found"))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Expression not found")))
 	}
 
 	return nil
@@ -1086,7 +1148,7 @@ func (v *R2D2Visitor) VisitMultiplicativeExpression(ctx *parser.MultiplicativeEx
 	if ctx.Expression(0) != nil {
 		ctx.Expression(0).Accept(v)
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Left expression not found on line %s", r2d2Styles.Bold(fmt.Sprintf("%d", ctx.GetStart().GetLine())))))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage("Left expression not found", ctx.GetStart().GetLine())))
 	}
 
 	// Operator is child(1)
@@ -1101,10 +1163,10 @@ func (v *R2D2Visitor) VisitMultiplicativeExpression(ctx *parser.MultiplicativeEx
 		case parser.R2D2ParserMOD:
 			v.JsCode += "%"
 		default:
-			fmt.Println(r2d2Styles.ErrorMessage("Unknown multiplicative operator"))
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Unknown multiplicative operator")))
 		}
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage("Expected a multiplicative operator"))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Expected a multiplicative operator")))
 	}
 
 	if ctx.Expression(1) != nil {
@@ -1133,10 +1195,10 @@ func (v *R2D2Visitor) VisitAdditiveExpression(ctx *parser.AdditiveExpressionCont
 		case parser.R2D2ParserMINUS:
 			v.JsCode += "-"
 		default:
-			fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Unknown additive operator on line %s", r2d2Styles.Bold(fmt.Sprintf("%d", ctx.GetStart().GetLine())))))
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage("Unknown additive operator", ctx.GetStart().GetLine())))
 		}
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Expected an additive operator on line %s", r2d2Styles.Bold(fmt.Sprintf("%d", ctx.GetStart().GetLine())))))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage("Expected an additive operator", ctx.GetStart().GetLine())))
 	}
 
 	if ctx.Expression(1) != nil {
@@ -1172,17 +1234,17 @@ func (v *R2D2Visitor) VisitComparisonExpression(ctx *parser.ComparisonExpression
 		case parser.R2D2ParserGEQ:
 			v.JsCode += ">="
 		default:
-			fmt.Println(r2d2Styles.ErrorMessage("Unknown comparison operator"))
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Unknown comparison operator")))
 		}
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage("Expected a comparison operator"))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Expected a comparison operator")))
 	}
 
 	if ctx.Expression(1) != nil {
 		ctx.Expression(1).Accept(v)
 	} else {
 		line := ctx.GetStart().GetLine()
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Right expression not found on line %s", r2d2Styles.Bold(fmt.Sprintf("%d", line)))))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage("Right expression not found", line)))
 	}
 
 	return nil
@@ -1204,10 +1266,10 @@ func (v *R2D2Visitor) VisitLogicalExpression(ctx *parser.LogicalExpressionContex
 		case parser.R2D2ParserOR:
 			v.JsCode += "||"
 		default:
-			fmt.Println(r2d2Styles.ErrorMessage("Unknown logical operator"))
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Unknown logical operator")))
 		}
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage("Expected a logical operator"))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Expected a logical operator")))
 	}
 
 	if ctx.Expression(1) != nil {
@@ -1226,7 +1288,7 @@ func (v *R2D2Visitor) VisitJsStatement(ctx *parser.JsStatementContext) any {
 		clean := strings.TrimSuffix(strings.TrimPrefix(raw, "<<"), ">>")
 		v.JsCode += clean
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("JS code not found at line %s", r2d2Styles.Bold(fmt.Sprintf("%d", ctx.GetStart().GetLine())))))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage("JS code not found", ctx.GetStart().GetLine())))
 	}
 
 	return v.VisitChildren(ctx)
@@ -1236,7 +1298,7 @@ func (v *R2D2Visitor) VisitArrayAccessExpression(ctx *parser.ArrayAccessExpressi
 	if ctx.Expression(0) != nil {
 		ctx.Expression(0).Accept(v)
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage("Array not found"))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Array not found")))
 	}
 
 	if ctx.LBRACK() != nil {
@@ -1246,7 +1308,7 @@ func (v *R2D2Visitor) VisitArrayAccessExpression(ctx *parser.ArrayAccessExpressi
 	if ctx.Expression(1) != nil {
 		ctx.Expression(1).Accept(v)
 	} else {
-		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Index not found on line %s", r2d2Styles.Bold(fmt.Sprintf("%d", ctx.GetStart().GetLine())))))
+		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage("Index not found", ctx.GetStart().GetLine())))
 	}
 
 	if ctx.RBRACK() != nil {
