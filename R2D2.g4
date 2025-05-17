@@ -231,15 +231,15 @@ block
   ;
 
 switchStatement
-  : SWITCH LPAREN expression RPAREN LBRACE switchCase* defaultCase? RBRACE
+  : SWITCH (LPAREN)? expression (RPAREN)? LBRACE switchCase* defaultCase? RBRACE
   ;
 
 switchCase
-  : CASE expression COLON block
+  : CASE expression ARROW (block | statement)
   ;
 
 defaultCase
-  : DEFAULT COLON block
+  : DEFAULT ARROW (block | statement)
   ;
 
 jsStatement
@@ -316,6 +316,7 @@ SEMI: ';';
 AT      : '@';
 JS      : 'js';
 JS_BLOCK: '<<' .*? '>>';
+ARROW   : '=>';
 
 TYPE
   : 'number'

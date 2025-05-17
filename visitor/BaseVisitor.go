@@ -584,6 +584,7 @@ func (v *R2D2Visitor) VisitFunctionCallStatement(ctx *parser.FunctionCallStateme
 }
 
 func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationContext) any {
+
 	// Skip if no identifier
 	if ctx.IDENTIFIER() == nil {
 		return v.VisitChildren(ctx)
@@ -620,6 +621,11 @@ func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationCo
 	// Store the variable AFTER setting all its properties
 	if _, ok := ctx.GetParent().(*parser.ModuleDeclarationContext); ok {
 		v.currentModule.Variables[varName] = variable
+
+		// add the ; if the variable is in module level
+		defer func() {
+			v.JsCode += ";"
+		}()
 	} else {
 		// Check for invalid export
 		if ctx.EXPORT() != nil {
@@ -986,6 +992,8 @@ func (v *R2D2Visitor) VisitSwitchStatement(ctx *parser.SwitchStatementContext) a
 		v.JsCode += ":"
 		if switchCase.Block() != nil {
 			switchCase.Block().Accept(v)
+		} else if switchCase.Statement() != nil {
+			switchCase.Statement().Accept(v)
 		}
 		v.JsCode += "break;"
 	}
@@ -995,6 +1003,8 @@ func (v *R2D2Visitor) VisitSwitchStatement(ctx *parser.SwitchStatementContext) a
 		v.JsCode += "default:"
 		if ctx.DefaultCase().Block() != nil {
 			ctx.DefaultCase().Block().Accept(v)
+		} else if ctx.DefaultCase().Statement() != nil {
+			ctx.DefaultCase().Statement().Accept(v)
 		}
 	}
 
