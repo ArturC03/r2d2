@@ -98,9 +98,10 @@ expressionStatement
   ;
 
 ifStatement
-  : IF ( LPAREN )? expression ( RPAREN )? block (ELSE IF ( LPAREN )? expression (RPAREN)? block)* (ELSE block)?
+  : IF (LPAREN)? expression (RPAREN)? (block | ARROW statement)
+    (ELSE IF (LPAREN)? expression (RPAREN)? (block | ARROW statement))*
+    (ELSE (block | ARROW statement))?
   ;
-
 forStatement
   : FOR (LPAREN)? simpleFor (RPAREN)? block
   ;
@@ -235,11 +236,11 @@ switchStatement
   ;
 
 switchCase
-  : CASE expression ARROW (block | statement)
+  : CASE expression (block | ARROW statement)
   ;
 
 defaultCase
-  : DEFAULT ARROW (block | statement)
+  : DEFAULT ARROW (block | ARROW statement)
   ;
 
 jsStatement

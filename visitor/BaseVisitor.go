@@ -689,11 +689,13 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 	v.JsCode += "for ("
 
 	simpleFor := ctx.SimpleFor()
+
+	bothAssignments := simpleFor.Assignment(0) != nil && simpleFor.Assignment(1) != nil
 	if simpleFor != nil {
 		// Initialization
 		if simpleFor.VariableDeclaration() != nil {
 			simpleFor.VariableDeclaration().Accept(v)
-		} else if simpleFor.Assignment(0) != nil && simpleFor.Assignment(1) != nil {
+		} else if bothAssignments {
 			simpleFor.Assignment(0).Accept(v)
 			// // Initial assignment
 			// if simpleFor.Assignment(0) != nil {
@@ -722,7 +724,7 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 		// Update
 		v.JsCode += "; "
 		if simpleFor.AllAssignment() != nil {
-			if len(simpleFor.AllAssignment()) > 1 {
+			if bothAssignments {
 				simpleFor.Assignment(1).Accept(v)
 			} else {
 				simpleFor.Assignment(0).Accept(v)
@@ -819,12 +821,6 @@ func (v *R2D2Visitor) VisitExpressionStatement(ctx *parser.ExpressionStatementCo
 }
 
 func (v *R2D2Visitor) VisitCicleControl(ctx *parser.CicleControlContext) any {
-	// inLoop := findParent(ctx, (*parser.LoopStatementContext)(nil), (*parser.ForStatementContext)(nil), (*parser.WhileStatementContext)(nil))
-
-	// if !inLoop {
-	// 	errorMessage := fmt.Sprintf("Cicle control statement on line %d must be within a loop", ctx.GetStart().GetLine())
-	// 	fmt.Println(r2d2Styles.ErrorMessage(errorMessage))
-	// }
 
 	return v.VisitChildren(ctx)
 }
@@ -844,31 +840,62 @@ func (v *R2D2Visitor) VisitReturnStatement(ctx *parser.ReturnStatementContext) a
 func (v *R2D2Visitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
 	v.JsCode += "if ("
 
-	// Expression for the condition using the improved expression visitor
+	// Condição do primeiro if
 	if ctx.Expression(0) != nil {
-		// Visita a expressão para gerar seu código JavaScript
-		exprResult := ctx.Expression(0).Accept(v)
-		if exprText, ok := exprResult.(string); ok && exprText != "" {
+		expr := ctx.Expression(0).Accept(v)
+		if exprText, ok := expr.(string); ok && exprText != "" {
 			v.JsCode += exprText
 		}
 	}
 
-	v.JsCode += ") {"
+	v.JsCode += ") "
 
-	// Process the "if" block if it exists
+	// Corpo do IF: bloco ou statement
 	if ctx.Block(0) != nil {
-		// Aceita o bloco do if para processá-lo
+		v.JsCode += "{"
 		ctx.Block(0).Accept(v)
+		v.JsCode += "}"
+	} else if ctx.Statement(0) != nil {
+		v.JsCode += "{"
+		ctx.Statement(0).Accept(v)
+		v.JsCode += "}"
 	}
 
-	v.JsCode += "}"
+	// ELSE IFs
+	elseIfCount := len(ctx.AllExpression()) - 1
+	for i := 0; i < elseIfCount; i++ {
+		v.JsCode += " else if ("
+		expr := ctx.Expression(i + 1).Accept(v)
+		if exprText, ok := expr.(string); ok && exprText != "" {
+			v.JsCode += exprText
+		}
+		v.JsCode += ") "
 
-	// Process the "else" block if it exists
-	if len(ctx.AllBlock()) > 1 && ctx.ELSE(0) != nil {
-		v.JsCode += " else {"
-		// Aceita o bloco do else
-		ctx.Block(1).Accept(v)
-		v.JsCode += "}"
+		blockIndex := i + 1
+		if len(ctx.AllBlock()) > blockIndex && ctx.Block(blockIndex) != nil {
+			v.JsCode += "{"
+			ctx.Block(blockIndex).Accept(v)
+			v.JsCode += "}"
+		} else if len(ctx.AllStatement()) > blockIndex && ctx.Statement(blockIndex) != nil {
+			v.JsCode += "{"
+			ctx.Statement(blockIndex).Accept(v)
+			v.JsCode += "}"
+		}
+	}
+
+	// ELSE final
+	elseIndex := len(ctx.AllExpression())
+	if len(ctx.AllBlock()) > elseIndex && ctx.ELSE(0) != nil {
+		v.JsCode += " else "
+		if ctx.Block(elseIndex) != nil {
+			v.JsCode += "{"
+			ctx.Block(elseIndex).Accept(v)
+			v.JsCode += "}"
+		} else if ctx.Statement(elseIndex) != nil {
+			v.JsCode += "{"
+			ctx.Statement(elseIndex).Accept(v)
+			v.JsCode += "}"
+		}
 	}
 
 	return nil

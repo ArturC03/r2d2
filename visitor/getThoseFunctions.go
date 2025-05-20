@@ -566,15 +566,16 @@ func isAccessibleFunction(v *R2D2Visitor, funcName string) (bool, Function) {
 
 	// Check if function is a function-level function
 	if _, exists := v.currentFunction.Functions[funcName]; exists {
+
 		return true, v.currentFunction.Functions[funcName]
 	}
 
 	// Check all modules for exported functions
-	for _, module := range v.symbolTable.Modules {
-		if fn, exists := module.Functions[funcName]; exists && fn.isExported {
-			return true, fn
-		}
-	}
+	// for _, module := range v.symbolTable.Modules {
+	// 	if fn, exists := module.Functions[funcName]; exists && fn.isExported {
+	// 		return true, fn
+	// 	}
+	// }
 
 	return false, Function{}
 }
