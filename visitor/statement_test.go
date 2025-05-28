@@ -117,13 +117,13 @@ func TestSwitchStatement(t *testing.T) {
 	module Test {
 		fn switchCase(value number) {
 			switch (value) {
-				case 1: {
+				case 1 {
 					return "one";
 				}
-				case 2: {
+				case 2 {
 					return "two";
 				}
-				default: {
+				default {
 					return "other";
 				}
 			}
@@ -158,10 +158,10 @@ func TestJsBlock(t *testing.T) {
 	input := `
 	module Test {
 		fn withJsBlock() {
-		@js <<
+		@js """
 			console.log("This is raw JavaScript");
 			const x = document.getElementById("test");
-			>>;
+			""";
 		}
 	}
 	`

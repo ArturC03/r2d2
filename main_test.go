@@ -22,9 +22,9 @@ func TestBuildJSCode(t *testing.T) {
 	input := `
     module Test {
         export fn main() {
-        @js <<
+        @js """
             console.log("Hello, world!");
-            >>;
+            """;
         }
     }
     `
@@ -111,9 +111,9 @@ func TestBuildJsFile(t *testing.T) {
 	testProgram := `
     module Test {
         export fn main() {
-        @js <<
+        @js """
             console.log("JS File Test");
-            >>;
+            """;
         }
     }
     `

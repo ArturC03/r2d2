@@ -48,7 +48,7 @@ parameterList
   ;
 
 parameter
-  : IDENTIFIER typeExpression
+  : IDENTIFIER ( typeExpression )?
   ;
 
 typeExpression
@@ -113,6 +113,8 @@ assignmentDeclaration
 assignment
   : IDENTIFIER assignmentOperator expression
   | IDENTIFIER (INCREMENT | DECREMENT)
+  | IDENTIFIER LBRACK expression RBRACK assignmentOperator expression
+  | IDENTIFIER LBRACK expression RBRACK (INCREMENT | DECREMENT)
   ;
 
 assignmentOperator
@@ -236,15 +238,17 @@ switchStatement
   ;
 
 switchCase
-  : CASE expression (block | ARROW statement)
+  : CASE expression block
+  | CASE expression ARROW statement
   ;
 
 defaultCase
-  : DEFAULT ARROW (block | ARROW statement)
+  : DEFAULT block
+  | DEFAULT ARROW statement
   ;
 
 jsStatement
-  : AT JS JS_BLOCK SEMI
+  : AT JS STRING_LITERAL SEMI
   ;
 
 /*
@@ -316,7 +320,6 @@ SEMI: ';';
 // Other stuff
 AT      : '@';
 JS      : 'js';
-JS_BLOCK: '<<' .*? '>>';
 ARROW   : '=>';
 
 TYPE
@@ -329,8 +332,11 @@ TYPE
   ;
 
 STRING_LITERAL
-  : '"' (~["\\\r\n] | '\\' .)* '"'
+  : '"""' .*? '"""'              // Multilinha — permissiva e permite \n
+  | '"' ( '\\' . | ~["\\\r\n] )* '"'  // Linha única com escapes
   ;
+
+fragment ESCAPE_SEQUENCE : '\\' [btnr"\\];
 
 BOOL_LITERAL
   : 'true'

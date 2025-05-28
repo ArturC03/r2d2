@@ -233,8 +233,10 @@ func loadGlobalFunctions(v *R2D2Visitor) error {
 		// Get parameters
 		var args = make(map[string]Argument)
 		params, ok := infoMap["parameters"].([]interface{})
+
 		if ok {
 			for i, param := range params {
+
 				paramMap, ok := param.(map[string]interface{})
 				if !ok {
 					continue
@@ -578,4 +580,12 @@ func isAccessibleFunction(v *R2D2Visitor, funcName string) (bool, Function) {
 	// }
 
 	return false, Function{}
+}
+
+func isParameter(v *R2D2Visitor, varName string) (bool, Argument) {
+	if fn, exists := v.currentFunction.Arguments[varName]; exists {
+		return true, fn
+	}
+
+	return false, Argument{}
 }

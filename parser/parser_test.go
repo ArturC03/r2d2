@@ -127,13 +127,13 @@ func TestValidParsing(t *testing.T) {
 			code: `module TestModule {
 				fn main() {
 					switch (day) {
-						case 1: {
+						case 1 {
 							return "Monday";
 						}
-						case 2: {
+						case 2 {
 							return "Tuesday";
 						}
-						default: {
+						default {
 							return "Other day";
 						}
 					}
@@ -144,7 +144,7 @@ func TestValidParsing(t *testing.T) {
 			name: "JavaScript Block in Function",
 			code: `module TestModule {
 				fn main() {
-					@js << console.log("This is JavaScript code"); >>;
+					@js " console.log('This is JavaScript code'); ";
 				}
 			}`,
 		},
@@ -255,7 +255,7 @@ func TestInvalidParsing(t *testing.T) {
 			name: "Missing Closing Tag in JS Block",
 			code: `module TestModule {
 				fn main() {
-					@js << console.log("test");
+					@js " console.log("test");
 				}
 			}`,
 		},
@@ -277,9 +277,9 @@ func TestInvalidParsing(t *testing.T) {
 			}`,
 		},
 		{
-			name: "Missing Type In Parameter",
+			name: "Missing Parameter",
 			code: `module TestModule {
-				fn test(a, b string) { }
+				fn test(, b string) { }
 			}`,
 		},
 		// {
@@ -370,9 +370,9 @@ module Main {
         }
 
         // JavaScript integration
-        @js <<
+        @js """
             console.log("This is native JavaScript code");
-        >>;
+        """;
     }
 }
 	`

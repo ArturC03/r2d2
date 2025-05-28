@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 
+	"maps"
+
 	"github.com/ArturC03/r2d2/parser"
 	"github.com/ArturC03/r2d2Styles"
 	"github.com/antlr4-go/antlr/v4"
@@ -199,7 +201,6 @@ func findParent(node antlr.RuleContext, types ...any) bool {
 			if _, ok := parent.(*parser.WhileStatementContext); ok {
 				return true
 			}
-			// Add other cases as needed
 		}
 	}
 
@@ -278,15 +279,9 @@ func (v *R2D2Visitor) VisitImportDeclaration(ctx *parser.ImportDeclarationContex
 	tree.Accept(sub)
 
 	// Merge the symbol tables
-	for name, module := range sub.symbolTable.Modules {
-		v.symbolTable.Modules[name] = module
-	}
-	for name, iface := range sub.symbolTable.Interfaces {
-		v.symbolTable.Interfaces[name] = iface
-	}
-	for name, global := range sub.symbolTable.Globals {
-		v.symbolTable.Globals[name] = global
-	}
+	maps.Copy(v.symbolTable.Modules, sub.symbolTable.Modules)
+	maps.Copy(v.symbolTable.Interfaces, sub.symbolTable.Interfaces)
+	maps.Copy(v.symbolTable.Globals, sub.symbolTable.Globals)
 
 	// Prepend the imported code
 	v.JsCode = sub.JsCode + v.JsCode
@@ -501,10 +496,15 @@ func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationCo
 				paramName := param.IDENTIFIER().GetText()
 				paramNames = append(paramNames, paramName)
 
+				var typee string = ""
+				if param.TypeExpression() != nil {
+					typee = param.TypeExpression().GetText()
+				}
+
 				// Create an Argument object
 				argument := Argument{
 					Name: paramName,
-					Type: param.TypeExpression().GetText(),
+					Type: typee,
 				}
 
 				// Add as both an argument and a variable
@@ -513,7 +513,7 @@ func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationCo
 				// Also add as a variable in the function's scope
 				v.currentFunction.Variables[paramName] = Variable{
 					Name:       paramName,
-					Type:       param.TypeExpression().GetText(),
+					Type:       typee,
 					isExported: false,
 				}
 			}
@@ -910,6 +910,7 @@ func (v *R2D2Visitor) VisitAssignmentDeclaration(ctx *parser.AssignmentDeclarati
 
 // VisitAssignment handles assignments
 func (v *R2D2Visitor) VisitAssignment(ctx *parser.AssignmentContext) any {
+
 	if ctx.IDENTIFIER() == nil {
 		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage("Assignment identifier missing", ctx.GetStart().GetLine())))
 		return v.VisitChildren(ctx)
@@ -934,6 +935,7 @@ func (v *R2D2Visitor) VisitAssignment(ctx *parser.AssignmentContext) any {
 			break
 		}
 	}
+
 	if !varExists {
 		errorMessage := fmt.Sprintf("Variable '%s' not declared on line %s", r2d2Styles.Bold(varName), r2d2Styles.Bold(fmt.Sprintf("%d", ctx.GetStart().GetLine())))
 		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(errorMessage, ctx.GetStart().GetLine())))
@@ -941,22 +943,47 @@ func (v *R2D2Visitor) VisitAssignment(ctx *parser.AssignmentContext) any {
 		return nil
 	}
 
-	// Generate assignment code
+	// Generate assignment code - start with variable name
 	v.JsCode += varName
 
-	// Handle assignment operator
+	// Check if this is an array indexing assignment
+	if ctx.LBRACK() != nil && ctx.RBRACK() != nil {
+		// Handle array indexing: IDENTIFIER LBRACK expression RBRACK
+		v.JsCode += "["
+		if expressionList := ctx.AllExpression(); len(expressionList) > 0 {
+			// Visit the index expression (first expression)
+			expressionList[0].Accept(v)
+		}
+		v.JsCode += "]"
+
+		// if variabl.Type!= "array" && variabl.Type!= "list" {
+		// 	errorMessage := fmt.Sprintf("Cannot use index operator on non-array variable '%s' on line %d",
+		// 		r2d2Styles.Bold(varName), ctx.GetStart().GetLine())
+		// 	fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(errorMessage, ctx.GetStart().GetLine())))
+		// 	v.JsCode += fmt.Sprintf("/* ERROR: %s */", errorMessage)
+		// }
+	}
+
+	// Handle assignment operator or increment/decrement
 	if ctx.AssignmentOperator() != nil {
 		if ctx.AssignmentOperator().GetText() != "=" {
-			if variabl.Value == nil || variabl.Value == "" {
+			isParam, _ := isParameter(v, ctx.IDENTIFIER().GetText())
+			if (variabl.Value == nil || variabl.Value == "") && !isParam {
 				line := ctx.GetStart().GetLine()
 				fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' not initialized on %s", ctx.IDENTIFIER().GetText(), r2d2Styles.Bold(fmt.Sprintf(" line %d", line)))))
 			}
 		}
 		v.JsCode += " " + ctx.AssignmentOperator().GetText() + " "
 
-		// Use the expression visitor for the right-hand side, without GetText
-		if ctx.Expression() != nil {
-			ctx.Expression().Accept(v)
+		// Get the right expression
+		// For array indexing, this would be the second expression
+		expressionList := ctx.AllExpression()
+		if ctx.LBRACK() != nil && len(expressionList) > 1 {
+			// Visit the value expression (second expression)
+			expressionList[1].Accept(v)
+		} else if ctx.LBRACK() == nil && len(expressionList) > 0 {
+			// Regular assignment with just one expression
+			expressionList[0].Accept(v)
 		}
 	} else if ctx.INCREMENT() != nil {
 		// Handle increment operation
@@ -1115,7 +1142,16 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 
 func (v *R2D2Visitor) VisitLiteralExpression(ctx *parser.LiteralExpressionContext) any {
 	if ctx.Literal() != nil {
-		v.JsCode += ctx.Literal().GetText()
+		text := ctx.Literal().GetText()
+
+		if strings.HasPrefix(text, `"""`) && strings.HasSuffix(text, `"""`) {
+			// Remove as aspas triplas e usa crases
+			inner := text[3 : len(text)-3]
+			v.JsCode += "`" + inner + "`"
+		} else {
+			// Normal string
+			v.JsCode += text
+		}
 		// fmt.Println(r2d2Styles.InfoMessage("Literal found: " + r2d2Styles.Bold(ctx.Literal().GetText())))
 	} else {
 		// fmt.Println(r2d2Styles.ErrorMessage("Literal not found"))
@@ -1127,7 +1163,8 @@ func (v *R2D2Visitor) VisitIdentifierExpression(ctx *parser.IdentifierExpression
 	line := ctx.GetStart().GetLine()
 	if ctx.IDENTIFIER() != nil {
 		if ok, variable := isAccessibleVariable(v, ctx.IDENTIFIER().GetText()); ok {
-			if variable.Value == nil || variable.Value == "" {
+			isParam, _ := isParameter(v, ctx.IDENTIFIER().GetText())
+			if (variable.Value == nil || variable.Value == "") && !isParam {
 				fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' not initialized on %s", ctx.IDENTIFIER().GetText(), r2d2Styles.Bold(fmt.Sprintf(" line %d", line)))))
 			}
 			v.JsCode += ctx.IDENTIFIER().GetText()
@@ -1319,16 +1356,23 @@ func (v *R2D2Visitor) VisitLogicalExpression(ctx *parser.LogicalExpressionContex
 }
 
 func (v *R2D2Visitor) VisitJsStatement(ctx *parser.JsStatementContext) any {
-	if ctx.JS_BLOCK() != nil {
-		raw := ctx.JS_BLOCK().GetText()
-		// Remove os delimitadores '<<' e '>>'
-		clean := strings.TrimSuffix(strings.TrimPrefix(raw, "<<"), ">>")
-		v.JsCode += clean
+	if ctx.STRING_LITERAL() != nil {
+		raw := ctx.STRING_LITERAL().GetText()
+
+		if strings.HasPrefix(raw, `"""`) && strings.HasSuffix(raw, `"""`) {
+			clean := strings.TrimSuffix(strings.TrimPrefix(raw, `"""`), `"""`)
+			v.JsCode += clean
+		} else if strings.HasPrefix(raw, `"`) && strings.HasSuffix(raw, `"`) {
+			clean := strings.TrimSuffix(strings.TrimPrefix(raw, `"`), `"`)
+			v.JsCode += clean
+		} else {
+			v.JsCode += raw
+		}
 	} else {
 		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage("JS code not found", ctx.GetStart().GetLine())))
 	}
 
-	return v.VisitChildren(ctx)
+	return nil
 }
 
 func (v *R2D2Visitor) VisitArrayAccessExpression(ctx *parser.ArrayAccessExpressionContext) any {
