@@ -1,13 +1,137 @@
 package visitor
 
 import (
+	"github.com/ArturC03/r2d2/parser"
+	"github.com/antlr4-go/antlr/v4"
+
 	"encoding/json"
 	"fmt"
 	"os/exec"
 	"strings"
 
-	r2d2Styles "github.com/ArturC03/r2d2Styles"
+	"github.com/ArturC03/r2d2Styles"
 )
+
+// Returns a list of the exported function and variable names for a given module
+func (m Module) Exports() []string {
+	var exports []string
+
+	// Add exported functions
+	for name, function := range m.Functions {
+		if function.isExported {
+			exports = append(exports, name)
+		}
+	}
+
+	// Add exported variables
+	for name, variable := range m.Variables {
+		if variable.isExported {
+			exports = append(exports, name)
+		}
+	}
+
+	return exports
+}
+
+// Creates a new R2D2 visitor instance
+func NewR2D2Visitor() *R2D2Visitor {
+	return &R2D2Visitor{
+		symbolTable: SymbolTable{
+			Modules:    make(map[string]Module),
+			Interfaces: make(map[string]Interface),
+			Globals:    make(map[string]Global),
+		},
+		currentModule: Module{
+			Name:      "",
+			Functions: make(map[string]Function),
+			Variables: make(map[string]Variable),
+			Types:     make(map[string]any),
+		},
+		currentFunction:  Function{},
+		currentInterface: Interface{},
+		JsCode:           "",
+	}
+}
+
+// Checks if a node is exported
+func isExported(node any) bool {
+	// Check if the node has an EXPORT token
+	switch n := node.(type) {
+	case *parser.FunctionDeclarationContext:
+		return n.EXPORT() != nil
+	case *parser.VariableDeclarationContext:
+		return n.EXPORT() != nil
+	case *parser.TypeDeclarationContext:
+		return n.EXPORT() != nil
+	}
+	return false
+}
+
+// Checks if a function is a pseudo function - aka imposter
+func isPseudo(node *parser.FunctionDeclarationContext) bool {
+	return node.PSEUDO() != nil
+}
+
+// Finds the first child of a node that matches any of the target types
+func findChild(parent antlr.RuleContext, types ...any) bool {
+	for i := range parent.GetChildCount() {
+		child := parent.GetChild(i)
+
+		// Check if child matches any of the target types
+		for _, t := range types {
+			if ctx, ok := child.(antlr.RuleContext); ok {
+				switch t.(type) {
+				case *parser.BreakStatementContext:
+					if _, ok := ctx.(*parser.BreakStatementContext); ok {
+						return true
+					}
+				case *parser.ReturnStatementContext:
+					if _, ok := ctx.(*parser.ReturnStatementContext); ok {
+						return true
+					}
+					// Add other cases as needed
+				}
+			}
+		}
+
+		// Recursively check children
+		if ctx, ok := child.(antlr.RuleContext); ok {
+			if findChild(ctx, types...) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// Finds the parent of a node that matches any of the target types
+func findParent(node antlr.RuleContext, types ...any) bool {
+	parent := node.GetParent()
+	if parent == nil {
+		return false
+	}
+
+	// Check if parent matches any of the target types
+	for _, t := range types {
+		switch t.(type) {
+		case *parser.LoopStatementContext:
+			if _, ok := parent.(*parser.LoopStatementContext); ok {
+				return true
+			}
+		case *parser.ForStatementContext:
+			if _, ok := parent.(*parser.ForStatementContext); ok {
+				return true
+			}
+		case *parser.WhileStatementContext:
+			if _, ok := parent.(*parser.WhileStatementContext); ok {
+				return true
+			}
+		}
+	}
+
+	// Recursively check parent's parent
+	return findParent(parent.(antlr.RuleContext), types...)
+}
 
 // Helper function to check if the passed argument matches the expected type
 func isValidJSType(passedArg string, expectedType string) bool {
@@ -18,17 +142,21 @@ func isValidJSType(passedArg string, expectedType string) bool {
 
 	// Check for number type
 	if expectedType == "number" {
+
 		// Exclude strings and booleans
 		if strings.Contains(passedArg, "\"") || strings.Contains(passedArg, "'") {
 			return false // Is a string
 		}
+
 		if passedArg == "true" || passedArg == "false" {
 			return false // Is a boolean
 		}
+
 		// Try to parse as number
 		if _, err := fmt.Sscanf(passedArg, "%f", new(float64)); err == nil {
 			return true
 		}
+
 		return false
 	}
 
@@ -538,7 +666,6 @@ func isAccessibleVariable(v *R2D2Visitor, varName string) (bool, Variable) {
 		return true, v.currentFunction.Variables[varName]
 	}
 
-	// fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' not found", varName)))
 	return false, Variable{}
 
 }
@@ -582,6 +709,7 @@ func isAccessibleFunction(v *R2D2Visitor, funcName string) (bool, Function) {
 	return false, Function{}
 }
 
+// Checks if a variable is a parameter of the current function
 func isParameter(v *R2D2Visitor, varName string) (bool, Argument) {
 	if fn, exists := v.currentFunction.Arguments[varName]; exists {
 		return true, fn
