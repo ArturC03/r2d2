@@ -11,6 +11,7 @@ import (
 //go:embed ts/list_std_functions.ts
 var denoScript string
 
+// Returns a map of all the standard library functions
 func GetStdFunctions() map[string]Module {
 	// Criar ficheiro temporário com o conteúdo embutido
 	tmpFile, err := os.CreateTemp("", "list_std_functions_*.ts")
