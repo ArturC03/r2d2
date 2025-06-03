@@ -26,18 +26,19 @@ func buildJSCode(userInput string) string {
 	lexer := parser.NewR2D2Lexer(input)
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	p := parser.NewR2D2Parser(stream)
+
 	el := parser.NewR2D2ErrorListener()
 	p.RemoveErrorListeners()
 	p.AddErrorListener(el)
+
 	p.BuildParseTrees = true
 	tree := p.Program()
+
 	v := visitor.NewR2D2Visitor()
 	v.LoadStdModules()
-	// fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
-	tree.Accept(v)
-	// fmt.Println(r2d2Styles.InfoMessage(v.JsCode))
 
-	// fmt.Println(r2d2Styles.InfoMessage("Running the code generated"))
+	tree.Accept(v)
+
 	return v.JsCode
 }
 
