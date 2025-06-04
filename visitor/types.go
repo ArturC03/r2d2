@@ -35,15 +35,17 @@ type Function struct {
 
 // Represents a R2D2 module
 type Module struct {
-	Name      string
-	Functions map[string]Function
-	Variables map[string]Variable
-	Types     map[string]any
+	Name       string
+	Implements Interface
+	Functions  map[string]Function
+	Variables  map[string]Variable
+	Types      map[string]any
 }
 
-// Represents a R2D2 interface - didnt really implement it
+// Represents a R2D2 interface - TODO: didnt really implement it, doing it now
 type Interface struct {
 	Name      string
+	Variables map[string]Variable
 	Functions map[string]Function
 }
 

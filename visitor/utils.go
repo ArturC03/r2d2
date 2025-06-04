@@ -47,7 +47,10 @@ func NewR2D2Visitor() *R2D2Visitor {
 			Variables: make(map[string]Variable),
 			Types:     make(map[string]any),
 		},
-		currentFunction:  Function{},
+		currentFunction: Function{
+			Variables: make(map[string]Variable),
+			Functions: make(map[string]Function),
+		},
 		currentInterface: Interface{},
 		JsCode:           "",
 	}

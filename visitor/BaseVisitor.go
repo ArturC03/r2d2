@@ -2,12 +2,13 @@ package visitor
 
 import (
 	"fmt"
-	"github.com/ArturC03/r2d2/parser"
-	"github.com/ArturC03/r2d2Styles"
-	"github.com/antlr4-go/antlr/v4"
 	"maps"
 	"os"
 	"strings"
+
+	"github.com/ArturC03/r2d2/parser"
+	"github.com/ArturC03/r2d2Styles"
+	"github.com/antlr4-go/antlr/v4"
 )
 
 func (v *R2D2Visitor) VisitChildren(node antlr.RuleNode) any {
@@ -129,8 +130,11 @@ func (v *R2D2Visitor) VisitGlobalDeclaration(ctx *parser.GlobalDeclarationContex
 }
 
 func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContext) any {
+	// ========================================
+	// 1. INITIALIZE SYMBOL TABLES
+	// ========================================
 
-	// Garantee that the global symbol table is initialized
+	// Guarantee that the global symbol table is initialized
 	if v.symbolTable.Globals == nil {
 		v.symbolTable.Globals = make(map[string]Global)
 	}
@@ -140,6 +144,10 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 		v.symbolTable.Modules = make(map[string]Module)
 	}
 
+	// ========================================
+	// 2. VALIDATE MODULE IDENTIFIER
+	// ========================================
+
 	// Verification to ensure that the module has an identifier
 	if ctx.IDENTIFIER(0) == nil || len(ctx.AllIDENTIFIER()) == 0 {
 		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Module declaration without identifier")))
@@ -148,33 +156,40 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 
 	moduleName := ctx.IDENTIFIER(0).GetText()
 
-	// Create the module if it doesn't exist
-	if _, exists := v.symbolTable.Modules[moduleName]; !exists {
+	// ========================================
+	// 3. INITIALIZE MODULE
+	// ========================================
 
+	// Initialize the module
+	if _, exists := v.symbolTable.Modules[moduleName]; !exists {
 		newModule := Module{
-			Name:      moduleName,
-			Functions: make(map[string]Function),
-			Variables: make(map[string]Variable),
-			Types:     make(map[string]any),
+			Name:       moduleName,
+			Implements: Interface{},
+			Functions:  make(map[string]Function),
+			Variables:  make(map[string]Variable),
+			Types:      make(map[string]any),
 		}
 
 		v.symbolTable.Modules[moduleName] = newModule
 		v.currentModule = newModule
 
-		// Make sure the module is added to the symbol table after the function is processed
+		// Make sure the module is added to the symbol table after everything is done
 		defer func() {
 			v.symbolTable.Modules[v.currentModule.Name] = v.currentModule
 		}()
-
 	} else {
 		fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine(fmt.Sprintf("Module '%s' already exists", moduleName))))
 		return nil
 	}
 
+	// ========================================
+	// 4. PROCESS MODULE CONTENT
+	// ========================================
+
 	// Process the module content to populate the symbol table
 	for _, child := range ctx.GetChildren() {
 
-		// Function declaration
+		// --- FUNCTION DECLARATIONS ---
 		if funcDecl, ok := child.(*parser.FunctionDeclarationContext); ok {
 			if funcDecl.IDENTIFIER() == nil {
 				continue
@@ -184,20 +199,14 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 
 			// Parse the function arguments
 			arguments := make(map[string]Argument)
-
 			if funcDecl.ParameterList() != nil {
-
 				for _, param := range funcDecl.ParameterList().AllParameter() {
-
 					if param.IDENTIFIER() != nil && param.TypeExpression() != nil {
-
 						paramName := param.IDENTIFIER().GetText()
-
 						arguments[paramName] = Argument{
 							Name: paramName,
 							Type: param.TypeExpression().GetText(),
 						}
-
 					}
 				}
 			}
@@ -217,28 +226,24 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 			v.symbolTable.Modules[moduleName] = module
 		}
 
-		// Variable declaration
+		// --- VARIABLE DECLARATIONS ---
 		if varDecl, ok := child.(*parser.VariableDeclarationContext); ok {
-
 			if varDecl.IDENTIFIER() == nil || varDecl.TypeExpression() == nil {
 				continue
 			}
 
 			varName := varDecl.IDENTIFIER().GetText()
-
 			variable := Variable{
 				Name:       varName,
 				Type:       varDecl.TypeExpression().GetText(),
 				isExported: isExported(varDecl),
 			}
 
-			// Variable declaration without an assignment expression
+			// Handle variable assignment
 			if varDecl.ASSIGN() != nil && varDecl.Expression() != nil {
-
 				expr := varDecl.Expression()
 				variable.Value = expr.GetText()
 			} else {
-
 				variable.Value = ""
 			}
 
@@ -248,9 +253,8 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 			v.symbolTable.Modules[moduleName] = module
 		}
 
-		// Type declaration
+		// --- TYPE DECLARATIONS ---
 		if typeDecl, ok := child.(*parser.TypeDeclarationContext); ok {
-
 			if typeDecl.IDENTIFIER() == nil {
 				continue
 			}
@@ -264,7 +268,46 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 		}
 	}
 
-	//  Start the module in the JS code
+	// ========================================
+	// 5. HANDLE INTERFACE IMPLEMENTATION
+	// ========================================
+
+	// Check if module implements an interface
+	if ctx.IMPLEMENTS() != nil {
+		implements := ctx.IDENTIFIER(1).GetText()
+		module := v.symbolTable.Modules[moduleName]
+		module.Implements = v.symbolTable.Interfaces[implements]
+
+		// Validate that all required functions are implemented
+		for _, fn := range module.Implements.Functions {
+			if _, exists := module.Functions[fn.Name]; !exists {
+				fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' needs to be implemented in module '%s'", fn.Name, moduleName)))
+			}
+		}
+
+		// Validate that all required variables are implemented
+		for variableName, variable := range module.Implements.Variables {
+			if _, exists := module.Variables[variableName]; !exists {
+				fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' needs to be implemented in module '%s'", variable.Name, moduleName)))
+			}
+		}
+
+		// // Validate that all required variables are implemented
+		// for var := range module.Implements.Variables {
+		// 	if _, exists := module.Variables[var.Name]; !exists {
+		// 		fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' needs to be implemented in module '%s'", varName, moduleName)))
+		// 	}
+		// }
+
+		// Update the module in the symbol table
+		v.symbolTable.Modules[moduleName] = module
+	}
+
+	// ========================================
+	// 6. GENERATE JAVASCRIPT CODE
+	// ========================================
+
+	// Start the module in the JS code
 	v.JsCode += fmt.Sprintf("const %s = (function () {", moduleName)
 
 	// Visit the children to process the module content
@@ -276,18 +319,25 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 	// Finish the module with the return statement
 	v.JsCode += fmt.Sprintf("return {%s}; })();", strings.Join(moduleExports, ", "))
 
+	// ========================================
+	// 7. EXECUTE MAIN FUNCTION IF EXPORTED
+	// ========================================
+
 	// Verify if the module exports a main function and execute it
 	module := v.symbolTable.Modules[moduleName]
-
 	if mainFunc, exists := module.Functions["main"]; exists && mainFunc.isExported {
-
 		v.JsCode += fmt.Sprintf("%s.main();", moduleName)
 	}
 
 	return result
+
 }
 
 func (v *R2D2Visitor) VisitFunctionDeclaration(ctx *parser.FunctionDeclarationContext) any {
+
+	if _, ok := ctx.GetParent().(*parser.InterfaceDeclarationContext); ok {
+		return nil
+	}
 
 	// Skip if no identifier
 	if ctx.IDENTIFIER() == nil {
@@ -424,9 +474,12 @@ func (v *R2D2Visitor) VisitFunctionCallStatement(ctx *parser.FunctionCallStateme
 
 func (v *R2D2Visitor) VisitVariableDeclaration(ctx *parser.VariableDeclarationContext) any {
 
+	if _, ok := ctx.GetParent().(*parser.InterfaceDeclarationContext); ok {
+		return nil
+	}
+
 	// Skip if no identifier
 	if ctx.IDENTIFIER() == nil {
-
 		return v.VisitChildren(ctx)
 	}
 
@@ -607,65 +660,86 @@ func (v *R2D2Visitor) VisitTypeDeclaration(ctx *parser.TypeDeclarationContext) a
 }
 
 func (v *R2D2Visitor) VisitInterfaceDeclaration(ctx *parser.InterfaceDeclarationContext) any {
-
 	if ctx.IDENTIFIER() == nil {
-		return v.VisitChildren(ctx)
+		return nil
 	}
 
 	interfaceName := ctx.IDENTIFIER().GetText()
 
-	// Create a new interface
 	newInterface := Interface{
 		Name:      interfaceName,
+		Variables: make(map[string]Variable),
 		Functions: make(map[string]Function),
 	}
 
-	// Process function declarations in the interface
-	for _, funcDecl := range ctx.AllFunctionDeclaration() {
+	for _, varDecl := range ctx.AllVariableDeclaration() {
 
+		if varDecl.IDENTIFIER() == nil {
+			continue
+		}
+
+		if varDecl.ASSIGN() != nil {
+			line := varDecl.GetStart().GetLine()
+			message := fmt.Sprintf("Variables within interfaces cannot have value: '%s' must be declared without value", varDecl.IDENTIFIER().GetText())
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(message, line)))
+		}
+
+		varName := varDecl.IDENTIFIER().GetText()
+		varType := ""
+
+		if varDecl.TypeExpression() != nil {
+			varType = varDecl.TypeExpression().GetText()
+		}
+
+		newInterface.Variables[varName] = Variable{
+			Name:  varName,
+			Type:  varType,
+			Value: nil,
+		}
+	}
+
+	for _, funcDecl := range ctx.AllFunctionDeclaration() {
 		if funcDecl.IDENTIFIER() == nil {
 			continue
 		}
 
+		if funcDecl.Block() != nil {
+			line := funcDecl.GetStart().GetLine()
+			message := fmt.Sprintf("Functions within interfaces cannot have a block: '%s' must be declared without block", funcDecl.IDENTIFIER().GetText())
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(message, line)))
+		}
+
 		funcName := funcDecl.IDENTIFIER().GetText()
 
-		// Parse function arguments
 		arguments := make(map[string]Argument)
-
 		if funcDecl.ParameterList() != nil {
-
 			for _, param := range funcDecl.ParameterList().AllParameter() {
-
 				if param.IDENTIFIER() != nil && param.TypeExpression() != nil {
-
 					paramName := param.IDENTIFIER().GetText()
-
 					arguments[paramName] = Argument{
 						Name: paramName,
 						Type: param.TypeExpression().GetText(),
 					}
-
 				}
 			}
 		}
 
-		// Store the function in the interface
 		newInterface.Functions[funcName] = Function{
 			Name:      funcName,
 			Arguments: arguments,
 			Variables: make(map[string]Variable),
 			Functions: make(map[string]Function),
 		}
-
 	}
 
-	// Add the interface to the symbol table
+	if v.symbolTable.Interfaces == nil {
+		fmt.Println("symbolTable.Interfaces nil — inicializando. sus isto n ]e para aparecer ")
+		v.symbolTable.Interfaces = make(map[string]Interface)
+	}
+
 	v.symbolTable.Interfaces[interfaceName] = newInterface
 
-	// JavaScript doesn't have interfaces, so add a comment
-	v.JsCode += fmt.Sprintf("/* Interface declaration: %s */", interfaceName)
-
-	return v.VisitChildren(ctx)
+	return nil // Evita visitar os filhos outra vez
 }
 
 func (v *R2D2Visitor) VisitExpressionStatement(ctx *parser.ExpressionStatementContext) any {

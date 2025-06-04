@@ -5,12 +5,11 @@ grammar R2D2;
  */
 
 program
-  : importDeclaration* declaration* EOF
+  : importDeclaration* interfaceDeclaration* declaration* EOF
   ;
 
 declaration
   : moduleDeclaration
-  | interfaceDeclaration
   | globalDeclaration
   | typeDeclaration
   ;
@@ -24,7 +23,7 @@ importDeclaration
   ;
 
 interfaceDeclaration
-  : INTERFACE IDENTIFIER LBRACE functionDeclaration* RBRACE
+  : INTERFACE IDENTIFIER LBRACE (variableDeclaration* | functionDeclaration*) RBRACE
   ;
 
 moduleDeclaration
@@ -102,6 +101,7 @@ ifStatement
     (ELSE IF (LPAREN)? expression (RPAREN)? (block | ARROW statement))*
     (ELSE (block | ARROW statement))?
   ;
+
 forStatement
   : FOR (LPAREN)? simpleFor (RPAREN)? block
   ;
@@ -152,10 +152,7 @@ continueStatement
 
 returnStatement
   : RETURN expression? SEMI
-  ;
-
-expression
-  : literal                                                #literalExpression
+  ; expression : literal                                                #literalExpression
   | IDENTIFIER                                             #identifierExpression
   | functionCall                                           #functionCallExpression
   | expression LBRACK expression RBRACK                    #arrayAccessExpression
@@ -261,7 +258,7 @@ IMPORT: 'import';
 FROM: 'from';
 INTERFACE: 'interface';
 MODULE: 'module';
-IMPLEMENTS: 'implements';
+IMPLEMENTS: '::';
 EXPORT: 'export';
 FN: 'fn';
 PSEUDO: 'pseudo';
