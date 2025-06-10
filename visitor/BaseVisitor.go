@@ -224,18 +224,26 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 			module := v.symbolTable.Modules[moduleName]
 			module.Functions[funcName] = function
 			v.symbolTable.Modules[moduleName] = module
+
 		}
 
 		// --- VARIABLE DECLARATIONS ---
 		if varDecl, ok := child.(*parser.VariableDeclarationContext); ok {
-			if varDecl.IDENTIFIER() == nil || varDecl.TypeExpression() == nil {
+			if varDecl.IDENTIFIER() == nil {
 				continue
 			}
 
 			varName := varDecl.IDENTIFIER().GetText()
+
+			tipoo := ""
+
+			if varDecl.TypeExpression() != nil {
+				tipoo = varDecl.TypeExpression().GetText()
+			}
+
 			variable := Variable{
 				Name:       varName,
-				Type:       varDecl.TypeExpression().GetText(),
+				Type:       tipoo,
 				isExported: isExported(varDecl),
 			}
 
@@ -286,8 +294,8 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 		}
 
 		// Validate that all required variables are implemented
-		for variableName, variable := range module.Implements.Variables {
-			if _, exists := module.Variables[variableName]; !exists {
+		for _, variable := range module.Implements.Variables {
+			if _, exists := module.Variables[variable.Name]; !exists {
 				fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Variable '%s' needs to be implemented in module '%s'", variable.Name, moduleName)))
 			}
 		}
@@ -660,16 +668,33 @@ func (v *R2D2Visitor) VisitTypeDeclaration(ctx *parser.TypeDeclarationContext) a
 }
 
 func (v *R2D2Visitor) VisitInterfaceDeclaration(ctx *parser.InterfaceDeclarationContext) any {
-	if ctx.IDENTIFIER() == nil {
+	if ctx.IDENTIFIER(0) == nil {
 		return nil
 	}
 
-	interfaceName := ctx.IDENTIFIER().GetText()
+	interfaceName := ctx.IDENTIFIER(0).GetText()
 
 	newInterface := Interface{
 		Name:      interfaceName,
 		Variables: make(map[string]Variable),
 		Functions: make(map[string]Function),
+	}
+
+	if ctx.IDENTIFIER(1) != nil {
+		// newInterface.Extends = ctx.IDENTIFIER(1).GetText()
+		if ctx.IDENTIFIER(1) == nil {
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessageNoLine("Interface extends identifier not found")))
+			return nil
+		}
+
+		if _, ok := v.symbolTable.Interfaces[ctx.IDENTIFIER(1).GetText()]; !ok {
+			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(fmt.Sprintf("Interface '%s' not found", ctx.IDENTIFIER(1).GetText()), ctx.GetStart().GetLine())))
+			return nil
+		}
+
+		maps.Copy(newInterface.Variables, v.symbolTable.Interfaces[ctx.IDENTIFIER(1).GetText()].Variables)
+		maps.Copy(newInterface.Functions, v.symbolTable.Interfaces[ctx.IDENTIFIER(1).GetText()].Functions)
+
 	}
 
 	for _, varDecl := range ctx.AllVariableDeclaration() {

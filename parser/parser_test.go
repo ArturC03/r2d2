@@ -321,7 +321,7 @@ interface Drawable {
     fn draw() void;
 }
 
-module Geometry implements Drawable {
+	module Geometry::Drawable {
     export const PI number = 3.14159;
 
     export fn calculateDistance(p1_x number, p1_y number, p2_x number, p2_y number) number {

@@ -23,7 +23,7 @@ importDeclaration
   ;
 
 interfaceDeclaration
-  : INTERFACE IDENTIFIER LBRACE (variableDeclaration* | functionDeclaration*) RBRACE
+  : INTERFACE IDENTIFIER (IMPLEMENTS IDENTIFIER)? LBRACE (functionDeclaration | variableDeclaration)* RBRACE
   ;
 
 moduleDeclaration
