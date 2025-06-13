@@ -3,7 +3,9 @@ package visitor
 import (
 	"testing"
 
+	"github.com/ArturC03/r2d2/errors"
 	"github.com/ArturC03/r2d2/parser"
+
 	// "github.com/ArturC03/r2d2/visitor"
 	"github.com/antlr4-go/antlr/v4"
 )
@@ -12,6 +14,7 @@ import (
 func setupVisitorWithInput(t *testing.T, input string) *R2D2Visitor {
 	// Create the input stream
 	inputStream := antlr.NewInputStream(input)
+	errorCollector := errors.ErrorCollector{}
 
 	// Create lexer
 	lexer := parser.NewR2D2Lexer(inputStream)
@@ -20,10 +23,12 @@ func setupVisitorWithInput(t *testing.T, input string) *R2D2Visitor {
 	// Create parser and parse input
 	p := parser.NewR2D2Parser(tokens)
 	p.RemoveErrorListeners()
+	l := parser.NewR2D2ErrorListener(&errorCollector)
+	p.AddErrorListener(l)
 	tree := p.Program()
 
 	// Create and use visitor
-	v := NewR2D2Visitor()
+	v := NewR2D2Visitor(&errorCollector)
 	tree.Accept(v)
 
 	return v
@@ -31,7 +36,8 @@ func setupVisitorWithInput(t *testing.T, input string) *R2D2Visitor {
 
 // TestNewR2D2Visitor tests the visitor creation
 func TestNewR2D2Visitor(t *testing.T) {
-	v := NewR2D2Visitor()
+	errorCollector := errors.ErrorCollector{}
+	v := NewR2D2Visitor(&errorCollector)
 
 	if v == nil {
 		t.Fatalf("Expected non-nil visitor")

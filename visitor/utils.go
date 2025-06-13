@@ -1,6 +1,7 @@
 package visitor
 
 import (
+	"github.com/ArturC03/r2d2/errors"
 	"github.com/ArturC03/r2d2/parser"
 	"github.com/antlr4-go/antlr/v4"
 
@@ -34,7 +35,7 @@ func (m Module) Exports() []string {
 }
 
 // Creates a new R2D2 visitor instance
-func NewR2D2Visitor() *R2D2Visitor {
+func NewR2D2Visitor(errorCollector *errors.ErrorCollector) *R2D2Visitor {
 	return &R2D2Visitor{
 		symbolTable: SymbolTable{
 			Modules:    make(map[string]Module),
@@ -53,6 +54,7 @@ func NewR2D2Visitor() *R2D2Visitor {
 		},
 		currentInterface: Interface{},
 		JsCode:           "",
+		ErrorCollector:   errorCollector,
 	}
 }
 
@@ -333,15 +335,20 @@ func loadGlobalFunctions(v *R2D2Visitor) error {
 	if err != nil {
 		errMsg := fmt.Sprintf("Error executing Deno command: %v", err)
 		fmt.Println(r2d2Styles.ErrorMessage(errMsg))
+		v.ErrorCollector.Add(errMsg, 0)
 		return fmt.Errorf("Error executing Deno command: %w", err)
 	}
 
 	// Parse JSON output
 	var result map[string]any
 	if err := json.Unmarshal(output, &result); err != nil {
-		lineMsg := r2d2Styles.Bold(fmt.Sprintf("Error parsing JSON at line %d", 1))
+		line := 1 // Se não houver linha específica, usa 1 ou outra linha padrão
+		lineMsg := r2d2Styles.Bold(fmt.Sprintf("Error parsing JSON at line %d", line))
 		errMsg := fmt.Sprintf("Error parsing JSON: %v. %s", err, lineMsg)
 		fmt.Println(r2d2Styles.ErrorMessage(errMsg))
+		if v.ErrorCollector != nil {
+			v.ErrorCollector.Add(errMsg, line)
+		}
 		return fmt.Errorf("Error parsing JSON: %w", err)
 	}
 

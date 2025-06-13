@@ -1,6 +1,9 @@
 package visitor
 
-import "github.com/ArturC03/r2d2/parser"
+import (
+	"github.com/ArturC03/r2d2/errors"
+	"github.com/ArturC03/r2d2/parser"
+)
 
 // Represents a R2D2 variable
 type Variable struct {
@@ -64,4 +67,5 @@ type R2D2Visitor struct {
 	currentModule    Module
 	currentFunction  Function
 	currentInterface Interface
+	ErrorCollector   *errors.ErrorCollector
 }

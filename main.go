@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/ArturC03/r2d2/errors"
 	"github.com/ArturC03/r2d2/parser"
 	"github.com/ArturC03/r2d2/visitor"
 	"github.com/ArturC03/r2d2Styles"
@@ -20,24 +21,28 @@ import (
 
 // Builds the JavaScript code from the user input
 func BuildJSCode(userInput string) string {
-	// print(userInput)
+	errorCollector := &errors.ErrorCollector{}
 	input := antlr.NewInputStream(userInput)
 
 	lexer := parser.NewR2D2Lexer(input)
 	stream := antlr.NewCommonTokenStream(lexer, 0)
 	p := parser.NewR2D2Parser(stream)
 
-	el := parser.NewR2D2ErrorListener()
+	el := parser.NewR2D2ErrorListener(errorCollector)
 	p.RemoveErrorListeners()
 	p.AddErrorListener(el)
 
 	p.BuildParseTrees = true
 	tree := p.Program()
 
-	v := visitor.NewR2D2Visitor()
+	v := visitor.NewR2D2Visitor(errorCollector)
 	v.LoadStdModules()
 
 	tree.Accept(v)
+
+	if errorCollector.HasErrors() {
+		os.Exit(1)
+	}
 
 	return v.JsCode
 }
