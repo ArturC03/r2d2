@@ -28,6 +28,8 @@ func (v *R2D2Visitor) VisitChildren(node antlr.RuleNode) any {
 }
 
 func (v *R2D2Visitor) VisitProgram(ctx *parser.ProgramContext) any {
+	// v.RegisterInterfaceNames(ctx)
+
 	return v.VisitChildren(ctx)
 }
 
@@ -290,6 +292,21 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 		for _, fn := range module.Implements.Functions {
 			if _, exists := module.Functions[fn.Name]; !exists {
 				fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' needs to be implemented in module '%s'", fn.Name, moduleName)))
+				continue
+			}
+
+			if fn.isPseudo {
+				if !module.Functions[fn.Name].isPseudo {
+					fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' needs to be pseudo in module '%s'", fn.Name, moduleName)))
+					continue
+				}
+			}
+
+			if fn.isExported {
+				if !module.Functions[fn.Name].isExported {
+					fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Function '%s' needs to be exported in module '%s'", fn.Name, moduleName)))
+					continue
+				}
 			}
 		}
 
@@ -694,7 +711,6 @@ func (v *R2D2Visitor) VisitInterfaceDeclaration(ctx *parser.InterfaceDeclaration
 
 		maps.Copy(newInterface.Variables, v.symbolTable.Interfaces[ctx.IDENTIFIER(1).GetText()].Variables)
 		maps.Copy(newInterface.Functions, v.symbolTable.Interfaces[ctx.IDENTIFIER(1).GetText()].Functions)
-
 	}
 
 	for _, varDecl := range ctx.AllVariableDeclaration() {
@@ -715,11 +731,16 @@ func (v *R2D2Visitor) VisitInterfaceDeclaration(ctx *parser.InterfaceDeclaration
 		if varDecl.TypeExpression() != nil {
 			varType = varDecl.TypeExpression().GetText()
 		}
+		isExported := false
+		if varDecl.EXPORT() != nil {
+			isExported = true
+		}
 
 		newInterface.Variables[varName] = Variable{
-			Name:  varName,
-			Type:  varType,
-			Value: nil,
+			Name:       varName,
+			Type:       varType,
+			Value:      nil,
+			isExported: isExported,
 		}
 	}
 
@@ -749,16 +770,30 @@ func (v *R2D2Visitor) VisitInterfaceDeclaration(ctx *parser.InterfaceDeclaration
 			}
 		}
 
+		isExported := false
+
+		if funcDecl.EXPORT() != nil {
+			isExported = true
+		}
+
+		isPseudo := false
+
+		if funcDecl.PSEUDO() != nil {
+			isPseudo = true
+		}
+
 		newInterface.Functions[funcName] = Function{
-			Name:      funcName,
-			Arguments: arguments,
-			Variables: make(map[string]Variable),
-			Functions: make(map[string]Function),
+			Name:       funcName,
+			Arguments:  arguments,
+			Variables:  make(map[string]Variable),
+			Functions:  make(map[string]Function),
+			isExported: isExported,
+			isPseudo:   isPseudo,
 		}
 	}
 
 	if v.symbolTable.Interfaces == nil {
-		fmt.Println("symbolTable.Interfaces nil — inicializando. sus isto n ]e para aparecer ")
+		fmt.Println("symbolTable.Interfaces nil — inicializando. sus isto n ]e para aparecer se esta msg ")
 		v.symbolTable.Interfaces = make(map[string]Interface)
 	}
 

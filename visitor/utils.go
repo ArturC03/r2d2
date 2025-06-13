@@ -720,3 +720,25 @@ func isParameter(v *R2D2Visitor, varName string) (bool, Argument) {
 
 	return false, Argument{}
 }
+
+func (v *R2D2Visitor) RegisterInterfaceNames(ctx *parser.ProgramContext) {
+	for _, ifaceCtx := range ctx.AllInterfaceDeclaration() {
+		if ifaceCtx.IDENTIFIER(0) == nil {
+			continue
+		}
+		interfaceName := ifaceCtx.IDENTIFIER(0).GetText()
+
+		if v.symbolTable.Interfaces == nil {
+			v.symbolTable.Interfaces = make(map[string]Interface)
+		}
+
+		// Só regista o nome e estruturas vazias
+		if _, exists := v.symbolTable.Interfaces[interfaceName]; !exists {
+			v.symbolTable.Interfaces[interfaceName] = Interface{
+				Name:      interfaceName,
+				Variables: make(map[string]Variable),
+				Functions: make(map[string]Function),
+			}
+		}
+	}
+}

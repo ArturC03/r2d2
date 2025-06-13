@@ -98,7 +98,7 @@ func TestLogicalExpressions(t *testing.T) {
 			var andResult = true && false;
 			var orResult = true || false;
 			var notResult = !true;
-			// var complex = (a > b) && (c < d); // TODO: No tests for this one since it depends on variable declarations
+			var complex = (a > b) && (c < d); 
 		}
 	}
 	`

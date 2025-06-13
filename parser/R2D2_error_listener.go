@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	r2d2Styles "github.com/ArturC03/r2d2Styles"
+	"github.com/ArturC03/r2d2Styles"
 	"github.com/antlr4-go/antlr/v4"
 )
 

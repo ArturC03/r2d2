@@ -34,7 +34,7 @@ func TestBuildJSCode(t *testing.T) {
 	_, w, _ := os.Pipe()
 	os.Stdout = w
 
-	jsCode := buildJSCode(input)
+	jsCode := BuildJSCode(input)
 
 	// Restore stdout
 	w.Close()
