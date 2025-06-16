@@ -259,6 +259,11 @@ func (v *R2D2Visitor) VisitModuleDeclaration(ctx *parser.ModuleDeclarationContex
 			module.Functions[funcName] = function
 			v.symbolTable.Modules[moduleName] = module
 
+			if funcName == "main" && !module.Functions["main"].isExported {
+				msg := fmt.Sprintf("Main function needs to be exported on line %d", funcDecl.GetStart().GetLine())
+				fmt.Println(r2d2Styles.WarningMessage(msg))
+			}
+
 		}
 
 		// --- VARIABLE DECLARATIONS ---

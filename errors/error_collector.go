@@ -6,7 +6,8 @@ type CompileError struct {
 }
 
 type ErrorCollector struct {
-	Errors []CompileError
+	Errors         []CompileError
+	HasSyntaxError bool
 }
 
 func (ec *ErrorCollector) Add(message string, line int) {

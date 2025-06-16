@@ -34,7 +34,11 @@ func TestBuildJSCode(t *testing.T) {
 	_, w, _ := os.Pipe()
 	os.Stdout = w
 
-	jsCode := BuildJSCode(input)
+	jsCode, errorCollector := BuildJSCode(input)
+
+	if errorCollector.HasErrors() {
+		os.Exit(1)
+	}
 
 	// Restore stdout
 	w.Close()

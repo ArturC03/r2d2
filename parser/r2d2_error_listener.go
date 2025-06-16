@@ -22,11 +22,16 @@ func NewR2D2ErrorListener(errorCollector *errors.ErrorCollector) *R2D2ErrorListe
 func (l *R2D2ErrorListener) SyntaxError(recognizer antlr.Recognizer, offendingSymbol any, line, column int, msg string, e antlr.RecognitionException) {
 	fmt.Println(r2d2Styles.ErrorMessage(fmt.Sprintf("Syntax error at %s: %s", r2d2Styles.Bold(fmt.Sprintf("line %d:%d", line, column)), msg)))
 
+	if l.ErrorCollector.HasSyntaxError {
+		return
+	}
+
 	l.ErrorCollector.Add(msg, line)
+	l.ErrorCollector.HasSyntaxError = true
 	// panic(nil)
 	// Finaliza silenciosamente o processo
 	os.Stdout.Close() // Evita saída residual
-	os.Stderr.Close() // Evita saída de erro
-	os.Exit(0)        // Sai silenciosamente
+	// os.Stderr.Close() // Evita saída de erro
+	// os.Exit(0) // Sai silenciosamente
 	return
 }
