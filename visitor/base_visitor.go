@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"maps"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/ArturC03/r2d2/parser"
@@ -502,11 +503,26 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 				if stmtCtx, ok := child.(*parser.StatementContext); ok {
 
 					// Not FunctionCall
-					if _, ok := stmtCtx.GetChild(0).(*parser.FunctionCallStatementContext); !ok {
+					if functionn, ok := stmtCtx.GetChild(0).(*parser.FunctionCallStatementContext); !ok {
+						parentFunctionName := parentFuncDecl.IDENTIFIER().GetText()
 						line := stmtCtx.GetStart().GetLine()
-						msg := fmt.Sprintf("Statement '%s' not allowed in a pseudo function", stmtCtx.GetStart().GetText())
+						msg := fmt.Sprintf("Statement '%s' not allowed in function '%s'", stmtCtx.GetStart().GetText(), parentFunctionName)
 						fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(msg, line)))
 						v.ErrorCollector.Add(msg, line)
+					} else {
+						functionName := functionn.FunctionCall().GetText()
+						re := regexp.MustCompile(`\([^)]*\)`)
+						functionName = re.ReplaceAllString(functionName, "")
+
+						if _, ok := v.currentModule.Functions[functionName]; !ok {
+
+							arentFunctionName := parentFuncDecl.IDENTIFIER().GetText()
+							line := stmtCtx.GetStart().GetLine()
+							msg := fmt.Sprintf("Function '%s' not allowed in function '%s'", functionName, parentFunctionName)
+							fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(msg, line)))
+							v.ErrorCollector.Add(msg, line)
+						}
+
 					}
 				}
 			}
