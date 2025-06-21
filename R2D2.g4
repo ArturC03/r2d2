@@ -152,7 +152,10 @@ continueStatement
 
 returnStatement
   : RETURN expression? SEMI
-  ; expression : literal                                                #literalExpression
+  ;
+
+expression 
+  : literal                                                #literalExpression
   | IDENTIFIER                                             #identifierExpression
   | functionCall                                           #functionCallExpression
   | expression LBRACK expression RBRACK                    #arrayAccessExpression
@@ -163,31 +166,6 @@ returnStatement
   | expression (EQ | NEQ | LT | GT | LEQ | GEQ) expression #comparisonExpression
   | expression (AND | OR) expression                       #logicalExpression
   ;
-
-// expression
-//   : logicalExpression
-//   ;
-//
-// logicalExpression
-//   : comparisonExpression ((AND | OR) comparisonExpression)*
-//   ;
-//
-// comparisonExpression
-//   : additiveExpression ((EQ | NEQ | LT | GT | LEQ | GEQ) additiveExpression)*
-//   ;
-//
-// additiveExpression
-//   : multiplicativeExpression ((PLUS | MINUS) multiplicativeExpression)*
-//   ;
-//
-// multiplicativeExpression
-//   : unaryExpression ((MULT | DIV | MOD) unaryExpression)*
-//   ;
-//
-// unaryExpression
-//   : (NOT | MINUS | INCREMENT | DECREMENT) unaryExpression
-//   | memberExpression
-//   ;
 
 memberExpression
   : primaryExpression memberPart*
@@ -278,15 +256,9 @@ SWITCH: 'switch';
 CASE: 'case';
 DEFAULT: 'default';
 
-// Operators
-PLUS: '+';
-MINUS: '-';
-MULT: '*';
-DIV: '/';
-MOD: '%';
+// Operators (order matters - longer operators first!)
 INCREMENT: '++';
 DECREMENT: '--';
-ASSIGN: '=';
 PLUS_ASSIGN: '+=';
 MINUS_ASSIGN: '-=';
 MULT_ASSIGN: '*=';
@@ -294,12 +266,18 @@ DIV_ASSIGN: '/=';
 MOD_ASSIGN: '%=';
 EQ: '==';
 NEQ: '!=';
-LT: '<';
-GT: '>';
 LEQ: '<=';
 GEQ: '>=';
 AND: '&&';
 OR: '||';
+PLUS: '+';
+MINUS: '-';
+MULT: '*';
+DIV: '/';
+MOD: '%';
+ASSIGN: '=';
+LT: '<';
+GT: '>';
 NOT: '!';
 
 // Delimiters
@@ -340,10 +318,11 @@ BOOL_LITERAL
   | 'false'
   ;
 
-  NULL_LITERAL
+NULL_LITERAL
   : 'null'
   ;
 
+// Fixed: Removed SignPart from INT_LITERAL
 INT_LITERAL
   : DecimalIntegerLiteral
   | HexIntegerLiteral
@@ -351,11 +330,19 @@ INT_LITERAL
   | BinaryIntegerLiteral
   ;
 
+// Fixed: Removed SignPart from FLOAT_LITERAL
+FLOAT_LITERAL
+  : DecimalNumeral '.' DecimalDigits? ExponentPart?
+  | '.' DecimalDigits ExponentPart?
+  | DecimalNumeral ExponentPart
+  ;
+
 // Identifiers and literals
 IDENTIFIER: ([a-zA-Z_][a-zA-Z_0-9]*);
 
+// Fixed: Removed SignPart from DecimalIntegerLiteral
 fragment DecimalIntegerLiteral
-  : SignPart? DecimalNumeral
+  : DecimalNumeral
   ;
 
 fragment HexIntegerLiteral
@@ -368,16 +355,6 @@ fragment OctalIntegerLiteral
 
 fragment BinaryIntegerLiteral
   : '0' [bB] BinaryDigits
-  ;
-
-FLOAT_LITERAL
-  : SignPart? DecimalNumeral '.' DecimalDigits? ExponentPart?
-  | SignPart? '.' DecimalDigits ExponentPart?
-  | SignPart? DecimalNumeral ExponentPart
-  ;
-
-fragment SignPart
-  : [+-]
   ;
 
 fragment DecimalNumeral
@@ -409,7 +386,6 @@ fragment OctalDigits
   : OctalDigit+
   ;
 
-
 fragment OctalDigit
   : [0-7]
   ;
@@ -423,7 +399,7 @@ fragment BinaryDigit
   ;
 
 fragment ExponentPart
-  : [eE] SignPart? DecimalDigits
+  : [eE] [+-]? DecimalDigits
   ;
 
 // Comments and whitespace

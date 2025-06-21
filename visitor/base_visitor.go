@@ -679,7 +679,7 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 
 	simpleFor := ctx.SimpleFor()
 
-	bothAssignments := simpleFor.Assignment(0) != nil && simpleFor.Assignment(1) != nil
+	bothAssignments := len(simpleFor.AllAssignment()) > 1
 
 	if simpleFor != nil {
 
@@ -701,12 +701,26 @@ func (v *R2D2Visitor) VisitForStatement(ctx *parser.ForStatementContext) any {
 		// Update
 		v.JsCode += "; "
 
-		if simpleFor.AllAssignment() != nil {
+		if simpleFor.AllAssignment() != nil && len(simpleFor.AllAssignment()) > 0 {
 			if bothAssignments {
-				simpleFor.Assignment(1).Accept(v)
-
+				if simpleFor.Assignment(1).Accept(v) != nil {
+					simpleFor.Assignment(1).Accept(v)
+				} else {
+					line := simpleFor.GetStart().GetLine()
+					msg := "Assignment not found"
+					fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(msg, line)))
+					v.ErrorCollector.Add(msg, line)
+				}
 			} else {
-				simpleFor.Assignment(0).Accept(v)
+				if simpleFor.Assignment(0) != nil {
+					simpleFor.Assignment(0).Accept(v)
+				} else {
+					line := simpleFor.GetStart().GetLine()
+					msg := "Assignment not found"
+					fmt.Print((simpleFor.AllAssignment()))
+					fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(msg, line)))
+					v.ErrorCollector.Add(msg, line)
+				}
 			}
 		}
 	}
@@ -1227,23 +1241,20 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 		exprs := argumentList.AllExpression()
 
 		if len(exprs) != len(fn.Arguments) {
-			lineNum := ctx.GetStart().GetLine()
 			var msg string
 
 			switch len(exprs) > len(fn.Arguments) {
 			case true:
 				msg = fmt.Sprintf(
-					"Too many arguments passed when calling function %s at line %s",
+					"Too many arguments passed when calling function %s",
 					r2d2Styles.Bold(funcName),
-					r2d2Styles.Bold(fmt.Sprintf("%d", lineNum)),
 				)
 
 			case false:
 
 				msg = fmt.Sprintf(
-					"Too little arguments passed when calling function %s at line %s",
+					"Too little arguments passed when calling function %s",
 					r2d2Styles.Bold(funcName),
-					r2d2Styles.Bold(fmt.Sprintf("%d", lineNum)),
 				)
 			}
 

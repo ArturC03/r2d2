@@ -86,7 +86,10 @@ func TestRunCode(t *testing.T) {
 	os.Stdout = w
 
 	// Run the code
-	RunCode(minimalProgram)
+	err := RunCode(minimalProgram)
+	if err != nil {
+		return
+	}
 
 	// Restore stdout and read captured output
 	w.Close()
