@@ -13,7 +13,7 @@ function extractFunctionsFromObject(obj: any, prefix: string = "", visited = new
 
       if (typeof value === "function") {
         const argMatch = value.toString().match(/^[^(]*\(([^)]*)\)/);
-        const args = argMatch ? argMatch[1].split(',').map(s => s.trim()).filter(Boolean) : [];
+        const args = argMatch ? argMatch[1].split(',').map((s: string) => s.trim()).filter(Boolean) : [];
         result[fullName] = args;
       } else if (typeof value === "object" && value !== null) {
         Object.assign(result, extractFunctionsFromObject(value, fullName, visited));

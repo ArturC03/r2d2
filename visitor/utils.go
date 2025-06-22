@@ -749,3 +749,11 @@ func (v *R2D2Visitor) RegisterInterfaceNames(ctx *parser.ProgramContext) {
 		}
 	}
 }
+
+func (arg Argument) isInfinite() bool {
+	if strings.Contains(arg.Name, "...") {
+		return true
+	}
+
+	return false
+}

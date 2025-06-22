@@ -131,17 +131,11 @@ type R2D2Visitor interface {
 	// Visit a parse tree produced by R2D2Parser#logicalExpression.
 	VisitLogicalExpression(ctx *LogicalExpressionContext) interface{}
 
-	// Visit a parse tree produced by R2D2Parser#memberExpression.
-	VisitMemberExpression(ctx *MemberExpressionContext) interface{}
-
-	// Visit a parse tree produced by R2D2Parser#memberPart.
-	VisitMemberPart(ctx *MemberPartContext) interface{}
-
 	// Visit a parse tree produced by R2D2Parser#argumentList.
 	VisitArgumentList(ctx *ArgumentListContext) interface{}
 
-	// Visit a parse tree produced by R2D2Parser#primaryExpression.
-	VisitPrimaryExpression(ctx *PrimaryExpressionContext) interface{}
+	// Visit a parse tree produced by R2D2Parser#objectLiteral.
+	VisitObjectLiteral(ctx *ObjectLiteralContext) interface{}
 
 	// Visit a parse tree produced by R2D2Parser#arrayLiteral.
 	VisitArrayLiteral(ctx *ArrayLiteralContext) interface{}

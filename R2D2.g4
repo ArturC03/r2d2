@@ -167,41 +167,27 @@ expression
   | expression (AND | OR) expression                       #logicalExpression
   ;
 
-memberExpression
-  : primaryExpression memberPart*
-  ;
-
-memberPart
-  : LBRACK expression RBRACK
-  | DOT IDENTIFIER
-  | INCREMENT
-  | DECREMENT
-  | LPAREN argumentList? RPAREN
-  ;
-
 argumentList
   : expression (COMMA expression)*
   ;
 
-primaryExpression
-  : IDENTIFIER
-  | literal
-  | LPAREN expression RPAREN
-  | arrayLiteral
-  | functionCall
+objectLiteral
+  : LBRACK ((expression ARROW expression)(COMMA (expression ARROW expression))*)? RBRACK
   ;
 
+// Array literals with comma-separated values
 arrayLiteral
   : LBRACK (expression (COMMA expression)*)? RBRACK
   ;
 
 literal
-  : INT_LITERAL
+  : objectLiteral
+  | arrayLiteral
+  | INT_LITERAL
   | FLOAT_LITERAL
   | STRING_LITERAL
   | BOOL_LITERAL
   | NULL_LITERAL
-  | arrayLiteral
   ;
 
 block
@@ -257,6 +243,7 @@ CASE: 'case';
 DEFAULT: 'default';
 
 // Operators (order matters - longer operators first!)
+ARROW: '=>';  // Used for associative arrays, must be before other operators that might match '=' or '>'
 INCREMENT: '++';
 DECREMENT: '--';
 PLUS_ASSIGN: '+=';
@@ -295,7 +282,6 @@ SEMI: ';';
 // Other stuff
 AT      : '@';
 JS      : 'js';
-ARROW   : '=>';
 
 TYPE
   : 'number'

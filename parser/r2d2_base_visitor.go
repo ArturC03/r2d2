@@ -172,19 +172,11 @@ func (v *BaseR2D2Visitor) VisitLogicalExpression(ctx *LogicalExpressionContext) 
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitMemberExpression(ctx *MemberExpressionContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
-func (v *BaseR2D2Visitor) VisitMemberPart(ctx *MemberPartContext) interface{} {
-	return v.VisitChildren(ctx)
-}
-
 func (v *BaseR2D2Visitor) VisitArgumentList(ctx *ArgumentListContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 
-func (v *BaseR2D2Visitor) VisitPrimaryExpression(ctx *PrimaryExpressionContext) interface{} {
+func (v *BaseR2D2Visitor) VisitObjectLiteral(ctx *ObjectLiteralContext) interface{} {
 	return v.VisitChildren(ctx)
 }
 

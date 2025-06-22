@@ -131,17 +131,11 @@ type R2D2Listener interface {
 	// EnterLogicalExpression is called when entering the logicalExpression production.
 	EnterLogicalExpression(c *LogicalExpressionContext)
 
-	// EnterMemberExpression is called when entering the memberExpression production.
-	EnterMemberExpression(c *MemberExpressionContext)
-
-	// EnterMemberPart is called when entering the memberPart production.
-	EnterMemberPart(c *MemberPartContext)
-
 	// EnterArgumentList is called when entering the argumentList production.
 	EnterArgumentList(c *ArgumentListContext)
 
-	// EnterPrimaryExpression is called when entering the primaryExpression production.
-	EnterPrimaryExpression(c *PrimaryExpressionContext)
+	// EnterObjectLiteral is called when entering the objectLiteral production.
+	EnterObjectLiteral(c *ObjectLiteralContext)
 
 	// EnterArrayLiteral is called when entering the arrayLiteral production.
 	EnterArrayLiteral(c *ArrayLiteralContext)
@@ -287,17 +281,11 @@ type R2D2Listener interface {
 	// ExitLogicalExpression is called when exiting the logicalExpression production.
 	ExitLogicalExpression(c *LogicalExpressionContext)
 
-	// ExitMemberExpression is called when exiting the memberExpression production.
-	ExitMemberExpression(c *MemberExpressionContext)
-
-	// ExitMemberPart is called when exiting the memberPart production.
-	ExitMemberPart(c *MemberPartContext)
-
 	// ExitArgumentList is called when exiting the argumentList production.
 	ExitArgumentList(c *ArgumentListContext)
 
-	// ExitPrimaryExpression is called when exiting the primaryExpression production.
-	ExitPrimaryExpression(c *PrimaryExpressionContext)
+	// ExitObjectLiteral is called when exiting the objectLiteral production.
+	ExitObjectLiteral(c *ObjectLiteralContext)
 
 	// ExitArrayLiteral is called when exiting the arrayLiteral production.
 	ExitArrayLiteral(c *ArrayLiteralContext)

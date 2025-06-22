@@ -516,7 +516,7 @@ func (v *R2D2Visitor) VisitBlock(ctx *parser.BlockContext) any {
 
 						if _, ok := v.currentModule.Functions[functionName]; !ok {
 
-							arentFunctionName := parentFuncDecl.IDENTIFIER().GetText()
+							parentFunctionName := parentFuncDecl.IDENTIFIER().GetText()
 							line := stmtCtx.GetStart().GetLine()
 							msg := fmt.Sprintf("Function '%s' not allowed in function '%s'", functionName, parentFunctionName)
 							fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(msg, line)))
@@ -1258,13 +1258,22 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 
 		if len(exprs) != len(fn.Arguments) {
 			var msg string
-
+			skips := false
 			switch len(exprs) > len(fn.Arguments) {
 			case true:
-				msg = fmt.Sprintf(
-					"Too many arguments passed when calling function %s",
-					r2d2Styles.Bold(funcName),
-				)
+
+				for _, arg := range fn.Arguments {
+					if arg.isInfinite() {
+						skips = true
+						break
+					}
+				}
+				if !skips {
+					msg = fmt.Sprintf(
+						"Too many arguments passed when calling function %s",
+						r2d2Styles.Bold(funcName),
+					)
+				}
 
 			case false:
 
@@ -1274,8 +1283,10 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 				)
 			}
 
-			fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(msg, ctx.GetStart().GetLine())))
-			v.ErrorCollector.Add(msg, ctx.GetStart().GetLine())
+			if !skips {
+				fmt.Println(r2d2Styles.ErrorMessage(formatErrorMessage(msg, ctx.GetStart().GetLine())))
+				v.ErrorCollector.Add(msg, ctx.GetStart().GetLine())
+			}
 		}
 
 		for i, expr := range exprs {
@@ -1294,22 +1305,29 @@ func (v *R2D2Visitor) VisitFunctionCall(ctx *parser.FunctionCallContext) any {
 
 func (v *R2D2Visitor) VisitLiteralExpression(ctx *parser.LiteralExpressionContext) any {
 
-	if ctx.Literal() != nil {
-		text := ctx.Literal().GetText()
+	text := ctx.Literal().GetText()
 
-		if strings.HasPrefix(text, `"""`) && strings.HasSuffix(text, `"""`) {
+	litCtx := ctx.Literal()
 
-			// Removes the triple quotes and uses the equivalent sintax in JS `
-			inner := text[3 : len(text)-3]
-			v.JsCode += "`" + inner + "`"
-
-		} else {
-			// Normal string
-			v.JsCode += text
+	for i := range litCtx.GetChildren() {
+		child := litCtx.GetChild(i)
+		if objLit, ok := child.(*parser.ObjectLiteralContext); ok {
+			// Encontraste objectLiteral, visita-o!
+			return v.VisitObjectLiteral(objLit)
 		}
-		// fmt.Println(r2d2Styles.InfoMessage("Literal found: " + r2d2Styles.Bold(ctx.Literal().GetText())))
+		if arrLit, ok := child.(*parser.ArrayLiteralContext); ok {
+			// Se quiseres fazer algo para arrayLiteral
+			return v.VisitArrayLiteral(arrLit)
+		}
+	}
+
+	if strings.HasPrefix(text, `"""`) && strings.HasSuffix(text, `"""`) {
+		// Removes the triple quotes and uses the equivalent sintax in JS `
+		inner := text[3 : len(text)-3]
+		v.JsCode += "`" + inner + "`"
 	} else {
-		// fmt.Println(r2d2Styles.ErrorMessage("Literal not found"))
+		// Normal string
+		v.JsCode += text
 	}
 
 	return nil
@@ -1659,23 +1677,35 @@ func (v *R2D2Visitor) VisitArrayAccessExpression(ctx *parser.ArrayAccessExpressi
 }
 
 func (v *R2D2Visitor) VisitArrayLiteral(ctx *parser.ArrayLiteralContext) any {
-	if ctx.LBRACK() != nil {
-		v.JsCode += "["
-	}
+	v.JsCode += "["
 
 	// Use AllExpression() to get the slice of expressions
 	for i, expr := range ctx.AllExpression() {
-
 		if i > 0 {
 			v.JsCode += ", "
 		}
-
 		expr.Accept(v)
 	}
 
-	if ctx.RBRACK() != nil {
-		v.JsCode += "]"
+	v.JsCode += "]"
+	return nil
+}
+
+func (v *R2D2Visitor) VisitObjectLiteral(ctx *parser.ObjectLiteralContext) any {
+
+	v.JsCode += "{"
+	for i, expr := range ctx.AllExpression() {
+		if (i % 2) == 0 {
+			expr.Accept(v)
+			v.JsCode += ": "
+			continue
+		}
+
+		expr.Accept(v) // Visits normally the argument
+		v.JsCode += ", "
 	}
+
+	v.JsCode += "}"
 
 	return nil
 }

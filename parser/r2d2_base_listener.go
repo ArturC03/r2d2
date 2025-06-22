@@ -267,29 +267,17 @@ func (s *BaseR2D2Listener) EnterLogicalExpression(ctx *LogicalExpressionContext)
 // ExitLogicalExpression is called when production logicalExpression is exited.
 func (s *BaseR2D2Listener) ExitLogicalExpression(ctx *LogicalExpressionContext) {}
 
-// EnterMemberExpression is called when production memberExpression is entered.
-func (s *BaseR2D2Listener) EnterMemberExpression(ctx *MemberExpressionContext) {}
-
-// ExitMemberExpression is called when production memberExpression is exited.
-func (s *BaseR2D2Listener) ExitMemberExpression(ctx *MemberExpressionContext) {}
-
-// EnterMemberPart is called when production memberPart is entered.
-func (s *BaseR2D2Listener) EnterMemberPart(ctx *MemberPartContext) {}
-
-// ExitMemberPart is called when production memberPart is exited.
-func (s *BaseR2D2Listener) ExitMemberPart(ctx *MemberPartContext) {}
-
 // EnterArgumentList is called when production argumentList is entered.
 func (s *BaseR2D2Listener) EnterArgumentList(ctx *ArgumentListContext) {}
 
 // ExitArgumentList is called when production argumentList is exited.
 func (s *BaseR2D2Listener) ExitArgumentList(ctx *ArgumentListContext) {}
 
-// EnterPrimaryExpression is called when production primaryExpression is entered.
-func (s *BaseR2D2Listener) EnterPrimaryExpression(ctx *PrimaryExpressionContext) {}
+// EnterObjectLiteral is called when production objectLiteral is entered.
+func (s *BaseR2D2Listener) EnterObjectLiteral(ctx *ObjectLiteralContext) {}
 
-// ExitPrimaryExpression is called when production primaryExpression is exited.
-func (s *BaseR2D2Listener) ExitPrimaryExpression(ctx *PrimaryExpressionContext) {}
+// ExitObjectLiteral is called when production objectLiteral is exited.
+func (s *BaseR2D2Listener) ExitObjectLiteral(ctx *ObjectLiteralContext) {}
 
 // EnterArrayLiteral is called when production arrayLiteral is entered.
 func (s *BaseR2D2Listener) EnterArrayLiteral(ctx *ArrayLiteralContext) {}

@@ -3,6 +3,7 @@ package visitor
 import (
 	_ "embed"
 	"encoding/json"
+	"maps"
 	"os"
 	"os/exec"
 	"strings"
@@ -92,5 +93,6 @@ func (v *R2D2Visitor) LoadStdModules() {
 
 	for name, mod := range stdModules {
 		v.symbolTable.Modules[name] = mod
+		maps.Copy(v.symbolTable.Modules[name].Functions, mod.Functions)
 	}
 }
