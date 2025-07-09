@@ -942,9 +942,7 @@ func (v *R2D2Visitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
 		v.JsCode += "{"
 		ctx.Block(0).Accept(v)
 		v.JsCode += "}"
-
 	} else if ctx.Statement(0) != nil {
-
 		v.JsCode += "{"
 		ctx.Statement(0).Accept(v)
 		v.JsCode += "}"
@@ -953,7 +951,6 @@ func (v *R2D2Visitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
 	// ELSE IFs
 	elseIfCount := len(ctx.AllExpression()) - 1
 	for i := 0; i < elseIfCount; i++ {
-
 		v.JsCode += " else if ("
 
 		expr := ctx.Expression(i + 1).Accept(v)
@@ -970,32 +967,27 @@ func (v *R2D2Visitor) VisitIfStatement(ctx *parser.IfStatementContext) any {
 			v.JsCode += "{"
 			ctx.Block(blockIndex).Accept(v)
 			v.JsCode += "}"
-
 		} else if len(ctx.AllStatement()) > blockIndex && ctx.Statement(blockIndex) != nil {
-
 			v.JsCode += "{"
 			ctx.Statement(blockIndex).Accept(v)
 			v.JsCode += "}"
 		}
 	}
 
-	// ELSE final
-	elseIndex := len(ctx.AllExpression())
-
-	if len(ctx.AllBlock()) > elseIndex && ctx.ELSE(0) != nil {
-
+	// ELSE final corrigido
+	if ctx.ELSE(len(ctx.AllELSE())-1) != nil {
 		v.JsCode += " else "
 
-		if ctx.Block(elseIndex) != nil {
+		lastBlockIndex := len(ctx.AllBlock()) - 1
+		lastStmtIndex := len(ctx.AllStatement()) - 1
 
+		if lastBlockIndex >= 0 && ctx.Block(lastBlockIndex) != nil {
 			v.JsCode += "{"
-			ctx.Block(elseIndex).Accept(v)
+			ctx.Block(lastBlockIndex).Accept(v)
 			v.JsCode += "}"
-
-		} else if ctx.Statement(elseIndex) != nil {
-
+		} else if lastStmtIndex >= 0 && ctx.Statement(lastStmtIndex) != nil {
 			v.JsCode += "{"
-			ctx.Statement(elseIndex).Accept(v)
+			ctx.Statement(lastStmtIndex).Accept(v)
 			v.JsCode += "}"
 		}
 	}
