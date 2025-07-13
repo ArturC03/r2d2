@@ -3,10 +3,13 @@ package visitor
 import (
 	_ "embed"
 	"encoding/json"
+	"fmt"
 	"maps"
 	"os"
 	"os/exec"
 	"strings"
+
+	r2d2Styles "github.com/ArturC03/r2d2Styles"
 )
 
 //go:embed ts/list_std_functions.ts
@@ -32,7 +35,8 @@ func GetStdFunctions() map[string]Module {
 
 	out, err := cmd.Output()
 	if err != nil {
-		panic("Failed to run Deno: " + err.Error())
+		fmt.Println(r2d2Styles.ErrorMessage("Failed to run Deno: " + err.Error()))
+		return nil
 	}
 
 	// Parse do JSON
